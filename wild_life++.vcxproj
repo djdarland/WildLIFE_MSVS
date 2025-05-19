@@ -127,7 +127,35 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="bi_math.cpp" />
+    <ClCompile Include="bi_sys.cpp" />
+    <ClCompile Include="bi_type.cpp" />
+    <ClCompile Include="built_ins.cpp" />
+    <ClCompile Include="info.cpp" />
+    <ClCompile Include="lefun.cpp" />
+    <ClCompile Include="lib.cpp" />
+    <ClCompile Include="list.cpp" />
+    <ClCompile Include="login.cpp" />
+    <ClCompile Include="lub.cpp" />
+    <ClCompile Include="memory.cpp" />
+    <ClCompile Include="modules.cpp" />
+    <ClCompile Include="parser.cpp" />
+    <ClCompile Include="print.cpp" />
+    <ClCompile Include="sys.cpp" />
+    <ClCompile Include="templates.cpp" />
+    <ClCompile Include="token.cpp" />
+    <ClCompile Include="trees.cpp" />
+    <ClCompile Include="types.cpp" />
     <ClCompile Include="wild_life++.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="defs.h" />
+    <ClInclude Include="def_config.h" />
+    <ClInclude Include="def_const.h" />
+    <ClInclude Include="def_glob.h" />
+    <ClInclude Include="def_macro.h" />
+    <ClInclude Include="def_proto.h" />
+    <ClInclude Include="def_struct.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
