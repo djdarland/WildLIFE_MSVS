@@ -32,7 +32,7 @@ static char vcid[] = "$Id: bi_math.c,v 1.2 1994/12/08 23:07:37 duchier Exp $";
 #define FALSE 0
 #endif
 */
-
+#define REV401PLUS
 #ifdef REV401PLUS
 #include "defs.h"
 #endif
@@ -223,7 +223,7 @@ static long c_div()
           }
 	  else {
 	    success=FALSE;
-            Errorline("division by zero in %P.\n",t); /* 8.9 */
+            Errorline((char*)"division by zero in %P.\n",t); /* 8.9 */
           }
 	  break;
 	case 3:
@@ -231,7 +231,7 @@ static long c_div()
 	    success=unify_real_result(arg3,val1/val2);
 	  else {
 	    success=FALSE;
-            Errorline("division by zero in %P.\n",t); /* 8.9 */
+            Errorline((char*)"division by zero in %P.\n",t); /* 8.9 */
           }
 	  break;
 	case 4:
@@ -259,7 +259,7 @@ static long c_div()
           else {
             if (val3) {
 	      success=FALSE;
-              Errorline("division by zero in %P.\n",t); /* 8.9 */
+              Errorline((char*)"division by zero in %P.\n",t); /* 8.9 */
             }
             else
               success=unify_real_result(arg1,(REAL)0);
@@ -270,7 +270,7 @@ static long c_div()
 	    success=(val3==val1/val2);
 	  else {
 	    success=FALSE;
-            Errorline("division by zero in %P.\n",t); /* 8.9 */
+            Errorline((char*)"division by zero in %P.\n",t); /* 8.9 */
           }
 	  break;
 	}
@@ -351,7 +351,7 @@ static long c_intdiv()
           }
 	  else {
 	    success=FALSE;
-            Errorline("division by zero in %P.\n",t); /* 8.9 */
+            Errorline((char*)"division by zero in %P.\n",t); /* 8.9 */
           }
 	  break;
 	case 3:
@@ -361,7 +361,7 @@ static long c_intdiv()
 	    success=unify_real_result(arg3,trunc(val1/val2));
 	  else {
 	    success=FALSE;
-            Errorline("division by zero in %P.\n",t); /* 8.9 */
+            Errorline((char*)"Division by zero in % P.\n",t); /* 8.9 */
           }
 	  break;
 	case 4:
@@ -424,7 +424,7 @@ static long c_intdiv()
           else {
             if (val3) {
 	      success=FALSE;
-              Errorline("division by zero in %P.\n",t); /* 8.9 */
+              Errorline((char*)"division by zero in %P.\n",t); /* 8.9 */
             }
             else
               success=unify_real_result(arg1,(REAL)0);
@@ -438,7 +438,7 @@ static long c_intdiv()
 	    success=(val3==trunc(val1/val2));
 	  else {
 	    success=FALSE;
-            Errorline("division by zero in %P.\n",t); /* 8.9 */
+            Errorline((char*)"division by zero in %P.\n",t); /* 8.9 */
           }
 	  break;
 	}
@@ -552,7 +552,7 @@ static long c_sqrt()
 	    success=unify_real_result(arg3,sqrt(val1));
 	  else {
 	    success=FALSE;
-            Errorline("square root of negative number in %P.\n",t);
+            Errorline((char*)"square root of negative number in %P.\n",t);
           }
 	  break;
 	case 4:
@@ -560,7 +560,7 @@ static long c_sqrt()
 	  break;
 	case 5:
 	  success=(val3*val3==val1 || (val1>=0 && val3==sqrt(val1)));
-          if (val1<0) Errorline("square root of negative number in %P.\n",t);
+          if (val1<0) Errorline((char*)"square root of negative number in %P.\n",t);
 	}
     }
   }
@@ -1263,7 +1263,7 @@ static long c_log()
 	    success=unify_real_result(arg3,log(val1));
 	  else {
 	    success=FALSE;
-            Errorline("logarithm of %s in %P.\n",
+            Errorline((char*)"logarithm of %s in %P.\n",
                       (val1==0)?"zero":"a negative number",t);
           }
 	  break;
@@ -1273,7 +1273,7 @@ static long c_log()
 	case 5:
 	  success=(exp(val3)==val1 || (val1>0 && val3==log(val1)));
           if (val1<=0)
-            Errorline("logarithm of %s in %P.\n",
+            Errorline((char*)"logarithm of %s in %P.\n",
                       (val1==0)?"zero":"a negative number",t);
 	}
     }
@@ -1338,24 +1338,24 @@ static long c_exp()
 
 void insert_math_builtins()
 {
-  new_built_in(syntax_module,"*",(def_type)function_it,c_mult);
-  new_built_in(syntax_module,"+",(def_type)function_it,c_add);
-  new_built_in(syntax_module,"-",(def_type)function_it,c_sub);
-  new_built_in(syntax_module,"/",(def_type)function_it,c_div);  
-  new_built_in(syntax_module,"//",(def_type)function_it,c_intdiv);  
-  new_built_in(syntax_module,"mod",(def_type)function_it,c_mod); /* PVR 24.2.94 */
-  new_built_in(syntax_module,"/\\",(def_type)function_it,c_bit_and);
-  new_built_in(syntax_module,"\\/",(def_type)function_it,c_bit_or);
-  new_built_in(syntax_module,"\\",(def_type)function_it,c_bit_not);
-  new_built_in(syntax_module,">>",(def_type)function_it,c_shift_right);
-  new_built_in(syntax_module,"<<",(def_type)function_it,c_shift_left);
-  new_built_in(bi_module,"floor",(def_type)function_it,c_floor);
-  new_built_in(bi_module,"ceiling",(def_type)function_it,c_ceiling);
-  new_built_in(bi_module,"exp",(def_type)function_it,c_exp);
-  new_built_in(bi_module,"log",(def_type)function_it,c_log);
-  new_built_in(bi_module,"cos",(def_type)function_it,c_cos);
-  new_built_in(bi_module,"sin",(def_type)function_it,c_sin);
-  new_built_in(bi_module,"tan",(def_type)function_it,c_tan);
-  new_built_in(bi_module,"sqrt",(def_type)function_it,c_sqrt);
+  new_built_in(syntax_module,(char*)"*",(def_type)function_it,c_mult);
+  new_built_in(syntax_module,(char*)"+",(def_type)function_it,c_add);
+  new_built_in(syntax_module,(char*)"-",(def_type)function_it,c_sub);
+  new_built_in(syntax_module,(char*)"/",(def_type)function_it,c_div);  
+  new_built_in(syntax_module,(char*)"//",(def_type)function_it,c_intdiv);  
+  new_built_in(syntax_module,(char*)"mod",(def_type)function_it,c_mod); /* PVR 24.2.94 */
+  new_built_in(syntax_module,(char*)"/\\",(def_type)function_it,c_bit_and);
+  new_built_in(syntax_module,(char*)"\\/",(def_type)function_it,c_bit_or);
+  new_built_in(syntax_module,(char*)"\\",(def_type)function_it,c_bit_not);
+  new_built_in(syntax_module,(char*)">>",(def_type)function_it,c_shift_right);
+  new_built_in(syntax_module,(char*)"<<",(def_type)function_it,c_shift_left);
+  new_built_in(bi_module,(char*)"floor",(def_type)function_it,c_floor);
+  new_built_in(bi_module,(char*)"ceiling",(def_type)function_it,c_ceiling);
+  new_built_in(bi_module,(char*)"exp",(def_type)function_it,c_exp);
+  new_built_in(bi_module,(char*)"log",(def_type)function_it,c_log);
+  new_built_in(bi_module,(char*)"cos",(def_type)function_it,c_cos);
+  new_built_in(bi_module,(char*)"sin",(def_type)function_it,c_sin);
+  new_built_in(bi_module,(char*)"tan",(def_type)function_it,c_tan);
+  new_built_in(bi_module,(char*)"sqrt",(def_type)function_it,c_sqrt);
 }
 

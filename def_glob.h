@@ -80,19 +80,19 @@ EXTERN float garbage_time;
 
 */
 
-EXTERN struct tms life_start;
+EXTERN long life_start;
 
 /*! \var life_start
   \brief time life ended - seconds
 
 */
 
-EXTERN struct tms life_end;
+EXTERN long life_end;
 
 /*! \var other_base
   \brief mem_size memory allocated in init_memory by malloc 
 
-  only used for the half-space garbage collector
+  only used for the half-space garbage collectorg
 */
 
 EXTERN GENERIC other_base;
@@ -936,7 +936,7 @@ EXTERN long clean_succ;
 
 /* ptr_choice_point prompt_choice_stack; 12.7 */
 
-EXTERN struct tms start_time,end_time;
+EXTERN long start_time,end_time;
 
 EXTERN long xeventdelay;
 EXTERN long xcount;
