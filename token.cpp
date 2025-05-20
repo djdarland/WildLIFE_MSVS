@@ -457,13 +457,14 @@ void end_terminal_io()
 char *expand_file_name(char *s)
 // char *s;
 {
-  char *r;
-  char *home; //, *getenv();
+#ifdef DJD_LATER
+//  char *r;
+  //char *home; //, *getenv();
   struct passwd *pw;
   /* char *user="eight character name"; 18.5 */
-  char userbuf[STRLEN];
-  char *user=userbuf;
-  char *t1,*t2;
+  // char userbuf[STRLEN];
+  // char *user=userbuf;
+  // char *t1,*t2;
 
   r=s;
   if (s[0]=='~') {
@@ -497,7 +498,12 @@ char *expand_file_name(char *s)
   }
 
   /* printf("*** Using file name: '%s'\n",r); */
-  
+#endif
+  char r[STRLEN];
+  sprintf(r, "C:\\Users\\pal\\dsa\\life+local\\%s", s);
+
+
+
   return r;
 }
 
@@ -531,7 +537,7 @@ long open_input_file(char *file)
   
   if (input_stream==NULL) {
     Errorline("file '%s' does not exist.\n",file);
-    file="stdin";
+    file=(char*)"stdin";
     input_stream=stdin;
     noisy=TRUE;
     ok=FALSE;
@@ -1220,7 +1226,7 @@ void read_token_main(ptr_psi_term tok, long for_parser)
     }
   } while(c && c!=EOF);
   
-  if (for_parser) prompt="|    ";
+  if (for_parser) prompt=(char*) "|    ";
 }
 
 /****************************************************************************/

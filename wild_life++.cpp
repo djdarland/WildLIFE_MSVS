@@ -44,10 +44,10 @@ int main(int argc, char *argv[])  // REV401PLUS correct main proto
   int i;
 #ifdef SOLARIS
   for(i=0;i<256;i++)
-    rand_array[i]=rand_r(&lifeseed);
+    rand_array[i]=srand(&lifeseed);
 #else
   for(i=0;i<256;i++)
-    rand_array[i]=random();
+    rand_array[i]=rand();
 #endif
   init_globals();
   arg_c=argc;
@@ -73,8 +73,8 @@ int main(int argc, char *argv[])  // REV401PLUS correct main proto
   assert(stack_pointer==mem_base); /* 8.10 */
 
   /* Timekeeping initialization */
-  tzset();
-  times(&life_start);
+  _tzset();
+  life_start = clock();
   assert(stack_pointer==mem_base); /* 8.10 */
 
   init_modules(); /*  RM: Jan  8 1993  */
@@ -200,31 +200,31 @@ void init_globals()
   
   display_persistent=FALSE;
   
-  no_name="pointer";
-  name="symbol";
+  no_name=(char*)"pointer";
+  name=(char*)"symbol";
   
   display_modules=TRUE;   /* Should really default to FALSE */
   
-  numbers[0] = "1";
-  numbers[1] = "2";
-  numbers[2] = "3";
-  numbers[3] = "4";
-  numbers[4] = "5";
-  numbers[5] = "6";
-  numbers[6] = "7";
-  numbers[7] = "8";
-  numbers[8] = "9";
-  numbers[9] = "10";
-  numbers[10] = "11";
-  numbers[11] = "12";
-  numbers[12] = "13";
-  numbers[13] = "14";
-  numbers[14] = "15";
-  numbers[15] = "16";
-  numbers[16] = "17";
-  numbers[17] = "18";
-  numbers[18] = "19";
-  numbers[19] = "20";
+  numbers[0] = (char*)"1";
+  numbers[1] = (char*)"2";
+  numbers[2] = (char*)"3";
+  numbers[3] = (char*)"4";
+  numbers[4] = (char*)"5";
+  numbers[5] = (char*)"6";
+  numbers[6] = (char*)"7";
+  numbers[7] = (char*)"8";
+  numbers[8] = (char*)"9";
+  numbers[9] = (char*)"10";
+  numbers[10] = (char*)"11";
+  numbers[11] = (char*)"12";
+  numbers[12] = (char*)"13";
+  numbers[13] = (char*)"14";
+  numbers[14] = (char*)"15";
+  numbers[15] = (char*)"16";
+  numbers[16] = (char*)"17";
+  numbers[17] = (char*)"18";
+  numbers[18] = (char*)"19";
+  numbers[19] = (char*)"20";
   numbers[20] = NULL;
 
   set_extra_args[0] = set_empty;

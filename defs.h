@@ -5,6 +5,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "def_config.h"
 #include <direct.h>
+#include <cstdlib>
 // #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -1647,7 +1647,7 @@ static long c_exists()
   ptr_node n;
   long success=TRUE;
   ptr_psi_term arg1; 
-  char *c_arg1; 
+  char *c_arg1=NULL; 
 
   g=aim->aaaa_1;
   deref_ptr(g);
@@ -2313,7 +2313,8 @@ long pred_clause(ptr_psi_term t,long r,ptr_psi_term g)
 // long r;
 {
   long success=FALSE;
-  ptr_psi_term head,body;
+  ptr_psi_term head = NULL;      // INIT ADDED MS C++
+      ptr_psi_term body=NULL;   // INIT ADDED MS C++
   
   bk_mark_quote(g); /*  RM: Apr  7 1993  */
   if (t) {
@@ -2813,7 +2814,8 @@ static long c_close()
 static long c_get()
 {
   long success=TRUE;
-  ptr_psi_term arg1,arg2,g,t;
+  ptr_psi_term arg1, arg2, g;
+  ptr_psi_term t=NULL;
   long c;
   
   g=aim->aaaa_1;
@@ -4878,8 +4880,11 @@ static long c_listing()
   def_type fp;
   ptr_pair_list r;
   ptr_node n;
-  ptr_psi_term t, t2, *a1, *a2, *a3;
-  char *s1,*s2;
+  ptr_psi_term t,* a1, * a2;
+  ptr_psi_term  t2 = NULL;
+      ptr_psi_term *a3 = NULL;
+  char* s1 = (char*)"def";
+  char* s2 = (char*)"def";
   
   g=aim->aaaa_1;
   deref_ptr(g);
@@ -4893,7 +4898,7 @@ static long c_listing()
 
       if (is_built_in(r)) {
         s1=(char*)"built-in ";
-        s2[0] = '\0';
+        s2 = (char*)"";
       }
       else {
         s1=(char*)"user-defined ";
@@ -5265,10 +5270,10 @@ long c_concatenate()
   long success=TRUE;
   long all_args=TRUE;
   char * c_result;
-  ptr_psi_term arg1; 
-  char * c_arg1; 
-  ptr_psi_term arg2; 
-  char * c_arg2; 
+  ptr_psi_term arg1=NULL; 
+  char * c_arg1=NULL;  // INIT MS C++ 
+  ptr_psi_term arg2=NULL;  // INIT MS C++ 
+  char * c_arg2=NULL;  // INIT MS C++ 
 
   funct=aim->aaaa_1;
   deref_ptr(funct);
@@ -5409,8 +5414,8 @@ long c_string_length()
   long success=TRUE;
   long all_args=TRUE;
   long c_result;
-  ptr_psi_term arg1; 
-  char * c_arg1; 
+  ptr_psi_term arg1=NULL;   // INIT MS C++ 
+  char * c_arg1=NULL; 
 
   funct=aim->aaaa_1;
   deref_ptr(funct);
@@ -5464,11 +5469,11 @@ long c_sub_string()
   long success=TRUE;
   long all_args=TRUE;
   char * c_result;
-  ptr_psi_term arg1; 
-  char * c_arg1; 
-  ptr_psi_term arg2; 
-  long c_arg2; 
-  ptr_psi_term arg3; 
+  ptr_psi_term arg1 = NULL;  // INIT MS C++ 
+  char * c_arg1 = NULL; // INIT MS C++
+  ptr_psi_term arg2=NULL; // INIT MS C++ 
+  long c_arg2=NULL; // INIT MS C++ 
+  ptr_psi_term arg3=NULL; // INIT MS C++ 
   long c_arg3; 
 
   funct=aim->aaaa_1;
@@ -5570,10 +5575,10 @@ long c_append_file()
   ptr_psi_term g;
   ptr_node n1,n2;
   long success=TRUE;
-  ptr_psi_term arg1; 
-  char * c_arg1; 
-  ptr_psi_term arg2; 
-  char * c_arg2; 
+  ptr_psi_term arg1=NULL; 
+  char * c_arg1=NULL; 
+  ptr_psi_term arg2=NULL; 
+  char * c_arg2=NULL; 
 
   g=aim->aaaa_1;
   deref_ptr(g);
@@ -5646,7 +5651,7 @@ long c_random()
   long success=TRUE;
   long all_args=TRUE;
   long c_result;
-  ptr_psi_term arg1; 
+  ptr_psi_term arg1=NULL; 
   long c_arg1; 
 
   funct=aim->aaaa_1;
@@ -5712,7 +5717,7 @@ long c_initrandom()
   long success=TRUE;
   long all_args=TRUE;
   long c_result;
-  ptr_psi_term arg1; 
+  ptr_psi_term arg1=NULL; 
   long c_arg1; 
 
   t=aim->aaaa_1;

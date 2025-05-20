@@ -179,7 +179,7 @@ ptr_node general_insert(long comp,char *keystr,
 // long heapflag, copystr, bkflag;
 {
   long cmp;
-  ptr_node result;
+  ptr_node result=NULL;  // Added INIT for MS C++ 
   long to_do=TRUE;
 
   
@@ -325,7 +325,7 @@ ptr_node find(long comp,char *keystr,ptr_node tree)
 //char *keystr;
 // ptr_node tree;
 {
-  ptr_node result;
+  ptr_node result=NULL;  // INIT ADDED MS C++
   long cmp;
   long to_do=TRUE;
 
