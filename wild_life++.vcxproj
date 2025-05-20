@@ -141,6 +141,9 @@
     <ClCompile Include="modules.cpp" />
     <ClCompile Include="parser.cpp" />
     <ClCompile Include="print.cpp" />
+    <ClCompile Include="regexp\regerror.cpp" />
+    <ClCompile Include="regexp\regexp.cpp" />
+    <ClCompile Include="regexp\regsub.cpp" />
     <ClCompile Include="sys.cpp" />
     <ClCompile Include="templates.cpp" />
     <ClCompile Include="token.cpp" />
@@ -156,6 +159,8 @@
     <ClInclude Include="def_macro.h" />
     <ClInclude Include="def_proto.h" />
     <ClInclude Include="def_struct.h" />
+    <ClInclude Include="regexp\regexp.h" />
+    <ClInclude Include="regexp\regmagic.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
