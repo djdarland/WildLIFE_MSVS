@@ -2,7 +2,7 @@
  ** All Rights Reserved.
  *****************************************************************/
 /* 	$Id: lib.c,v 1.2 1994/12/08 23:26:47 duchier Exp $	 */
-
+#define REV401PLUS
 #ifndef lint
 static char vcid[] = "$Id: lib.c,v 1.2 1994/12/08 23:26:47 duchier Exp $";
 #endif /* lint */
@@ -70,7 +70,7 @@ void init_io()
 {
   struct stat buffer;
   
-  fstat(fileno(stdin), &buffer);
+  fstat(_fileno(stdin), &buffer);
   /* True iff stdin is from a terminal */
   stdin_terminal=(S_IFCHR & buffer.st_mode)!=0;
   input_state=NULL;
@@ -96,7 +96,7 @@ void init_system()
 
   /*  RM: Oct 13 1993  */
   if(current_module==user_module)
-    prompt=PROMPT;
+    prompt=(char*)PROMPT;
   else {
     prompt=prompt_buffer;
     sprintf(prompt_buffer,"%s%s",current_module->module_name,PROMPT);
@@ -123,7 +123,7 @@ void WFInit(long argc, char *argv[])
     rand_array[i]=rand_r(&libseed);
 #else
   for(i=0;i<256;i++)
-    rand_array[i]=random();
+    rand_array[i]=rand();
 #endif
   
   if (argc < 10)
@@ -150,8 +150,8 @@ void WFInit(long argc, char *argv[])
   assert(stack_pointer==mem_base); /* 8.10 */
   
   /* Timekeeping initialization */
-  tzset();
-  times(&life_start);
+  _tzset();
+  life_start = clock();
   assert(stack_pointer==mem_base); /* 8.10 */
   
   init_modules(); /*  RM: Jan  8 1993  */

@@ -2,7 +2,7 @@
  ** All Rights Reserved.
  *****************************************************************/
 /* 	$Id: login.c,v 1.4 1995/01/14 00:25:33 duchier Exp $	 */
-
+#define REV401PLUS
 #ifndef lint
 static char vcid[] = "$Id: login.c,v 1.4 1995/01/14 00:25:33 duchier Exp $";
 #endif /* lint */
@@ -333,7 +333,7 @@ void assert_clause(ptr_psi_term t)
 
 void start_chrono()
 {
-  times(&start_time);
+    start_time = clock();
 }
 
 
@@ -1093,8 +1093,8 @@ void show_count()
   if (verbose) {
     printf("  [");
     
-    times(&end_time);
-    t = (end_time.tms_utime - start_time.tms_utime)/60.0;
+    end_time = clock();
+    t = (float)(end_time - start_time)/(float)CLOCKS_PER_SEC;
     
     printf("%1.3fs cpu, %ld goal%s",t,goal_count,(goal_count!=1?"s":""));
     
@@ -1421,7 +1421,7 @@ long unify_body(long eval_flag)
 	      unsigned long ulen = *((unsigned long *)u->value_3);
 	      unsigned long vlen = *((unsigned long *)v->value_3);
               success=(ulen==vlen &&
-		       (bcmp((char *)u->value_3,(char *)v->value_3,ulen)==0));
+		       (memcmp((char *)u->value_3,(char *)v->value_3,ulen)==0));
 	    }
             else if (u->type==cut && v->type==cut) { /* 22.9 */
               GENERIC mincut;

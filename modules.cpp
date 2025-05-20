@@ -6,7 +6,7 @@
 
     */
 /* 	$Id: modules.c,v 1.3 1994/12/15 22:05:39 duchier Exp $	 */
-
+#define REV401PLUS
 #ifndef lint
 static char vcid[] = "$Id: modules.c,v 1.3 1994/12/15 22:05:39 duchier Exp $";
 #endif /* lint */

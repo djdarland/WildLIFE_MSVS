@@ -2,7 +2,7 @@
  * All Rights Reserved.
 *****************************************************************/
 /* 	$Id: templates.c,v 1.2 1994/12/08 23:33:53 duchier Exp $	 */
-
+#define REV401PLUS
 #ifndef lint
 static char vcid[] = "$Id: templates.c,v 1.2 1994/12/08 23:33:53 duchier Exp $";
 #endif /* lint */

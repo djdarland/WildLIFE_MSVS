@@ -2,6 +2,7 @@
 ** All Rights Reserved.
 *****************************************************************/
 /* 	$Id: built_ins.c,v 1.14 1995/07/27 21:26:28 duchier Exp $	 */
+#define REV401PLUS
 
 #ifndef lint
 static char vcid[] = "$Id: built_ins.c,v 1.14 1995/07/27 21:26:28 duchier Exp $";
@@ -2020,7 +2021,7 @@ static long c_read(long psi_flag)
       return (abort_life(TRUE));
     }
     else {
-      prompt="";
+      prompt[0] = '\0';;
       old_var_tree=var_tree;
       var_tree=NULL;
       if (psi_flag) {
@@ -2094,15 +2095,15 @@ long c_halt()   /*  RM: Jan  8 1993  Used to be 'void' */ // REV401PLUS chg to l
 void exit_life(long nl_flag)
 // long nl_flag;
 {
-  open_input_file("stdin");
-  times(&life_end);
+  open_input_file("stdin");   // CHAR * MSVC
+  life_end = clock();
   if (NOTQUIET) { /* 21.1 */
     if (nl_flag) printf("\n");
     printf("*** Exiting Wild_Life  ");
     printf("[%1.3lfs cpu, %1.3lfs gc (%2.1lf%%)]\n",
-           ((REAL)(life_end.tms_utime-life_start.tms_utime)/(REAL)sysconf(_SC_CLK_TCK)),
+           ((REAL)(life_end-life_start)/(REAL)CLOCKS_PER_SEC,
            garbage_time,
-           (REAL)garbage_time * 100.0) / (REAL) (life_end.tms_utime-life_start.tms_utime)/(REAL)sysconf(_SC_CLK_TCK);
+           (REAL)garbage_time * 100.0) / (REAL) (life_end-life_start));
   }
 
 #ifdef ARITY  /*  RM: Mar 29 1993  */
@@ -2826,7 +2827,7 @@ static long c_get()
       success=FALSE;
     }
     else {
-      prompt="";
+      prompt[0] = '\0';
       c=read_char();
       t=stack_psi_term(0);
       if (c==EOF) {
@@ -3912,7 +3913,7 @@ static long c_chdir()
   if(arg1) {
     deref_ptr(arg1);
     if(matches(arg1->type,quoted_string,&smaller) && arg1->value_3)
-      success=!chdir(expand_file_name((char *)arg1->value_3));
+      success=!_chdir(expand_file_name((char *)arg1->value_3));
     else
       Errorline("bad argument in %P\n",funct);
   }
@@ -4891,12 +4892,12 @@ static long c_listing()
     if (is_built_in(r) || !has_rules(r)) {
 
       if (is_built_in(r)) {
-        s1="built-in ";
-        s2="";
+        s1=(char*)"built-in ";
+        s2[0] = '\0';
       }
       else {
-        s1="user-defined ";
-        s2=" with an empty definition";
+        s1=(char*)"user-defined ";
+        s2=(char*)" with an empty definition";
       }
       switch ((long)fp) {
       case function_it:
@@ -5683,7 +5684,7 @@ long c_random()
 #ifdef SOLARIS
 	c_result=(rand_r(&randomseed)<<15) + rand_r(&randomseed);
 #else
-        c_result=random();
+        c_result=rand();
 #endif
         c_result=c_result-(c_result/c_arg1)*c_arg1;
       }
@@ -5745,7 +5746,7 @@ long c_initrandom()
 #ifdef SOLARIS
   if (success && all_args) randomseed=c_arg1;
 #else
-  if (success && all_args) srandom(c_arg1);
+  if (success && all_args) srand(c_arg1);
 #endif
 
   return success;

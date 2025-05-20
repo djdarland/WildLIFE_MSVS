@@ -2,7 +2,7 @@
 ** All Rights Reserved.
 *****************************************************************/
 /* 	$Id: memory.c,v 1.10 1995/07/27 19:03:24 duchier Exp $	 */
-
+#define REV401PLUS
 #ifndef lint
 static char vcid[] = "$Id: memory.c,v 1.10 1995/07/27 19:03:24 duchier Exp $";
 #endif /* lint */
@@ -23,8 +23,11 @@ static long pass;
 
 #define LONELY 1
 
-static struct tms last_garbage_time;
+// static struct tms last_garbage_time;
 static float gc_time, life_time;
+
+clock_t last_garbage_time;
+
 
 #define ALIGNUP(X) { (X) = (GENERIC)( ((long) (X) + (ALIGN-1)) & ~(ALIGN-1) ); }
 
@@ -1453,15 +1456,16 @@ void print_gc_info(long timeflag)
 void garbage()
 {
   GENERIC addr;
-  struct tms garbage_start_time,garbage_end_time;
+//   struct tms garbage_start_time,garbage_end_time;
+  time_t garbage_start_time, garbage_end_time;
   long start_number_cells, end_number_cells;
 
   start_number_cells = (stack_pointer-mem_base) + (mem_limit-heap_pointer);
 
-  times(&garbage_start_time);
+  garbage_start_time = clock();
 
   /* Time elapsed since last garbage collection */
-  life_time=(garbage_start_time.tms_utime - last_garbage_time.tms_utime)/60.0;
+  life_time=(garbage_start_time - last_garbage_time)/CLOCKS_PER_SEC;
 
 
   if (verbose) {
@@ -1502,8 +1506,8 @@ void garbage()
   printed_pointers=NULL;
   pointer_names=NULL;
   
-  times(&garbage_end_time);
-  gc_time=(garbage_end_time.tms_utime - garbage_start_time.tms_utime)/60.0;
+  garbage_end_time = clock();
+  gc_time=(garbage_end_time - garbage_start_time)/CLOCKS_PER_SEC;
   garbage_time+=gc_time;
 
   if (verbose) {

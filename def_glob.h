@@ -80,14 +80,14 @@ EXTERN float garbage_time;
 
 */
 
-EXTERN long life_start;
+EXTERN clock_t life_start;
 
 /*! \var life_start
   \brief time life ended - seconds
 
 */
 
-EXTERN long life_end;
+EXTERN clock_t life_end;
 
 /*! \var other_base
   \brief mem_size memory allocated in init_memory by malloc 

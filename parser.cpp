@@ -7,7 +7,7 @@
 **      modified on Thu Aug 22 18:14:49 1991 by herve
 *****************************************************************/
 /* 	$Id: parser.c,v 1.2 1994/12/08 23:32:03 duchier Exp $	 */
-
+#define REV401PLUS
 #ifndef lint
 static char vcid[] = "$Id: parser.c,v 1.2 1994/12/08 23:32:03 duchier Exp $";
 #endif /* lint */
@@ -931,7 +931,7 @@ psi_term parse(long *q)
 
     while (saved_psi_term!=NULL) read_token(&u);
 
-    prompt="error>";
+    prompt=(char*)"error>";
     while((c=read_char()) && c!=EOF && c!='.' && c!='?' && c!=EOLN) {}
 
     *q=ERROR;

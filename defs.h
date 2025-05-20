@@ -2,8 +2,9 @@
   \brief includes
 
 */
+#define _CRT_SECURE_NO_WARNINGS
 #include "def_config.h"
-
+#include <direct.h>
 // #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,6 +24,7 @@
 // #include <sys/time.h>
 // #include <sys/times.h>
 #include <time.h>
+#include <ctime>
 #include <sys/types.h>
 // #include <sys/ioctl.h>
 #ifndef NORAW

@@ -2,7 +2,7 @@
 ** All Rights Reserved.
 *****************************************************************/
 /* 	$Id: types.c,v 1.7 1994/12/15 22:28:56 duchier Exp $	 */
-
+#define REV401PLUS
 #ifndef lint
 static char vcid[] = "$Id: types.c,v 1.7 1994/12/15 22:28:56 duchier Exp $";
 #endif /* lint */

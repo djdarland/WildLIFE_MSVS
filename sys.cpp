@@ -6,7 +6,7 @@
    module "sys"
    */
 /* 	$Id: sys.c,v 1.9 1996/01/17 00:33:09 duchier Exp $	 */
-
+#define REV401PLUS
 #ifndef lint
 static char vcid[] = "$Id: sys.c,v 1.9 1996/01/17 00:33:09 duchier Exp $";
 #endif /* lint */
@@ -154,7 +154,7 @@ static ptr_psi_term make_bytedata(ptr_definition sort, unsigned long bytes)
   ptr_psi_term temp_result;
   char *b = (char *) heap_alloc(bytes+sizeof(bytes));
   *((long *) b) = bytes;
-  bzero(b+sizeof(bytes),bytes);
+  memset((void*)bytes, 0 , (size_t)(b+sizeof(bytes))); // 
   temp_result=stack_psi_term(0);
   temp_result->type=sort;
   temp_result->value_3=(GENERIC)b;
@@ -192,7 +192,7 @@ static long make_bitvector_internal(ptr_psi_term args[],
 static long c_make_bitvector()
 {
   psi_arg args[1];
-  SETARG(args,0, "1" , integer , REQUIRED );
+  SETARG(args,0, (char*)"1" , integer , REQUIRED );
   return call_primitive((long (*)(wl_psi_term**,
 				  ptr_psi_term, ptr_psi_term, GENERIC))
 			make_bitvector_internal,NARGS(args),args,0);
@@ -258,8 +258,8 @@ static long bitvector_binop(long op)
 //      long op; // REV401PLUS int -> long
 {
   psi_arg args[2];
-  SETARG(args,0, "1" , sys_bitvector , REQUIRED );
-  SETARG(args,1, "2" , sys_bitvector , REQUIRED );
+  SETARG(args,0, (char*)"1" , sys_bitvector , REQUIRED );
+  SETARG(args,1, (char*)"2" , sys_bitvector , REQUIRED );
   return call_primitive((long (*)(wl_psi_term**,
 				  ptr_psi_term, ptr_psi_term, GENERIC))bitvector_binop_internal,NARGS(args),args,(GENERIC)op); // REV401PLUS (void *) -> (GENERIC)
 }
@@ -339,7 +339,7 @@ static long bitvector_unop(long op)
 //     long op;   // REV401PLUS 
 {
   psi_arg args[1];
-  SETARG(args,0, "1" , sys_bitvector , REQUIRED );
+  SETARG(args,0, (char*)"1" , sys_bitvector , REQUIRED );
   return call_primitive((long (*)(wl_psi_term**,
 				  ptr_psi_term, ptr_psi_term, GENERIC))bitvector_unop_internal,NARGS(args),args,(GENERIC)op); // REV401PLUS
 }
@@ -384,13 +384,13 @@ static long bitvector_bit_code(unsigned long *bv1,
   case BV_SET:
     temp_result = make_bytedata(sys_bitvector,size1);
     s2 = ((unsigned char *) temp_result->value_3)+ sizeof(size1);
-    bcopy(s1,s2,size1);
+    memcpy(s1,s2,size1);
     s2[i] |= 1<<j;
     break;
   case BV_CLEAR:
     temp_result = make_bytedata(sys_bitvector,size1);
 	  s2 = ((unsigned char *) temp_result->value_3)+ sizeof(size1);
-    bcopy(s1,s2,size1);
+    memcpy(s1,s2,size1);
     s2[i] &= ~ (1<<j);
     break;
   }
@@ -401,21 +401,21 @@ static long bitvector_bit_code(unsigned long *bv1,
 static long bitvector_bit_internal(ptr_psi_term args[],
 				   ptr_psi_term result,
 				   ptr_psi_term funct,
-				   long *op)
+				   long op)
 //     ptr_psi_term args[],result,funct;
 // long* op; // REV401PLUS
 {
   return bitvector_bit_code((unsigned long *)args[0]->value_3,
 			    (long)*((REAL*)args[1]->value_3),
-			    result,(GENERIC)op,funct); // REV401PLUS
+			    result,op,funct); // REV401PLUS
 }
 
 static long bitvector_bit(long op)
 //     long op; // REV401PLUS
 {
   psi_arg args[2];
-  SETARG(args,0, "1" , sys_bitvector , REQUIRED );
-  SETARG(args,1, "2" , integer       , REQUIRED );
+  SETARG(args,0, (char*)"1" , sys_bitvector , REQUIRED );
+  SETARG(args,1, (char*)"2" , integer       , REQUIRED );
   return call_primitive((long (*)(wl_psi_term**,
 				  ptr_psi_term, ptr_psi_term, GENERIC))bitvector_bit_internal,NARGS(args),args,(GENERIC)op);
 }

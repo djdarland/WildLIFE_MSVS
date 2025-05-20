@@ -6,7 +6,7 @@
 #ifndef lint
 static char vcid[] = "$Id: bi_sys.c,v 1.2 1994/12/08 23:08:17 duchier Exp $";
 #endif /* lint */
-
+#define REV401PLUS
 #ifdef REV401PLUS
 #include "defs.h"
 #endif
@@ -42,7 +42,7 @@ long c_trace()
     else if (arg1->type==lf_false)
       trace=FALSE;
     else {
-      Errorline("bad first argument in %P.\n",t);
+      Errorline((char*)"bad first argument in %P.\n",t);
       /* report_error(t,"bad first argument"); */
       success=FALSE;
     }
@@ -58,7 +58,7 @@ long c_trace()
     else if (arg2->type==lf_false)
       stepflag=FALSE;
     else {
-      Errorline("bad second argument in %P.\n",t);
+      Errorline((char*)"bad second argument in %P.\n",t);
       /* report_error(t,"bad second argument"); */
       success=FALSE;
     }
@@ -123,7 +123,7 @@ static long c_warning()
   warningflag = !warningflag;
 
   /*  RM: Sep 24 1993  */
-  Infoline("*** Warning messages are%s printed\n",warningflag?"":" not");
+  infoline((char*)"*** Warning messages are%s printed\n",warningflag?"":" not");
   
   return TRUE;
 }
@@ -190,8 +190,8 @@ static long c_cputime()
   deref_ptr(result);
   success=get_real_value(result,&val,&num);
   if (success) {
-    times(&life_end);
-    thetime= ((REAL)life_end.tms_utime-life_start.tms_utime)/(REAL)sysconf(_SC_CLK_TCK);
+    life_end = clock();
+    thetime= ((REAL)life_end-life_start)/(REAL)CLOCKS_PER_SEC;
     if (num)
       success=(val==thetime);
     else
@@ -214,8 +214,9 @@ static long c_realtime()
   ptr_psi_term result, t;
   REAL thetime,val;
   long num,success;
-  struct timeval tp;
-  struct timezone tzp;
+  // struct timeval tp;
+  time_t rawtime;
+//  struct timezone tzp;
  
   t=aim->aaaa_1;
   deref_args(t,set_empty);
@@ -223,8 +224,10 @@ static long c_realtime()
   deref_ptr(result);
   success=get_real_value(result,&val,&num);
   if (success) {
-    gettimeofday(&tp, &tzp);
-    thetime=(REAL)tp.tv_sec + ((REAL)tp.tv_usec/1000000.0);
+  //  gettimeofday(&tp, &tzp);
+      time(&rawtime);
+      thetime = (REAL)rawtime;
+//  thetime=(REAL)tp.tv_sec + ((REAL)tp.tv_usec/1000000.0);
     /* thetime=times(&life_end)/60.0; */
     //    if (num)
     //  success=(val==thetime);
@@ -273,17 +276,20 @@ static long c_localtime()
 {
   ptr_psi_term result, t, psitime;
   long success=TRUE;
-  struct timeval tp;
-  struct timezone tzp;
+  // struct timeval tp;
+  // struct timezone tzp;
+  // struct tm *thetime;
+  time_t rawtime;
   struct tm *thetime;
-  
+
+
   t=aim->aaaa_1;
   deref_args(t,set_empty);
   result=aim->bbbb_1;
   deref_ptr(result);
 
-  gettimeofday(&tp, &tzp);
-  thetime=localtime((time_t *) &(tp.tv_sec));
+  time(&rawtime);
+  thetime=localtime(&rawtime);
 
   psitime=stack_psi_term(4);
   psitime->type=timesym;
@@ -377,10 +383,10 @@ static long c_getenv()
       }
     }
     else
-      Errorline("bad argument in %P\n",funct);
+      Errorline((char*)"bad argument in %P\n",funct);
   }
   else
-    Errorline("argument missing in %P\n",funct);
+    Errorline((char*)"argument missing in %P\n",funct);
   
   return success;
 }
@@ -408,7 +414,7 @@ static long c_system()
 	value=(REAL)system((char *)arg1->value_3);
 	if(value==127) {
 	  success=FALSE;
-          Errorline("could not execute shell in %P.\n",funct);
+          Errorline((char*)"could not execute shell in %P.\n",funct);
 	  /* report_error(funct,"couldn't execute shell"); */
 	}
 	else
@@ -417,11 +423,11 @@ static long c_system()
       else {
 	/* residuate(arg1); */ /*  RM: Feb 10 1993  */
         success=FALSE;
-        Errorline("bad argument in %P.\n",funct);
+        Errorline((char*)"bad argument in %P.\n",funct);
       }
     else {
       success=FALSE;
-      Errorline("bad argument in %P.\n",funct);
+      Errorline((char*)"bad argument in %P.\n",funct);
       /* report_error(funct,"bad argument"); */
     }
   }
@@ -603,7 +609,7 @@ static long c_residuate()
 
 	get_two_args(pred->attr_list, &arg1, &arg2);
 	if ((!arg1)||(!arg2)) {
-	  Errorline("%P requires two arguments.\n",pred);
+	  Errorline((char*)"%P requires two arguments.\n",pred);
 	  return FALSE;
         }
 	
@@ -636,7 +642,7 @@ static long c_mresiduate()
   
   get_two_args(pred->attr_list, &arg1, &arg2);
   if ((!arg1)||(!arg2)) {
-    Errorline("%P requires two arguments.\n",pred);
+    Errorline((char*)"%P requires two arguments.\n",pred);
     return FALSE;
   }
   
@@ -659,7 +665,7 @@ static long c_mresiduate()
   }
   
   if(!tmp || tmp->type!=nil) {
-    Errorline("%P should be a nil-terminated list in mresiduate.\n",arg1);
+    Errorline((char*)"%P should be a nil-terminated list in mresiduate.\n",arg1);
     success=FALSE;
   }
 

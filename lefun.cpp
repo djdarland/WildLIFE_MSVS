@@ -2,7 +2,7 @@
 ** All Rights Reserved.
 *****************************************************************/
 /* 	$Id: lefun.c,v 1.4 1995/01/14 00:24:55 duchier Exp $	 */
-
+#define REV401PLUS
 #ifndef lint
 static char vcid[] = "$Id: lefun.c,v 1.4 1995/01/14 00:24:55 duchier Exp $";
 #endif /* lint */
@@ -741,7 +741,7 @@ long match_aim()
               else if (overlap_type(v->type,sys_bytedata)) {
 		unsigned long ulen = *((unsigned long *) u->value_3);
 		unsigned long vlen = *((unsigned long *) v->value_3);
-                success=(ulen==vlen && bcmp((char *)u->value_3,(char *)v->value_3,ulen)==0);
+                success=(ulen==vlen && memcmp((char *)u->value_3,(char *)v->value_3,ulen)==0);  // was bcmp in Linux
 	      }
             }
             else

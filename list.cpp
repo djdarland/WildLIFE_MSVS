@@ -3,7 +3,7 @@
  * All Rights Reserved.
  */
 /* 	$Id: list.c,v 1.2 1994/12/08 23:28:16 duchier Exp $	 */
-
+#define REV401PLUS
 #ifndef lint
 static char vcid[] = "$Id: list.c,v 1.2 1994/12/08 23:28:16 duchier Exp $";
 #endif /* lint */

@@ -22,7 +22,7 @@
  * History:
  */
 /* 	$Id: lub.c,v 1.3 1995/08/25 21:34:37 duchier Exp $	 */
-
+#define REV401PLUS
 #ifndef lint
 static char vcid[] = "$Id: lub.c,v 1.3 1995/08/25 21:34:37 duchier Exp $";
 #endif /* lint */
