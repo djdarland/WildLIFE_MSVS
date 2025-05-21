@@ -1,6 +1,6 @@
 /*! \file def_struct.h
   \brief typedefs and structures
-
+  symbo
 */
 
 /*! \typedef type_ptr
@@ -102,8 +102,7 @@ typedef struct wl_resid_list {
 typedef struct wl_hash_table * ptr_hash_table;
 
 /************ MODULES **************/
-/*        RM: Jan  7 1993          */
-
+/*        RM: Jan  7 1993         */
 struct wl_module {
   char *module_name;
   char *source_file;

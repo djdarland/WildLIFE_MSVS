@@ -13,7 +13,7 @@ static char vcid[] = "$Id: types.c,v 1.7 1994/12/15 22:28:56 duchier Exp $";
   binary encoding algorithm.
 
  ****************************************************************************/
-
+#define EXTERN extern
 #define REV401PLUS
 #define _CRT_SECURE_NO_WARNINGS
 #ifdef REV401PLUS

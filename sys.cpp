@@ -6,6 +6,7 @@
    module "sys"
    */
 /* 	$Id: sys.c,v 1.9 1996/01/17 00:33:09 duchier Exp $	 */
+#define EXTERN extern
 #define REV401PLUS
 #ifndef lint
 static char vcid[] = "$Id: sys.c,v 1.9 1996/01/17 00:33:09 duchier Exp $";

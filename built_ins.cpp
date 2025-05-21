@@ -7,7 +7,7 @@
 #ifndef lint
 static char vcid[] = "$Id: built_ins.c,v 1.14 1995/07/27 21:26:28 duchier Exp $";
 #endif /* lint */
-
+#define EXTERN extern
 #ifdef REV401PLUS
 #include "defs.h"
 #endif
@@ -5071,7 +5071,7 @@ static long c_funct()
   T=type (function or predicate).
   R=address of C routine to call.
 */
-void new_built_in(ptr_module m,char *s,def_type t,long (*r)())
+void new_built_in(ptr_module m,const char *s,def_type t,long (*r)())
 //     ptr_module m;
 //     char *s;
 //     def_type t;

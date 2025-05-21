@@ -84,6 +84,12 @@
     <ClCompile Include="regexp\regsub.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="error.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hash_table.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="def_config.h">
