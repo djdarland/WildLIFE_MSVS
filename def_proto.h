@@ -7,7 +7,7 @@
 #ifdef ARITY
 void arity_init();
 void arity_end();
-void rec_print_feat(ptr_node n);
+void rec_print_feat(ptr_node n);sys
 void print_features(ptr_node u);
 int check_equal(ptr_node u,ptr_node v);
 void arity_unify(ptr_psi_term u, ptr_psi_term v);
@@ -346,7 +346,7 @@ long memory_check ();
 // from modules.c
 
 void init_modules();
-ptr_module find_module(char *module);
+ptr_module find_module(const char *module);
 ptr_module create_module(const char *module);
 ptr_module set_current_module(ptr_module module);
 ptr_module extract_module_from_name(char *str);
@@ -512,7 +512,7 @@ void restore_parse_state(ptr_parse_block pb);
 void init_parse_state();
 void begin_terminal_io();
 void end_terminal_io();
-char *expand_file_name(char *s);
+char *expand_file_name(const char *s);
 long open_input_file(const char *file);
 long open_output_file(const char *file);
 long read_char();
@@ -533,7 +533,7 @@ void read_token_main(ptr_psi_term tok,long for_parser);
 long intcmp(long a,long b);
 long is_int(char **s,long *len,long *sgn);
 long featcmp(const char *str1,const char *str2);
-char *heap_ncopy_string(char *s,int n);
+char *heap_ncopy_string(const char *s,int n);
 char *heap_copy_string(const char *s);
 char *stack_copy_string(char *s);
 ptr_node general_insert(long comp,char *keystr,ptr_node *tree,GENERIC info,long heapflag, long copystr,long bkflag);

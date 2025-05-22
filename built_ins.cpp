@@ -3915,7 +3915,7 @@ static long c_chdir()
   if(arg1) {
     deref_ptr(arg1);
     if(matches(arg1->type,quoted_string,&smaller) && arg1->value_3)
-      success=!_chdir(expand_file_name((char *)arg1->value_3));
+      success=!_chdir(expand_file_name((const char *)arg1->value_3));
     else
       Errorline("bad argument in %P\n",funct);
   }

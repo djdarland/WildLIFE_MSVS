@@ -41,7 +41,7 @@ void init_modules()
   Return a module if it exists.
   */
 
-ptr_module find_module(char *module)
+ptr_module find_module(const char *module)
 
 //     char *module;
 {
@@ -60,7 +60,7 @@ ptr_module find_module(char *module)
   Create a new module.
   */
 
-ptr_module create_module(char *module)
+ptr_module create_module(const char *module)
 
 //     char *module;
 {
@@ -105,14 +105,14 @@ ptr_module set_current_module(ptr_module module)
   Return NULL if only "#symbol".
   */
 
-ptr_module extract_module_from_name(char *str)
+ptr_module extract_module_from_name(const char *str)
 
 //     char *str;
 {
   char *s;
   ptr_module result=NULL;
 
-  s=str;
+  s=(char*)str;
   while(legal_in_name(*s))
     s++;
   if(s!=str && *s=='#' /* && *(s+1)!=0 */) {
@@ -127,17 +127,39 @@ ptr_module extract_module_from_name(char *str)
   return result;
 }
 
+ptr_module extract_module_from_name(char* str)
+
+//     char *str;
+{
+    char* s;
+    ptr_module result = NULL;
+
+    s = (char*)str;
+    while (legal_in_name(*s))
+        s++;
+    if (s != str && *s == '#' /* && *(s+1)!=0 */) {
+        *s = 0;
+        result = create_module(str);
+        *s = '#';
+        /*
+        printf("Extracted module name '%s' from '%s'\n",result->module_name,str);
+        */
+    }
+
+    return result;
+}
+
 
 
 /******** STRIP_MODULE_NAME(symbol)
   Return the sub-string of symbol without the module prefix.
   */
 
-char *strip_module_name(char *str)
+const char *strip_module_name(const char *str)
 
 //     char *str;
 {
-  char *s=str;
+  char *s=(char*)str;
 
   while(legal_in_name(*s))
     s++;
@@ -150,6 +172,22 @@ char *strip_module_name(char *str)
     return str;
 }
 
+char* strip_module_name(char* str)
+
+//     char *str;
+{
+    char* s = str;
+
+    while (legal_in_name(*s))
+        s++;
+    if (s != str && *s == '#' /* && *(s+1)!=0 */) {
+        s++;
+        /* printf("Stripped module from '%s' yielding '%s'\n",str,s); */
+        return s;
+    }
+    else
+        return str;
+}
 
 
 /******** STRING_VAL(term)
@@ -179,7 +217,7 @@ char *string_val(ptr_psi_term term)
   The result must be immediately stored in a newly allocated string.
   */
 
-char *make_module_token(ptr_module module,char *str)
+char *make_module_token(ptr_module module,const char *str)
 
 //     ptr_module module;
 //     char *str;
@@ -203,6 +241,29 @@ char *make_module_token(ptr_module module,char *str)
   return module_buffer;
 }
 
+char* make_module_token(ptr_module module, char* str)
+
+//     ptr_module module;
+//     char *str;
+{
+    ptr_module wl_explicit;
+
+
+    /* Check if the string already contains a module */
+    wl_explicit = extract_module_from_name(str);
+    if (wl_explicit)
+        strcpy(module_buffer, str);
+    else
+        if (module != no_module) {
+            strcpy(module_buffer, module->module_name);
+            strcat(module_buffer, "#");
+            strcat(module_buffer, str);
+        }
+        else
+            strcpy(module_buffer, str);
+
+    return module_buffer;
+}
 
 
 /******** NEW_DEFINITION(key)
@@ -258,7 +319,7 @@ ptr_definition new_definition(ptr_keyword key)    /*  RM: Feb 22 1993  */
   definition by scanning the opened modules.
   */
 
-ptr_definition update_symbol(ptr_module module,char *symbol)   /*  RM: Jan  8 1993  */
+ptr_definition update_symbol(ptr_module module,const char *symbol)   /*  RM: Jan  8 1993  */
 //     ptr_module module;
 //     char *symbol;
 {
@@ -467,7 +528,7 @@ void pretty_quote_symbol(ptr_keyword k)
     prettyf(k->module->module_name);
     prettyf("#");
   }
-  prettyf_quote(k->symbol);
+  prettyf_quote((char *)k->symbol);
 }
 
 

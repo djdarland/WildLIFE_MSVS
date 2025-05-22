@@ -2179,7 +2179,7 @@ long load_aim()
       */
 	   
     set_current_module(
-		       find_module((char *)((ptr_psi_term)get_attr(input_state,
+		       find_module((const char *)((ptr_psi_term)get_attr(input_state,
        CURRENT_MODULE))->value_3));
   }
 
@@ -2477,12 +2477,12 @@ void main_prove()
         memory_check();
       
       if (interrupted || (stepflag && steptrace))
-        handle_interrupt();
+          ; // handle_interrupt();
       else if (stepcount>0) {
         stepcount--;
         if (stepcount==0 && !stepflag) {
           stepflag=TRUE;
-          handle_interrupt();
+//          handle_interrupt();
         }
       }
     }
@@ -2490,7 +2490,7 @@ void main_prove()
 }
 
 
-int dummy_printf(char *f,char *s,char *t)
+int dummy_printf(const char *f,char *s,char *t)
      
 //     char *f, *s, *t;
 {

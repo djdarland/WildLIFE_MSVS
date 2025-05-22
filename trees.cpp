@@ -67,7 +67,7 @@ long is_int(char **s, long *len, long *sgn)
   In addition, all integers are considered to be less than
   all strings that do not represent integers.
 */
-long featcmp(char *str1, char *str2)
+long featcmp(const char *str1, const char *str2)
 // char *str1, *str2;
 {
   long len1,len2,sgn1,sgn2;
@@ -82,8 +82,8 @@ long featcmp(char *str1, char *str2)
     return *str1 - *str2;
   
   
-  s1=str1; /* Local copies of the pointers */
-  s2=str2;
+  s1=(char*)str1; /* Local copies of the pointers */
+  s2=(char*)str2;
 
   if (is_int(&s1,&len1,&sgn1)) {
     if (is_int(&s2,&len2,&sgn2)) {
@@ -107,13 +107,13 @@ long featcmp(char *str1, char *str2)
   Make a copy of the string in the heap, and return a pointer to that.
   Exceptions: "1" and "2" are unique (and in the heap).
 */
-char *heap_ncopy_string(char *s,int n)
+char *heap_ncopy_string(const char *s,int n)
 // char *s;
 // int n;
 {
   char *p;
   
-  if (s==one || s==two) return s;
+  if (s==one || s==two) return (char*)s;
 
   p=(char *)heap_alloc(n+1);
   strncpy(p,s,n);
@@ -126,9 +126,9 @@ char *heap_ncopy_string(char *s,int n)
   Make a copy of the string in the heap, and return a pointer to that.
   Exceptions: "1" and "2" are unique (and in the heap).
 */
-char *heap_copy_string(char *s)
+char *heap_copy_string(const char *s)
 // char *s;
-{ return heap_ncopy_string(s,strlen(s)); }
+{ return (char*)heap_ncopy_string(s,strlen(s)); }
 
 
 
@@ -320,7 +320,7 @@ ptr_node bk2_stack_insert(long comp,char *keystr,ptr_node *tree,GENERIC info)
   Return the NODE address corresponding to key KEYSTR in TREE using function
   COMP to compare keys.
 */
-ptr_node find(long comp,char *keystr,ptr_node tree)
+ptr_node find(long comp,const char *keystr,ptr_node tree)
 // long comp;
 //char *keystr;
 // ptr_node tree;

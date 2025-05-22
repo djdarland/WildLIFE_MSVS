@@ -107,7 +107,7 @@ void stack_info(FILE *outfile)
 
 */
 
-void outputline(char *format,...)
+void outputline(const char *format,...)
 {
   va_list VarArg;
   // int l;	    
@@ -122,7 +122,7 @@ void outputline(char *format,...)
   va_start(VarArg,format);
   //  vinfoline(format,output_stream, VarArg);
   //  #define vinfoline(format, outfile, xxxx)  {	
-  for (p=format;p &&  *p; p++) 
+  for (p=(char*)format;p &&  *p; p++) 
     { 
       if (*p == '%') 
 	{ 
@@ -781,12 +781,12 @@ void perr(const char *str)
 
 */
 
-void perr_s(const char *s1,const char *s2)
+void perr_s(const char *s1, char *s2)
 {
   fprintf(stderr,s1,s2);
 }
 
-/*! \fn void perr_s2(char *s1,char *s2,char *s3)
+/*! \fn void perr_s2(const char *s1,char *s2,char *s3)
   \brief perr_s2
   \param s1 - char *s1
   \param s2 - char *s2
@@ -794,7 +794,7 @@ void perr_s(const char *s1,const char *s2)
 
 */
 
-void perr_s2(const char *s1,const char *s2,const char *s3)
+void perr_s2(const char* s1, const char* s2, const char* s3)
 {
   fprintf(stderr,s1,s2,s3);
 }
@@ -851,7 +851,7 @@ void report_error_main(ptr_psi_term g,const char *s,const char *s2)
   perr("'.\n");
 }
 
-/*! \fn void report_error(ptr_psi_term g,char *s)
+/*! \fn void report_error(ptr_psi_term g,const char *s)
   \brief report_error
   \param g - ptr_psi_term g
   \param s - char *s
@@ -862,7 +862,7 @@ void report_error_main(ptr_psi_term g,const char *s,const char *s2)
   Format: '*** Error: %s in 'g'.'
 */
 
-void report_error(ptr_psi_term g,char *s)
+void report_error(ptr_psi_term g, const char *s)
 {
   report_error_main(g,s,"Error");
 }
@@ -914,9 +914,9 @@ void report_error2_main(ptr_psi_term g,const char *s,const char *s2)
 {
   //  FILE *f;
 
-  perr_s("*** %s: argument '",s2);
+  perr_s("*** %s: argument '",(char*)s2);
   display_psi_stderr(g);
-  perr_s("' %s.\n",s);
+  perr_s("' %s.\n",(char*)s);
 }
 
 /*! \fn void report_error2(ptr_psi_term g,char *s)

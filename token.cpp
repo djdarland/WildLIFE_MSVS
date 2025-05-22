@@ -50,7 +50,7 @@ void stdin_cleareof()
 
 /* Add an attribute whose value is an integer to a psi-term */
 /* that does not yet contains this attribute. */
-void heap_add_int_attr(ptr_psi_term t, char *attrname, long value)
+void heap_add_int_attr(ptr_psi_term t, const char *attrname, long value)
 // ptr_psi_term t;
 // char *attrname;
 // long value;
@@ -76,7 +76,7 @@ REAL cp2R(char *cp_in)
 }
 
 
-void stack_add_int_attr(ptr_psi_term t, char *attrname, char *value)
+void stack_add_int_attr(ptr_psi_term t, const char *attrname, long value)
 // ptr_psi_term t;
 // char *attrname;
 // long value;
@@ -87,15 +87,15 @@ void stack_add_int_attr(ptr_psi_term t, char *attrname, char *value)
   t1->type=integer;
   t1->value_3=heap_alloc(sizeof(REAL)); /* 12.5 */
   //  *(REAL *)t1->value_3cp =  value;
-  // *(REAL *)t1->value_3 = (REAL) value;
-  *(REAL *)t1->value_3 = cp2R(value);
+   *(REAL *)t1->value_3 = (REAL) value;
+  //*(REAL *)t1->value_3 = cp2R(value);
   stack_insert(FEATCMP,heap_copy_string(attrname),&(t->attr_list), (GENERIC)t1); // REV401PLUS cast
 }
 
 
 /* Modify an attribute whose value is an integer to a psi-term */
 /* that already contains this attribute with another integer value. */
-void heap_mod_int_attr(ptr_psi_term t, char *attrname, long value)
+void heap_mod_int_attr(ptr_psi_term t, const char *attrname, long value)
 // ptr_psi_term t;
 // char *attrname;
 // long value;
@@ -126,7 +126,7 @@ long value;
 
 /* Add an attribute whose value is a string to a psi-term */
 /* that does not yet contains this attribute. */
-void heap_add_str_attr(ptr_psi_term t, char *attrname, char *str)
+void heap_add_str_attr(ptr_psi_term t, const char *attrname, char *str)
 // ptr_psi_term t;
 // char *attrname;
 // char *str;
@@ -158,7 +158,7 @@ void stack_add_str_attr(ptr_psi_term t, char *attrname, char *str)
 
 /* Modify an attribute whose value is a string to a psi-term */
 /* that already contains this attribute with another integer value. */
-void heap_mod_str_attr(ptr_psi_term t, char *attrname, char *str)
+void heap_mod_str_attr(ptr_psi_term t, const char *attrname, char *str)
 // ptr_psi_term t;
 // char *attrname;
 // char *str;
@@ -189,7 +189,7 @@ char *str;
 
 
 /* Attach a psi-term to another as an attribute. */
-void heap_add_psi_attr(ptr_psi_term t, char *attrname, ptr_psi_term g)
+void heap_add_psi_attr(ptr_psi_term t, const char *attrname, ptr_psi_term g)
 // ptr_psi_term t;
 // char *attrname;
 // ptr_psi_term g;
@@ -197,7 +197,7 @@ void heap_add_psi_attr(ptr_psi_term t, char *attrname, ptr_psi_term g)
   heap_insert(FEATCMP,heap_copy_string(attrname),&(t->attr_list), (GENERIC)g); // REV401PLUS cast
 }
 
-void stack_add_psi_attr(ptr_psi_term t, char *attrname, ptr_psi_term g)
+void stack_add_psi_attr(ptr_psi_term t, const char *attrname, ptr_psi_term g)
 // ptr_psi_term t;
 // char *attrname;
 // ptr_psi_term g;
@@ -205,7 +205,7 @@ void stack_add_psi_attr(ptr_psi_term t, char *attrname, ptr_psi_term g)
   stack_insert(FEATCMP,heap_copy_string(attrname),&(t->attr_list), (GENERIC)g); // REV401PLUS cast
 }
 
-void bk_stack_add_psi_attr(ptr_psi_term t, char *attrname, ptr_psi_term g)
+void bk_stack_add_psi_attr(ptr_psi_term t, const char *attrname, ptr_psi_term g)
 // ptr_psi_term t;
 // char *attrname;
 // ptr_psi_term g;
@@ -215,7 +215,7 @@ void bk_stack_add_psi_attr(ptr_psi_term t, char *attrname, ptr_psi_term g)
 
 
 /* Get the GENERIC value of a psi-term's attribute */
-GENERIC get_attr(ptr_psi_term t, char *attrname)
+GENERIC get_attr(ptr_psi_term t, const char *attrname)
 // ptr_psi_term t;
 // char *attrname;
 {
@@ -454,7 +454,7 @@ void end_terminal_io()
   For the time being all this does is replace '~' by the HOME directory
   if no user is given, or tries to find the user.
 */
-char *expand_file_name(char *s)
+char *expand_file_name(const char *s)
 // char *s;
 {
 #ifdef DJD_LATER
@@ -515,7 +515,7 @@ char *expand_file_name(char *s)
   state for it.
   If the file can't be opened, print an error and open "stdin" instead.
 */   
-long open_input_file(char *file)
+long open_input_file(const char *file)
 // char *file;
 {
   long ok=TRUE;
@@ -565,7 +565,7 @@ long open_input_file(char *file)
   Same thing as OPEN_INPUT_FILE, only for output. If FILE="stdout" then
   output_stream=stdout.
 */
-long open_output_file(string file)
+long open_output_file(const string file)
 // string file;
 {
   long ok=TRUE;

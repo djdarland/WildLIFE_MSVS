@@ -131,6 +131,7 @@
     <ClCompile Include="bi_sys.cpp" />
     <ClCompile Include="bi_type.cpp" />
     <ClCompile Include="built_ins.cpp" />
+    <ClCompile Include="copy.cpp" />
     <ClCompile Include="error.cpp" />
     <ClCompile Include="hash_table.cpp" />
     <ClCompile Include="info.cpp" />

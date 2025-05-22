@@ -373,7 +373,7 @@ static long bitvector_bit_code(unsigned long *bv1,
   unsigned char *s1 = ((unsigned char*)bv1)+sizeof(size1);
   unsigned long i = idx / sizeof(char);
   int j = idx % sizeof(char);
-  ptr_psi_term temp_result;
+  ptr_psi_term temp_result = NULL;
   unsigned char *s2;
   if (idx<0 || idx>=size1) {
     Errorline("Index out of bound in %P.\n",funct);
@@ -441,11 +441,11 @@ static long c_bitvector_clear()
 
 #include "regexp/regexp.h"
 
-void regerror(char *s)
+//extern void regerror(char *s)
 //     char*s;
-{
-  fprintf(stderr,"Regexp Error: %s\n",s);
-}
+//{ 
+ // fprintf(stderr,"Regexp Error: %s\n",s);
+//} 
 
 /******** C_REGEXP_COMPILE
   given a string returns, compiles it into a regexp structure,
@@ -1829,30 +1829,14 @@ void make_sys_type_links()
 extern void check_ndbm_definitions();
 #endif
 
-void
-check_sys_definitions()
-{
-  check_definition(&sys_bytedata);	/* DENYS: BYTEDATA */
-  check_definition(&sys_bitvector);
-  check_definition(&sys_regexp);
-  check_definition(&sys_stream);
-  check_definition(&sys_file_stream);
-  check_definition(&sys_socket_stream);
-  check_definition(&sys_process_no_children);
-  check_definition(&sys_process_exited);
-  check_definition(&sys_process_signaled);
-  check_definition(&sys_process_stopped);
-  check_definition(&sys_process_continued);
-#ifdef LIFE_NDBM
-  check_ndbm_definitions();
-#endif
-}
 
 #ifdef LIFE_DBM
 extern void insert_dbm_builtins();
 #endif
 #ifdef LIFE_NDBM
 extern void insert_ndbm_builtins();
+#endif
+
 #endif
 
 void insert_sys_builtins()
@@ -1896,27 +1880,27 @@ void insert_sys_builtins()
   new_built_in(sys_module,"get_code"		,(def_type)function_it ,c_get_code);
   new_built_in(sys_module,"ftell"		,(def_type)function_it ,c_ftell);
   new_built_in(sys_module,"fseek"		,(def_type)predicate_it,c_fseek);
-  new_built_in(sys_module,"socket"		,(def_type)function_it ,c_socket);
-  new_built_in(sys_module,"bind"		,(def_type)predicate_it,c_bind);
-  new_built_in(sys_module,"connect"		,(def_type)predicate_it,c_connect);
+  //new_built_in(sys_module,"socket"		,(def_type)function_it ,c_socket);
+  // new_built_in(sys_module,"bind"		,(def_type)predicate_it,c_bind);
+  //new_built_in(sys_module,"connect"		,(def_type)predicate_it,c_connect);
   new_built_in(sys_module,"fwrite"		,(def_type)predicate_it,c_fwrite);
   new_built_in(sys_module,"fflush"		,(def_type)predicate_it,c_fflush);
-  new_built_in(sys_module,"listen"		,(def_type)predicate_it,c_listen);
-  new_built_in(sys_module,"accept"		,(def_type)function_it ,c_accept);
+  //new_built_in(sys_module,"listen"		,(def_type)predicate_it,c_listen);
+  //new_built_in(sys_module,"accept"		,(def_type)function_it ,c_accept);
   new_built_in(sys_module,"errno"		,(def_type)function_it ,c_errno);
   new_built_in(sys_module,"errmsg"		,(def_type)function_it ,c_errmsg);
   new_built_in(sys_module,"import_symbol"	,(def_type)predicate_it,c_import_symbol);
-  new_built_in(sys_module,"fork"		,(def_type)function_it ,c_fork);
-  new_built_in(sys_module,"wait"		,(def_type)function_it ,c_wait);
-  new_built_in(sys_module,"waitpid"		,(def_type)function_it ,c_waitpid);
-  new_built_in(sys_module,"kill"		,(def_type)predicate_it,c_kill);
-  new_built_in(sys_module,"cuserid"		,(def_type)function_it ,c_cuserid);
-  new_built_in(sys_module,"gethostname"		,(def_type)function_it ,c_gethostname);
-  new_built_in(sys_module,"lazy_project"	,(def_type)function_it ,c_lazy_project);
-  new_built_in(sys_module,"wait_on_feature"	,(def_type)predicate_it,c_wait_on_feature);
-  new_built_in(sys_module,"my_wait_on_feature"	,(def_type)function_it ,c_my_wait_on_feature);
-  new_built_in(sys_module,"apply1"		,(def_type)function_it ,c_apply1);
-  new_built_in(sys_module,"getpid"		,(def_type)function_it ,c_getpid);
+  //new_built_in(sys_module,"fork"		,(def_type)function_it ,c_fork);
+  //new_built_in(sys_module,"wait"		,(def_type)function_it ,c_wait);
+  //new_built_in(sys_module,"waitpid"		,(def_type)function_it ,c_waitpid);
+  //new_built_in(sys_module,"kill"		,(def_type)predicate_it,c_kill);
+  //new_built_in(sys_module,"cuserid"		,(def_type)function_it ,c_cuserid);
+  //new_built_in(sys_module,"gethostname"		,(def_type)function_it ,c_gethostname);
+  //new_built_in(sys_module,"lazy_project"	,(def_type)function_it ,c_lazy_project);
+  //new_built_in(sys_module,"wait_on_feature"	,(def_type)predicate_it,c_wait_on_feature);
+  //new_built_in(sys_module,"my_wait_on_feature"	,(def_type)function_it ,c_my_wait_on_feature);
+  //new_built_in(sys_module,"apply1"		,(def_type)function_it ,c_apply1);
+  //new_built_in(sys_module,"getpid"		,(def_type)function_it ,c_getpid);
   new_built_in(sys_module,"stream2sys_stream"	,(def_type)function_it ,c_stream2sys_stream);
   new_built_in(sys_module,"sys_stream2stream"	,(def_type)function_it ,c_sys_stream2stream);
 #ifdef LIFE_DBM
@@ -1926,7 +1910,57 @@ void insert_sys_builtins()
   insert_ndbm_builtins();
 #endif
   set_current_module(bi_module);
-  new_built_in(bi_module ,"call_once"		,(def_type)function_it ,c_call_once);
+  //new_built_in(bi_module ,"call_once"		,(def_type)function_it ,c_call_once);
   set_current_module(curmod);
 }
+void
+check_sys_definitions()
+{
+  check_definition(&sys_bytedata);	/* DENYS: BYTEDATA */
+  check_definition(&sys_bitvector);
+  check_definition(&sys_regexp);
+  check_definition(&sys_stream);
+  check_definition(&sys_file_stream);
+  check_definition(&sys_socket_stream);
+  check_definition(&sys_process_no_children);
+  check_definition(&sys_process_exited);
+  check_definition(&sys_process_signaled);
+  check_definition(&sys_process_stopped);
+  check_definition(&sys_process_continued);
+#ifdef LIFE_NDBM
+  check_ndbm_definitions();
 #endif
+}
+#ifdef NOT_NEEDED
+void
+check_sys_definitions()
+{
+  check_definition(&sys_bytedata);	/* DENYS: BYTEDATA */
+  check_definition(&sys_bitvector);
+  check_definition(&sys_regexp);
+  check_definition(&sys_stream);
+  check_definition(&sys_file_stream);
+  check_definition(&sys_socket_stream);
+  check_definition(&sys_process_no_children);
+  check_definition(&sys_process_exited);
+  check_definition(&sys_process_signaled);
+  check_definition(&sys_process_stopped);
+  check_definition(&sys_process_continued);
+#ifdef LIFE_NDBM
+  check_ndbm_definitions();
+#endif
+}
+#endif
+
+void make_sys_type_links()
+{
+#ifdef LIFE_NDBM
+    make_ndbm_type_links();
+#endif
+    make_type_link(sys_bitvector, sys_bytedata);
+    make_type_link(sys_regexp, sys_bytedata);
+    make_type_link(sys_stream, sys_bytedata);
+    make_type_link(sys_file_stream, sys_stream);
+    make_type_link(sys_socket_stream, sys_stream);
+    make_type_link(sys_bytedata, built_in); /* DENYS: BYTEDATA */
+}

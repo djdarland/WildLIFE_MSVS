@@ -162,8 +162,8 @@ void WFInit(long argc, char *argv[])
   x_setup_builtins();
   assert(stack_pointer==mem_base); /* 8.10 */
 #endif
-  init_interrupt();
-  assert(stack_pointer==mem_base); /* 8.10 */
+ // init_interrupt();
+ assert(stack_pointer==mem_base); /* 8.10 */
   title();
   assert(stack_pointer==mem_base); /* 8.10 */
   init_trace();

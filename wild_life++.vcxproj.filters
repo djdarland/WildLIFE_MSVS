@@ -90,6 +90,9 @@
     <ClCompile Include="hash_table.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="copy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="def_config.h">
