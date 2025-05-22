@@ -500,7 +500,7 @@ char *expand_file_name(const char *s)
   /* printf("*** Using file name: '%s'\n",r); */
 #endif
   char r[STRLEN];
-  sprintf(r, "C:\\Users\\pal\\dsa\\life+local\\%s", s);
+  sprintf(r, "C:\\Users\\pal\\dsa\\life+local\\Source\\%s", s);
 
 
 
