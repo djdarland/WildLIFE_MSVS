@@ -329,7 +329,7 @@ void prettyf_inner(const char *s,long q,char c)
 // long q;
 // char c; /* the quote character */
 {
-  char *sb=buffer;
+    char* sb = (char*)buffer;
 
   if (indent) {
     while (*sb) sb++;
@@ -357,7 +357,7 @@ void prettyf_inner(char* s, long q, char c)
 // long q;
 // char c; /* the quote character */
 {
-    char* sb = buffer;
+    char* sb = (char*)buffer;
 
     if (indent) {
         while (*sb) sb++;
@@ -563,8 +563,8 @@ void prettyf_quote(char* s)
 void end_tab()
 {
   if (indent) {
-    indx->str=(char *)heap_alloc(strlen(buffer)+1);
-    strcpy(indx->str,buffer);
+    indx->str=(char *)heap_alloc(strlen((char*)buffer)+1);
+    strcpy(indx->str,(char*)buffer);
     indx++;
     *buffer=0;
   }

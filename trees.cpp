@@ -111,15 +111,22 @@ char *heap_ncopy_string(const char *s,int n)
 // char *s;
 // int n;
 {
-  char *p;
+//  char *p;
+    GENERIC p;
+
   
   if (s==one || s==two) return (char*)s;
 
-  p=(char *)heap_alloc(n+1);
-  strncpy(p,s,n);
+  p=(GENERIC)heap_alloc(n+1);
+   printf("DEBUG p = %p s = %p n = %p\n", (void*)p, (void*)s, (void*)n);
+  
+//    exit(0);
+
+//   strncpy(p,s,n);
+   memcpy(p, s, n);
   p[n]='\0';
   
-  return p;
+  return (char*)p;
 }
 
 /******** HEAP_COPY_STRING(string)

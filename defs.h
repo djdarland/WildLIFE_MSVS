@@ -5,12 +5,14 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "def_config.h"
 #include <direct.h>
+//#include <stdlib.h>
 #include <cstdlib>
+
 // #include <unistd.h>
 #include <stdio.h>
-#include <stdlib.h>
+
 #include <stdarg.h>
-#include <string.h>
+#include <cstring>
 // #include <strings.h>
 #include <time.h>
 #include <math.h>

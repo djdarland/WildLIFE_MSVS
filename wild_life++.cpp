@@ -29,7 +29,8 @@ static unsigned int lifeseed;
 This routine contains the Read-Solve-Prlong loop.
 */
 
-int main(int argc, char *argv[])  // REV401PLUS correct main proto
+int main(int argc, char *argv[])  // REV401PLUS correct main proto.
+// int main(void)  // REV401PLUS correct main proto
 {
 
   // int main()
@@ -105,8 +106,8 @@ int main(int argc, char *argv[])  // REV401PLUS correct main proto
 #endif
 
   
-  open_input_file("~/life_local/Source/.set_up");
-
+//   open_input_file("~/life_local/Source/.set_up");
+  open_input_file(".set_up");
   push_goal(load,input_state,(ptr_psi_term)file_date,(GENERIC)heap_copy_string("~/life_local/Source/.set_up")); // REV401PLUS casts
 
   file_date+=2;

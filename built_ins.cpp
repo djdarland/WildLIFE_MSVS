@@ -6127,8 +6127,8 @@ void init_built_in_types()
   
   /* Hack so '.set_up' doesn't issue a Warning message */
   /*  RM: Feb  3 1993  */
-  hash_lookup(bi_module->symbol_table,"set_module")->wl_public=TRUE;
-  hash_lookup(bi_module->symbol_table,"built_in")->wl_public=TRUE;
+//  hash_lookup(bi_module->symbol_table,"set_module")->wl_public=TRUE;  // DJD was crahing 
+  //hash_lookup(bi_module->symbol_table,"built_in")->wl_public=TRUE;
 
   /*  RM: Jan 29 1993  */
   abortsym=update_symbol(bi_module,"abort"); /* 26.1 */

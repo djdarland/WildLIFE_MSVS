@@ -27,7 +27,7 @@ typedef void *PsiTerm;
 /******************************* TYPES ************************************/
 
 /*! \typedef GENERIC 
-  \brief unsigned long *GENERIC 
+  \brief void *GENERIC 
   
   GENERIC is the type of a pointer to any type.  This might not work on 
   some machines, but it should be possible as MALLOC() uses something of/

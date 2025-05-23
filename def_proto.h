@@ -336,8 +336,8 @@ void check_attr(ptr_node *n);
 void check_gamma_code();
 void print_gc_info(long timeflag);
 void garbage();
-GENERIC heap_alloc(long s);
-GENERIC stack_alloc(long s);
+GENERIC heap_alloc(unsigned long s);
+GENERIC stack_alloc(unsigned long s);
 void init_memory ();
 long memory_check ();
 
@@ -348,8 +348,12 @@ long memory_check ();
 void init_modules();
 ptr_module find_module(const char *module);
 ptr_module create_module(const char *module);
+ptr_module create_module(char* module);
+
 ptr_module set_current_module(ptr_module module);
 ptr_module extract_module_from_name(char *str);
+ptr_module extract_module_from_name(const char* str);
+
 char *strip_module_name(char *str);
 char *string_val(ptr_psi_term term);
 char *make_module_token(ptr_module module,char *str);

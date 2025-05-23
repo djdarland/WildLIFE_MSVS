@@ -31,14 +31,14 @@ EXTERN char *arg_v[ARGNN]; // Modified DJD
 
 */
 
-EXTERN int alloc_words;
+EXTERN unsigned long alloc_words;
 
 /*! \var mem_size
   \brief number of words from memory = alloc_words * sizeof word 
 
 */
 
-EXTERN int mem_size;
+EXTERN unsigned long mem_size;
 
 /*! \var mem_base
   \brief mem_size memory allocated in init_memory by malloc 
@@ -777,7 +777,7 @@ EXTERN char *no_name;
 
 */
 
-EXTERN char *buffer;
+EXTERN GENERIC buffer;
 
 /*! \var print_depth
   \brief Global flag that modifies how writing is done. 

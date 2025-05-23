@@ -60,7 +60,7 @@ ptr_module find_module(const char *module)
   Create a new module.
   */
 
-ptr_module create_module(const char *module)
+ptr_module create_module(char *module)
 
 //     char *module;
 {
@@ -69,13 +69,18 @@ ptr_module create_module(const char *module)
 
   wl_new=find_module(module);
   if(!wl_new) {
+      printf("A0001\n");
     wl_new=HEAP_ALLOC(struct wl_module);
+    printf("A0002\n");
     wl_new->module_name=heap_copy_string(module);
+    printf("A0003\n");
     wl_new->source_file=heap_copy_string(input_file_name);
+    printf("A0004\n");
     wl_new->open_modules=NULL;
+    printf("A0005\n");
     wl_new->inherited_modules=NULL;
     wl_new->symbol_table=hash_create(16); /*  RM: Feb  3 1993  */
-
+    printf("A0006\n");
     heap_insert(STRCMP,wl_new->module_name,&module_table,(GENERIC)wl_new); // REV401PLUS cast
 
     /* printf("*** New module: '%s' from file %s\n",input_file_name); */
@@ -83,6 +88,33 @@ ptr_module create_module(const char *module)
   return wl_new;
 }
 
+ptr_module create_module(const char* module)
+
+//     char *module;
+{
+    ptr_module wl_new;
+
+
+    wl_new = find_module(module);
+    if (!wl_new) {
+        printf("A0001\n");
+        wl_new = HEAP_ALLOC(struct wl_module);
+        printf("A0002\n");
+        wl_new->module_name = heap_copy_string(module);
+        printf("A0003\n");
+        wl_new->source_file = heap_copy_string(input_file_name);
+        printf("A0004\n");
+        wl_new->open_modules = NULL;
+        printf("A0005\n");
+        wl_new->inherited_modules = NULL;
+        wl_new->symbol_table = hash_create(16); /*  RM: Feb  3 1993  */
+        printf("A0006\n");
+        heap_insert(STRCMP, wl_new->module_name, &module_table, (GENERIC)wl_new); // REV401PLUS cast
+
+        /* printf("*** New module: '%s' from file %s\n",input_file_name); */
+    }
+    return wl_new;
+}
 
 
 /******** SET_CURRENT_MODULE(module)
