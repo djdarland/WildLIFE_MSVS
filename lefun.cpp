@@ -562,6 +562,7 @@ long eval_aim()
     if (*u==NULL)
       attr_missing=TRUE;
     else {
+      prt("lefun featcmp 1");
       cmp=featcmp((*u)->key,v->key);
       if(cmp==0) {
         ptr_psi_term t;
@@ -607,6 +608,7 @@ long eval_aim()
       match_attr1(u,v->left,rb);
     }
     else {
+      prt("lefun featcmp 2");
       cmp=featcmp((*u)->key,v->key);
       if(cmp==0) {
   	/* RESID */ match_attr2(&((*u)->right),v->right,rb);
@@ -653,6 +655,7 @@ long eval_aim()
     if (*u==NULL)
       attr_missing=TRUE;
     else {
+      prt("lefun featcmp 3");
       cmp=featcmp((*u)->key,v->key);
       if(cmp==0) {
         ptr_psi_term t1,t2;
@@ -1201,10 +1204,14 @@ long in_set(char *str,long set)
 // char *str;
 // long set;
 {
-  if (set&1 && !featcmp(str,"1")) return TRUE;
-  if (set&2 && !featcmp(str,"2")) return TRUE;
-  if (set&4 && !featcmp(str,"3")) return TRUE;
-  if (set&8 && !featcmp(str,"4")) return TRUE;
+  prt("lefun featcmp 4");
+  if (set&1 && !featcmp(str,(char*)"1")) return TRUE;
+  prt("lefun featcmp 5");
+  if (set&2 && !featcmp(str,(char*)"2")) return TRUE;
+  prt("lefun featcmp 6");
+  if (set&4 && !featcmp(str,(char*)"3")) return TRUE;
+  prt("lefun featcmp 7");
+  if (set&8 && !featcmp(str,(char*)"4")) return TRUE;
   return FALSE;
 }
 

@@ -879,7 +879,7 @@
   
 */
 
-#define STREAM "stream"
+#define DEF_STREAM "stream"
 
 /*! \def INPUT_FILE_NAME
   \brief feature name

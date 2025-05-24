@@ -1533,6 +1533,7 @@ long only_arg1(ptr_psi_term t, ptr_psi_term *arg1)
 {
   ptr_node n=t->attr_list;
 
+  prt("built_ins featcmp");
   if (n && n->left==NULL && n->right==NULL && !featcmp(n->key,one)) {
     *arg1=(ptr_psi_term)n->data;
     return TRUE;
@@ -2095,7 +2096,7 @@ long c_halt()   /*  RM: Jan  8 1993  Used to be 'void' */ // REV401PLUS chg to l
 void exit_life(long nl_flag)
 // long nl_flag;
 {
-  open_input_file("stdin");   // CHAR * MSVC
+  open_input_file((char*)"stdin");   // CHAR * MSVC
   life_end = clock();
   if (NOTQUIET) { /* 21.1 */
     if (nl_flag) printf("\n");
@@ -2775,7 +2776,7 @@ static long c_close()
     outclose=equal_types(arg1->type,stream) && arg1->value_3;
     inclose=FALSE;
     if (equal_types(arg1->type,inputfilesym)) {
-      ptr_node n=find(FEATCMP,STREAM,arg1->attr_list);
+      ptr_node n=find(FEATCMP,(char*)STREAM,arg1->attr_list);
       if (n) {
         arg1=(ptr_psi_term)n->data;
         inclose=(arg1->value_3!=NULL);
@@ -2787,9 +2788,9 @@ static long c_close()
       fclose((FILE *)arg1->value_3);
       
       if (inclose && arg1->value_3==(GENERIC)input_stream)
-	open_input_file("stdin");
+	open_input_file((char*)"stdin");
       else if (outclose && arg1->value_3==(GENERIC)output_stream)
-	open_output_file("stdout");
+	open_output_file((char*)"stdout");
       
       arg1->value_3=NULL;
     }
@@ -3915,7 +3916,7 @@ static long c_chdir()
   if(arg1) {
     deref_ptr(arg1);
     if(matches(arg1->type,quoted_string,&smaller) && arg1->value_3)
-      success=!_chdir(expand_file_name((const char *)arg1->value_3));
+      success=!_chdir(expand_file_name((char *)arg1->value_3));
     else
       Errorline("bad argument in %P\n",funct);
   }
@@ -6002,11 +6003,12 @@ void init_built_in_types()
   new_built_in(bi_module,"is_predicate",(def_type)function_it,c_is_predicate);
   new_built_in(bi_module,"is_sort",(def_type)function_it,c_is_sort);
   
+  /*  COMMENTED FOR LATER DJD
   new_built_in(bi_module,
 	       disjunction->keyword->symbol,
 	       (def_type)function_it,
 	       c_eval_disjunction);
-  
+  */
   /*  RM: Dec 16 1992  So the symbol can be changed easily */
 
   

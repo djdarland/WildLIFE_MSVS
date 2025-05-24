@@ -50,7 +50,7 @@ void stdin_cleareof()
 
 /* Add an attribute whose value is an integer to a psi-term */
 /* that does not yet contains this attribute. */
-void heap_add_int_attr(ptr_psi_term t, const char *attrname, long value)
+void heap_add_int_attr(ptr_psi_term t, char *attrname, long value)
 // ptr_psi_term t;
 // char *attrname;
 // long value;
@@ -76,7 +76,7 @@ REAL cp2R(char *cp_in)
 }
 
 
-void stack_add_int_attr(ptr_psi_term t, const char *attrname, long value)
+void stack_add_int_attr(ptr_psi_term t, char *attrname, long value)
 // ptr_psi_term t;
 // char *attrname;
 // long value;
@@ -95,7 +95,7 @@ void stack_add_int_attr(ptr_psi_term t, const char *attrname, long value)
 
 /* Modify an attribute whose value is an integer to a psi-term */
 /* that already contains this attribute with another integer value. */
-void heap_mod_int_attr(ptr_psi_term t, const char *attrname, long value)
+void heap_mod_int_attr(ptr_psi_term t, char *attrname, long value)
 // ptr_psi_term t;
 // char *attrname;
 // long value;
@@ -126,7 +126,7 @@ long value;
 
 /* Add an attribute whose value is a string to a psi-term */
 /* that does not yet contains this attribute. */
-void heap_add_str_attr(ptr_psi_term t, const char *attrname, char *str)
+void heap_add_str_attr(ptr_psi_term t, char *attrname, char *str)
 // ptr_psi_term t;
 // char *attrname;
 // char *str;
@@ -158,7 +158,7 @@ void stack_add_str_attr(ptr_psi_term t, char *attrname, char *str)
 
 /* Modify an attribute whose value is a string to a psi-term */
 /* that already contains this attribute with another integer value. */
-void heap_mod_str_attr(ptr_psi_term t, const char *attrname, char *str)
+void heap_mod_str_attr(ptr_psi_term t, char *attrname, char *str)
 // ptr_psi_term t;
 // char *attrname;
 // char *str;
@@ -189,7 +189,7 @@ char *str;
 
 
 /* Attach a psi-term to another as an attribute. */
-void heap_add_psi_attr(ptr_psi_term t, const char *attrname, ptr_psi_term g)
+void heap_add_psi_attr(ptr_psi_term t, char *attrname, ptr_psi_term g)
 // ptr_psi_term t;
 // char *attrname;
 // ptr_psi_term g;
@@ -197,7 +197,7 @@ void heap_add_psi_attr(ptr_psi_term t, const char *attrname, ptr_psi_term g)
   heap_insert(FEATCMP,heap_copy_string(attrname),&(t->attr_list), (GENERIC)g); // REV401PLUS cast
 }
 
-void stack_add_psi_attr(ptr_psi_term t, const char *attrname, ptr_psi_term g)
+void stack_add_psi_attr(ptr_psi_term t, char *attrname, ptr_psi_term g)
 // ptr_psi_term t;
 // char *attrname;
 // ptr_psi_term g;
@@ -205,7 +205,7 @@ void stack_add_psi_attr(ptr_psi_term t, const char *attrname, ptr_psi_term g)
   stack_insert(FEATCMP,heap_copy_string(attrname),&(t->attr_list), (GENERIC)g); // REV401PLUS cast
 }
 
-void bk_stack_add_psi_attr(ptr_psi_term t, const char *attrname, ptr_psi_term g)
+void bk_stack_add_psi_attr(ptr_psi_term t, char *attrname, ptr_psi_term g)
 // ptr_psi_term t;
 // char *attrname;
 // ptr_psi_term g;
@@ -215,7 +215,7 @@ void bk_stack_add_psi_attr(ptr_psi_term t, const char *attrname, ptr_psi_term g)
 
 
 /* Get the GENERIC value of a psi-term's attribute */
-GENERIC get_attr(ptr_psi_term t, const char *attrname)
+GENERIC get_attr(ptr_psi_term t, char *attrname)
 // ptr_psi_term t;
 // char *attrname;
 {
@@ -227,7 +227,7 @@ GENERIC get_attr(ptr_psi_term t, const char *attrname)
 FILE *get_stream(ptr_psi_term t)
 // ptr_psi_term t;
 {
-  return (FILE *) ((ptr_psi_term)get_attr(t,STREAM))->value_3;
+  return (FILE *) ((ptr_psi_term)get_attr(t,(char*)STREAM))->value_3;
 }
 
 /***********************************************/
@@ -241,7 +241,7 @@ void save_state(ptr_psi_term t)
   ptr_node n;
   ptr_psi_term t1;
 
-  n=find(FEATCMP,STREAM,t->attr_list);
+  n=find(FEATCMP,(char*)STREAM,t->attr_list);
   t1=(ptr_psi_term)n->data;
   t1->value_3=(GENERIC)input_stream;
 
@@ -249,24 +249,24 @@ void save_state(ptr_psi_term t)
   heap_mod_str_attr(t,CURRENT_MODULE,current_module->module_name);
   */
   
-  heap_mod_str_attr(t,INPUT_FILE_NAME,input_file_name);
-  heap_mod_int_attr(t,LINE_COUNT,line_count);
-  heap_mod_int_attr(t,SAVED_CHAR,saved_char);
-  heap_mod_int_attr(t,OLD_SAVED_CHAR,old_saved_char);
+  heap_mod_str_attr(t,(char*)INPUT_FILE_NAME,input_file_name);
+  heap_mod_int_attr(t,(char*)LINE_COUNT,line_count);
+  heap_mod_int_attr(t,(char*)SAVED_CHAR,saved_char);
+  heap_mod_int_attr(t,(char*)OLD_SAVED_CHAR,old_saved_char);
 
   t1=saved_psi_term?saved_psi_term:null_psi_term;
-  heap_add_psi_attr(t,SAVED_PSI_TERM,t1);
+  heap_add_psi_attr(t, (char*)SAVED_PSI_TERM, t1);
 
   t1=old_saved_psi_term?old_saved_psi_term:null_psi_term;
-  heap_add_psi_attr(t,OLD_SAVED_PSI_TERM,t1);
+  heap_add_psi_attr(t,(char*)OLD_SAVED_PSI_TERM,t1);
 
   t1=heap_psi_term(4);
   t1->type=(eof_flag?lf_true:lf_false);
-  heap_add_psi_attr(t,EOF_FLAG,t1);
+  heap_add_psi_attr(t,(char*)EOF_FLAG,t1);
 
   t1=heap_psi_term(4);
   t1->type=(start_of_line?lf_true:lf_false);
-  heap_add_psi_attr(t,START_OF_LINE,t1);
+  heap_add_psi_attr(t,(char*)START_OF_LINE,t1);
 }
 
 
@@ -279,22 +279,22 @@ void restore_state(ptr_psi_term t)
   char *str;
 
   
-  input_stream = (FILE *) ((ptr_psi_term)get_attr(t,STREAM))->value_3;
-  str = (char*) ((ptr_psi_term)get_attr(t,INPUT_FILE_NAME))->value_3;
+  input_stream = (FILE *) ((ptr_psi_term)get_attr(t,(char*)STREAM))->value_3;
+  str = (char*) ((ptr_psi_term)get_attr(t,(char*)INPUT_FILE_NAME))->value_3;
   strcpy(input_file_name,str);
   /* for (i=0;i++;i<=strlen(str)) input_file_name[i]=str[i]; */
-  line_count = *(REAL *) ((ptr_psi_term)get_attr(t,LINE_COUNT))->value_3;
-  saved_char = *(REAL *) ((ptr_psi_term)get_attr(t,SAVED_CHAR))->value_3;
-  old_saved_char= *(REAL *)((ptr_psi_term)get_attr(t,OLD_SAVED_CHAR))->value_3;
+  line_count = *(REAL *) ((ptr_psi_term)get_attr(t,(char*)LINE_COUNT))->value_3;
+  saved_char = *(REAL *) ((ptr_psi_term)get_attr(t,(char*)SAVED_CHAR))->value_3;
+  old_saved_char= *(REAL *)((ptr_psi_term)get_attr(t,(char*)OLD_SAVED_CHAR))->value_3;
 
-  saved_psi_term=(ptr_psi_term)get_attr(t,SAVED_PSI_TERM);
+  saved_psi_term=(ptr_psi_term)get_attr(t,(char*)SAVED_PSI_TERM);
   if (saved_psi_term==null_psi_term) saved_psi_term=NULL;
 
-  old_saved_psi_term=(ptr_psi_term)get_attr(t,OLD_SAVED_PSI_TERM);
+  old_saved_psi_term=(ptr_psi_term)get_attr(t,(char*)OLD_SAVED_PSI_TERM);
   if (old_saved_psi_term==null_psi_term) old_saved_psi_term=NULL;
 
-  eof_flag = ((ptr_psi_term)get_attr(t,EOF_FLAG))->type==lf_true;
-  start_of_line = ((ptr_psi_term)get_attr(t,START_OF_LINE))->type==lf_true;
+  eof_flag = ((ptr_psi_term)get_attr(t,(char*)EOF_FLAG))->type==lf_true;
+  start_of_line = ((ptr_psi_term)get_attr(t,(char*)START_OF_LINE))->type==lf_true;
 
   
   /*  RM: Jan 27 1993
@@ -317,10 +317,10 @@ void new_state(ptr_psi_term *t)
   t1=heap_psi_term(4);
   t1->type=stream;
   t1->value_3=(GENERIC)input_stream;
-  heap_add_psi_attr(*t,STREAM,t1);
+  heap_add_psi_attr(*t,(char*)STREAM,t1);
 
   /*  RM: Jan 27 1993  */
-  heap_add_str_attr(*t,CURRENT_MODULE,current_module->module_name);
+  heap_add_str_attr(*t,(char*)CURRENT_MODULE,current_module->module_name);
   
   /*
     printf("Creating new state for file '%s', module '%s'\n",
@@ -328,24 +328,24 @@ void new_state(ptr_psi_term *t)
     current_module->module_name);
     */
   
-  heap_add_str_attr(*t,INPUT_FILE_NAME,input_file_name);
-  heap_add_int_attr(*t,LINE_COUNT,line_count);
-  heap_add_int_attr(*t,SAVED_CHAR,saved_char);
-  heap_add_int_attr(*t,OLD_SAVED_CHAR,old_saved_char);
+  heap_add_str_attr(*t,(char*)INPUT_FILE_NAME,input_file_name);
+  heap_add_int_attr(*t,(char*)LINE_COUNT,line_count);
+  heap_add_int_attr(*t,(char*)SAVED_CHAR,saved_char);
+  heap_add_int_attr(*t,(char*)OLD_SAVED_CHAR,old_saved_char);
 
   t1=saved_psi_term?saved_psi_term:null_psi_term;
-  heap_add_psi_attr(*t,SAVED_PSI_TERM,t1);
+  heap_add_psi_attr(*t,(char*)SAVED_PSI_TERM,t1);
 
   t1=old_saved_psi_term?old_saved_psi_term:null_psi_term;
-  heap_add_psi_attr(*t,OLD_SAVED_PSI_TERM,t1);
+  heap_add_psi_attr(*t,(char*)OLD_SAVED_PSI_TERM,t1);
 
   t1=heap_psi_term(4);
   t1->type=(eof_flag?lf_true:lf_false);
-  heap_add_psi_attr(*t,EOF_FLAG,t1);
+  heap_add_psi_attr(*t,(char*)EOF_FLAG,t1);
 
   t1=heap_psi_term(4);
   t1->type=(start_of_line?lf_true:lf_false);
-  heap_add_psi_attr(*t,START_OF_LINE,t1);
+  heap_add_psi_attr(*t,(char*)START_OF_LINE,t1);
 }
 
 
@@ -427,7 +427,7 @@ void begin_terminal_io()
 
   if (inchange) {
     old_state=input_state;
-    open_input_file("stdin");
+    open_input_file((char*)"stdin");
   }
 }
 
@@ -454,7 +454,7 @@ void end_terminal_io()
   For the time being all this does is replace '~' by the HOME directory
   if no user is given, or tries to find the user.
 */
-char *expand_file_name(const char *s)
+char *expand_file_name(char *s)
 // char *s;
 {
 #ifdef DJD_LATER
@@ -515,7 +515,7 @@ char *expand_file_name(const char *s)
   state for it.
   If the file can't be opened, print an error and open "stdin" instead.
 */   
-long open_input_file(const char *file)
+long open_input_file(char *file)
 // char *file;
 {
   long ok=TRUE;
@@ -565,7 +565,7 @@ long open_input_file(const char *file)
   Same thing as OPEN_INPUT_FILE, only for output. If FILE="stdout" then
   output_stream=stdout.
 */
-long open_output_file(const string file)
+long open_output_file(string file)
 // string file;
 {
   long ok=TRUE;

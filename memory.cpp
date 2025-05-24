@@ -253,7 +253,7 @@ void fail_all()
   abort_life(TRUE);
   /* printf("\n*** Abort\n"); */
   stdin_cleareof();
-  open_input_file("stdin");
+  open_input_file((char*)"stdin");
 }
 
 
@@ -1883,3 +1883,13 @@ long memory_check ()
 
 
 #endif
+
+#define DJD_DBG
+
+void prt(const char *str)
+{
+#ifdef DJD_DBG
+  printf("%s \n",str);
+#endif
+}
+	 

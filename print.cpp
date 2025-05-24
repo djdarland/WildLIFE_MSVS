@@ -885,8 +885,12 @@ long check_opargs(ptr_node n)
 {
   if (n) {
     long f=check_opargs(n->left) | check_opargs(n->right);
-    if (!featcmp(n->key,"1")) return 1 | f;
-    if (!featcmp(n->key,"2")) return 2 | f;
+          prt("print featcmp 1");
+
+    if (!featcmp(n->key,(char*)"1")) return 1 | f;
+          prt("print featcmp 2");
+
+    if (!featcmp(n->key,(char*)"2")) return 2 | f;
     return 4 | f;
   }
   else

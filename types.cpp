@@ -56,7 +56,7 @@ long yes_or_no()
   old_prompt=prompt;
   prompt=(char*)"(y/n)?";
   old_state=input_state;
-  open_input_file("stdin");
+  open_input_file((char*)"stdin");
 
   do {
     do {

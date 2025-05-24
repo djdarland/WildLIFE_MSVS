@@ -848,6 +848,7 @@ void merge1(ptr_node *u, ptr_node v)
       /* more_v_attr=TRUE; */
     }
     else {
+      prt("login featcmp 1");
       cmp=featcmp((*u)->key,v->key);
       if (cmp==0) {
 	if (v->right)
@@ -900,6 +901,7 @@ void merge2(ptr_node *u,ptr_node v)
       merge2(u,v->left);
     }
     else {
+      prt("login featcmp 2");
       cmp=featcmp((*u)->key,v->key);
       if (cmp==0) {
 	/* if (v->right) */
@@ -950,6 +952,7 @@ void merge3(ptr_node *u,ptr_node v)
     }
     else {
       ptr_psi_term t1,t2;
+      prt("login featcmp 3");
       
       cmp=featcmp((*u)->key,v->key);
       if (cmp==0) {
@@ -1024,6 +1027,7 @@ void merge(ptr_node *u,ptr_node v)
       merge(u,v->left);
     }
     else {
+      prt("login featcmp 4");
       cmp=featcmp((*u)->key,v->key);
       if (cmp==0) {
         /* if (v->right) */
@@ -1626,7 +1630,7 @@ long prove_aim()
 		
 		call_handler=stack_psi_term(0);
 		call_handler->type=call_handlersym;
-		stack_add_psi_attr(call_handler,"1",thegoal);
+		stack_add_psi_attr(call_handler,(char*)"1",thegoal);
 		push_goal(prove,call_handler,(ptr_psi_term)DEFRULES,NULL); // REV401PLUS cast
 		return success; /* We're done! */
 	      }
@@ -2178,15 +2182,13 @@ long load_aim()
       CURRENT_MODULE))->value);
       */
 	   
-    set_current_module(
-		       find_module((const char *)((ptr_psi_term)get_attr(input_state,
-       CURRENT_MODULE))->value_3));
+    set_current_module(find_module((const char *)((ptr_psi_term)get_attr(input_state,(char*)CURRENT_MODULE))->value_3));
   }
 
   
   noisy=old_noisy;
   file_date=old_file_date;
-  open_input_file("stdin");
+  open_input_file((char*)"stdin");
 
   
   return success;

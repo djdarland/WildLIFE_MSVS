@@ -67,7 +67,7 @@ long is_int(char **s, long *len, long *sgn)
   In addition, all integers are considered to be less than
   all strings that do not represent integers.
 */
-long featcmp(const char *str1, const char *str2)
+long featcmp(char *str1, char *str2)
 // char *str1, *str2;
 {
   long len1,len2,sgn1,sgn2;
@@ -327,7 +327,7 @@ ptr_node bk2_stack_insert(long comp,char *keystr,ptr_node *tree,GENERIC info)
   Return the NODE address corresponding to key KEYSTR in TREE using function
   COMP to compare keys.
 */
-ptr_node find(long comp,const char *keystr,ptr_node tree)
+ptr_node find(long comp, char *keystr,ptr_node tree)
 // long comp;
 //char *keystr;
 // ptr_node tree;

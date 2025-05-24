@@ -183,7 +183,7 @@ void WFInit(long argc, char *argv[])
   
   
 //   open_input_file("~/life_local/Source/.set_up");
-  open_input_file(".set_up");
+  open_input_file((char*)".set_up");
   push_goal(load,input_state,(ptr_psi_term)file_date,(GENERIC)heap_copy_string("~/life_local/Source/.set_up")); // REV401PLUS casts
   file_date+=2;
   main_prove();

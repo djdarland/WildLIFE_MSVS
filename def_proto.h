@@ -2,7 +2,7 @@
   \brief prototypes
 
 */
-
+void prt(const char*);
 // from arity.c
 #ifdef ARITY
 void arity_init();
@@ -497,16 +497,16 @@ long get_arg (ptr_psi_term g, ptr_psi_term *arg, char *number);
 
 void TOKEN_ERROR(ptr_psi_term p);
 void stdin_cleareof();
-void heap_add_int_attr(ptr_psi_term t,const char *attrname,long value);
-void stack_add_int_attr(ptr_psi_term t,const char *attrname,long value);
-void heap_mod_int_attr(ptr_psi_term t, const char *attrname,long value);
-void heap_add_str_attr(ptr_psi_term t,const char *attrname,char *str);
+void heap_add_int_attr(ptr_psi_term t,char *attrname,long value);
+void stack_add_int_attr(ptr_psi_term t,char *attrname,long value);
+void heap_mod_int_attr(ptr_psi_term t, char *attrname,long value);
+void heap_add_str_attr(ptr_psi_term t,char *attrname,char *str);
 void stack_add_str_attr(ptr_psi_term t,char *attrname,char *str);
-void heap_mod_str_attr(ptr_psi_term t,const char *attrname,char *str);
-void heap_add_psi_attr(ptr_psi_term t,const char *attrname,ptr_psi_term g);
-void stack_add_psi_attr(ptr_psi_term t,const char *attrname,ptr_psi_term g);
+void heap_mod_str_attr(ptr_psi_term t,char *attrname,char *str);
+void heap_add_psi_attr(ptr_psi_term t, char *attrname,ptr_psi_term g);
+void stack_add_psi_attr(ptr_psi_term t,char *attrname,ptr_psi_term g);
 void bk_stack_add_psi_attr(ptr_psi_term t,char *attrname,ptr_psi_term g);
-GENERIC get_attr(ptr_psi_term t,const char *attrname);
+GENERIC get_attr(ptr_psi_term t,char *attrname);
 FILE *get_stream(ptr_psi_term t);
 void save_state(ptr_psi_term t);
 void restore_state(ptr_psi_term t);
@@ -516,9 +516,9 @@ void restore_parse_state(ptr_parse_block pb);
 void init_parse_state();
 void begin_terminal_io();
 void end_terminal_io();
-char *expand_file_name(const char *s);
-long open_input_file(const char *file);
-long open_output_file(const char *file);
+char *expand_file_name(char *s);
+long open_input_file(char *file);
+long open_output_file(char *file);
 long read_char();
 void put_back_char(long c);
 void put_back_token(psi_term t);
@@ -536,7 +536,7 @@ void read_token_b(ptr_psi_term tok);
 void read_token_main(ptr_psi_term tok,long for_parser);
 long intcmp(long a,long b);
 long is_int(char **s,long *len,long *sgn);
-long featcmp(const char *str1,const char *str2);
+long featcmp(char *str1,char *str2);
 char *heap_ncopy_string(const char *s,int n);
 char *heap_copy_string(const char *s);
 char *stack_copy_string(char *s);
@@ -547,7 +547,7 @@ ptr_node heap_insert(long comp,char *keystr,ptr_node *tree,GENERIC info);
 ptr_node stack_insert(long comp,char *keystr,ptr_node *tree,GENERIC info);
 ptr_node bk_stack_insert(long comp,char *keystr,ptr_node *tree,GENERIC info);
 ptr_node bk2_stack_insert(long comp,char *keystr,ptr_node *tree,GENERIC info);
-ptr_node find(long comp,const char *keystr,ptr_node tree);
+ptr_node find(long comp,char *keystr,ptr_node tree);
 ptr_node find_data(GENERIC p,ptr_node t);
 void delete_attr(char *s,ptr_node *n);
 // from types.c 

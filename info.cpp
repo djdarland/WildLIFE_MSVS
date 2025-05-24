@@ -37,6 +37,13 @@ static void pnf(char *s,long n)
 */
 void title()
 {
+//    char** it;
+    long len;
+    long sign;
+    long val;
+    char *it2 = (char*) "1234";
+    char **it = &it2;
+
   if(quietflag)
     return; /*  RM: Feb 17 1993  */
   
@@ -45,7 +52,11 @@ void title()
   printf("Extensions, Copyright (C) 1994-1995 Intelligent Software Group, SFU\n"); 
   printf("Ported to Linux and Cygwin December 2022 after many efforts since 1995\n");
   printf("By Dennis J. Darland dennis.darland@hotmail.com\n");
-  
+
+  val = is_int(it, &len, &sign);
+  printf("it = %s len = %ld, sign = %ld val = %ld\n", *it, len, sign,val);
+
+ // exit(0);
   
 #ifndef X11
   printf("X interface not installed.\n");

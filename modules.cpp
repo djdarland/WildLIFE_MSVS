@@ -47,7 +47,7 @@ ptr_module find_module(const char *module)
 {
   ptr_node nodule;
 
-  nodule=find(STRCMP,module,module_table);
+  nodule=find(STRCMP,(char*)module,module_table);
   if(nodule)
     return (ptr_module)(nodule->data);
   else
@@ -1218,6 +1218,7 @@ int global_unify_attr(ptr_node u,ptr_node v)    /*  RM: Feb  9 1993  */
     if(v) {
       /*  RM: Feb 16 1993  Avoid C optimiser bug */
       dummy_printf("%s %s\n",u->key,v->key);
+      prt("modules featcmp 1");
       
       cmp=featcmp(u->key,v->key);
       if(cmp<0) {
