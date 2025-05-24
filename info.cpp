@@ -41,7 +41,7 @@ void title()
     long len;
     long sign;
     long val;
-    char *it2 = (char*) "1234";
+    char *it2 = (char*) "5234";
     char **it = &it2;
 
   if(quietflag)
@@ -54,9 +54,14 @@ void title()
   printf("By Dennis J. Darland dennis.darland@hotmail.com\n");
 
   val = is_int(it, &len, &sign);
-  printf("it = %s len = %ld, sign = %ld val = %ld\n", *it, len, sign,val);
 
- // exit(0);
+  printf("it = %s len = %ld, sign = %ld val = %ld\n", *it, len, sign, val);
+
+  val = is_int(&str_constants->num_tst, &len, &sign);
+
+  printf("num_tat = %s len = %ld, sign = %ld val = %ld\n", str_constants->num_tst, len, sign,val);
+
+   exit(0);
   
 #ifndef X11
   printf("X interface not installed.\n");

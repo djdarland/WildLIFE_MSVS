@@ -54,7 +54,7 @@
 #include <X11/Xutil.h>
 #include "life_icon"
 #endif
-
+#include "str_const.h"
 
 #include "def_const.h"
 #include "def_macro.h"

@@ -64,6 +64,10 @@ int main(int argc, char *argv[])  // REV401PLUS correct main proto.
   
   quietflag = GetBoolOption("q");
 
+  str_constants = new str_const();
+
+
+
   init_io();
   init_memory();
   exit_if_true(!mem_base || !other_base);

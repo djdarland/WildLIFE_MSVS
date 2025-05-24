@@ -3,6 +3,7 @@
   
 */
 
+EXTERN str_const* str_constants;
 
 
 // from extern.h
