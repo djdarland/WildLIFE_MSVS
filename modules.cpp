@@ -322,7 +322,7 @@ ptr_definition new_definition(ptr_keyword key)    /*  RM: Feb 22 1993  */
   result->rule=NULL;
   result->properties=NULL;
   result->date=0;
-  result->type_def=(def_type)undef_it;
+  result->wl_type=undef_it;
   result->always_check=TRUE;
   result->wl_protected=TRUE;
   result->evaluate_args=TRUE;

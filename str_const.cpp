@@ -19,7 +19,10 @@ str_const::str_const()
 	STDIN = str_const::cvt("stdin");
 	STDOUT = str_const::cvt("stdout");
 	STDERR = str_const::cvt("stderr");
-
+	ONE = str_const::cvt("1");
+	TWO = str_const::cvt("2");
+	THREE = str_const::cvt("3");
+	FOUR = str_const::cvt("4");
 
 
 }

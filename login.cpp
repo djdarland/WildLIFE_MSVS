@@ -149,7 +149,7 @@ void get_one_arg_addr(ptr_node t,ptr_psi_term **a)
   The global flag ASSERT_FIRST indicates whether to do the insertion at the
   head or the tail of the existing list.
   */
-void add_rule(ptr_psi_term head,ptr_psi_term body,def_type typ)
+void add_rule(ptr_psi_term head,ptr_psi_term body,char typ)
 //     ptr_psi_term head;
 //     ptr_psi_term body;
 //     def_type typ;
@@ -159,7 +159,7 @@ void add_rule(ptr_psi_term head,ptr_psi_term body,def_type typ)
   ptr_definition def;
   ptr_pair_list p, *p2;
   
-  if (!body && typ==(def_type)predicate_it) {
+  if (!body && typ==predicate_it) {
     succ.type=succeed;
     succ.value_3=NULL;
     succ.coref=NULL;
@@ -178,7 +178,7 @@ void add_rule(ptr_psi_term head,ptr_psi_term body,def_type typ)
     
     def=head->type;
     
-    if (def->type_def==(def_type)undef_it || def->type_def==(def_type)typ)
+    if (def->wl_type==undef_it || def->wl_type==typ)
       
       /*  RM: Jan 27 1993  */
       if(TRUE
@@ -188,10 +188,10 @@ void add_rule(ptr_psi_term head,ptr_psi_term body,def_type typ)
 	 ) {
 	if (def->rule && (unsigned long)def->rule<=MAX_BUILT_INS) {
 	  Errorline("the built-in %T '%s' may not be redefined.\n",
-		    def->type_def, def->keyword->symbol);
+		    def->wl_type, def->keyword->symbol);
 	}
 	else {
-	  def->type_def=typ;
+	  def->wl_type=typ;
 	  
 	  /* PVR single allocation in source */
 	  p=HEAP_ALLOC(pair_list);
@@ -219,13 +219,13 @@ void add_rule(ptr_psi_term head,ptr_psi_term body,def_type typ)
       }
       else { /*  RM: Jan 27 1993  */
 	Errorline("the %T '%s' may not be redefined from within module %s.\n",
-		  def->type_def,
+		  def->wl_type,
 		  def->keyword->combined_name,
 		  current_module->module_name);
       }
     else {
       Errorline("the %T '%s' may not be redefined as a %T.\n",
-                def->type_def, def->keyword->symbol, typ);
+                def->wl_type, def->keyword->symbol, typ);
     }
   }
 }
@@ -238,7 +238,7 @@ void add_rule(ptr_psi_term head,ptr_psi_term body,def_type typ)
   The psi_term T is of the form 'H :- B' or 'H -> B', but it may be incorrect
   (report errors). TYP is the type, function or predicate.
   */
-void assert_rule(psi_term t,def_type typ)
+void assert_rule(psi_term t,char typ)
 //     psi_term t;
 //     def_type typ;
 {
@@ -297,10 +297,10 @@ void assert_clause(ptr_psi_term t)
       */
   
   if (equ_tok((*t),":-"))
-    assert_rule((*t),(def_type)predicate_it);
+    assert_rule((*t),predicate_it);
   else
     if (equ_tok((*t),"->"))
-      assert_rule((*t),(def_type)function_it);
+      assert_rule((*t),function_it);
     else
       if (equ_tok((*t),"::"))
 	assert_attributes(t);
@@ -320,7 +320,7 @@ void assert_clause(ptr_psi_term t)
 	  if (equ_tok((*t),"<|") || equ_tok((*t),":="))
 	    assert_complicated_type(t);
 	  else
-	    add_rule(t,NULL,(def_type)predicate_it);
+	    add_rule(t,NULL,predicate_it);
   
   /* if (!assert_ok && warning()) perr("the declaration is ignored.\n"); */
 }
@@ -421,7 +421,7 @@ void push_def_ptr_value(ptr_psi_term q,GENERIC *p)
       undo_stack=n;
 #else
       n=STACK_ALLOC(stack); /* Trail definition field (top of undo_stack) */
-      n->type=def_ptr;
+     n->type=def_ptr;
       n->aaaa_3= (GENERIC *)p;  // REV401PLUS add * to cast
       n->bbbb_3= (GENERIC *)*p;  // REV401PLUS add cast
       n->next=undo_stack;
@@ -1093,7 +1093,7 @@ void merge_unify(ptr_node *u,ptr_node v)
 void show_count()
 {
   float t;
-  
+  verbose = FALSE; // DJD  
   if (verbose) {
     printf("  [");
     
@@ -1310,8 +1310,8 @@ long unify_body(long eval_flag)
     if (u>v) { tmp=v; v=u; u=tmp; }
       
     /**** Check for curried functions ****/
-    u_func=(u->type->type_def==(def_type)function_it);
-    v_func=(v->type->type_def==(def_type)function_it);
+    u_func=(u->type->wl_type==function_it);
+    v_func=(v->type->wl_type==function_it);
     old1stat=u->status; /* 18.2.94 */
     old2stat=v->status; /* 18.2.94 */
     
@@ -1510,7 +1510,7 @@ long unify_body(long eval_flag)
 	/**** VERIFY CONSTRAINTS ****/
 	/* if ((old1stat<4 || old2stat<4) &&
 	     (u->type->type==type || v->type->type==type)) { 18.2.94 */
-        if (new_stat<4 && u->type->type_def==(def_type)type_it) {
+        if (new_stat<4 && u->type->wl_type==type_it) {
           /* This does not check the already-checked properties     */
           /* (i.e. those in types t with t>=old1 or t>=old2),       */
           /* and it does not check anything if u has no attributes. */
@@ -1581,16 +1581,16 @@ long prove_aim()
 	    
 	    if ((unsigned long)rule==DEFRULES) {
 	      rule=(ptr_pair_list)thegoal->type->rule;
-	      if (thegoal->type->type_def==(def_type)predicate_it) {
+	      if (thegoal->type->wl_type==predicate_it) {
 		if (!rule) /* This can happen when RETRACT is used */
 		  success=FALSE;
 	      }
-	      else if ( thegoal->type->type_def==(def_type)function_it
-			|| ( thegoal->type->type_def==(def_type)type_it
+	      else if ( thegoal->type->wl_type==function_it
+			|| ( thegoal->type->wl_type==type_it
 			 && sub_type(boolean,thegoal->type)
 			 )
 	              ) {
-		if (thegoal->type->type_def==(def_type)function_it && !rule)
+		if (thegoal->type->wl_type==function_it && !rule)
 		  /* This can happen when RETRACT is used */
 		  success=FALSE;
 		else {
@@ -1609,7 +1609,7 @@ long prove_aim()
 		  return success; /* We're done! */
 		}
 	      }
-	      else if (!thegoal->type->wl_protected && thegoal->type->type_def==(def_type)undef_it) {
+	      else if (!thegoal->type->wl_protected && thegoal->type->wl_type==undef_it) {
 		/* Don't give an error message for undefined dynamic objects */
 		/* that do not yet have a definition */
 		success=FALSE;
@@ -2414,7 +2414,7 @@ void main_prove()
       goal_count++;
       p=(ptr_pair_list*)aim->aaaa_1;
       Traceline("deleting clause (%P%s%P)\n",
-                (*p)->aaaa_2,((*p)->aaaa_2->type->type_def==(def_type)function_it?"->":":-"),(*p)->bbbb_2);
+                (*p)->aaaa_2,((*p)->aaaa_2->type->wl_type==function_it?"->":":-"),(*p)->bbbb_2);
       (*p)->aaaa_2=NULL;
       (*p)->bbbb_2=NULL;
       (*p)=(*p)->next; /* Remove retracted element from pairlist */

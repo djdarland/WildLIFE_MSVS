@@ -405,7 +405,7 @@ psi_term parse_list(ptr_definition typ,char e,char s)
 psi_term read_psi_term()
 {
   psi_term t,t2,t3;
-  char s[22];  // Modified 3/8/2021  DJD to prevent overflow - compiler warning
+  char s[65];  // Modified 3/8/2021  DJD to prevent overflow - compiler warning
   long count=0,f=TRUE,f2,v;
   ptr_psi_term module;
 
@@ -889,7 +889,7 @@ psi_term parse(long *q)
   parser_stack_index=0;
   parse_ok=TRUE;
 
-  /*s=read_life_form('.','?');*/
+  // s=read_life_form('.','?');  // DJD
   s=read_life_form(0,0);
 
   if (parse_ok) {

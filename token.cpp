@@ -499,7 +499,7 @@ char *expand_file_name(char *s)
 
   /* printf("*** Using file name: '%s'\n",r); */
 #endif
-  char r[STRLEN];
+  static char r[STRLEN];
   sprintf(r, "C:\\Users\\pal\\dsa\\life_local\\Source\\%s", s);
 
 
@@ -961,7 +961,7 @@ void read_name(ptr_psi_term tok,long ch,long (*f)(long),ptr_definition typ)
     TOKEN_ERROR(tok); /*  RM: Feb  1 1993  */
 
     /* PVR 4.2.94 for correct level incrementing */
-    if (tok->type->type_def==(def_type)global_it) {
+    if (tok->type->wl_type==global_it) {
       var_occurred=TRUE;
     }
     if (FALSE /*tok->type->type==global && tok->type->global_value*/) {

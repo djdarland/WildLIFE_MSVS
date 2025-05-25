@@ -848,7 +848,7 @@ static long c_boolpred()
         }
         else {
           /* Both true and false are disentailed. */
-          if (arg1->type->type_def==(def_type)predicate_it) { // REV401PLUS _def & _it & cast
+          if (arg1->type->wl_type==predicate_it) { // REV401PLUS _def & _it & cast
             push_goal(prove,arg1,(ptr_psi_term)DEFRULES,NULL);
           }
           else {
@@ -1125,7 +1125,7 @@ static long c_apply()
     if (other->type==top)
       residuate(other);
     else
-      if(other->type && other->type->type_def!=(def_type)function_it) {// REV401PLUS _type & (def_type) & _it
+      if(other->type && other->type->wl_type!=function_it) {// REV401PLUS _type & (def_type) & _it
 	success=FALSE;
         Errorline("argument is not a function in %P.\n",funct);
       }
@@ -1203,11 +1203,10 @@ static long c_project()
     }
     
     if (label) {
-      n=find(FEATCMP,label,arg1->attr_list);
-      
+        n = find(FEATCMP, label, arg1->attr_list);
       if (n)
 	push_goal(unify,result,(ptr_psi_term)n->data,NULL); //REV401PLUS cast
-      else if (arg1->type->type_def==(def_type)function_it && !(arg1->flags&QUOTED_TRUE)) { // _def & (def_type) & _it
+      else if (arg1->type->wl_type==function_it && !(arg1->flags&QUOTED_TRUE)) { // _def &  & _it
 	Errorline("attempt to add a feature to curried function %P\n",
 		  arg1);
 	return FALSE;
@@ -1449,7 +1448,7 @@ static long c_is_function()
     deref(arg1);
     deref_args(g,set_1);
     other=stack_psi_term(4); /* 19.11 */
-    other->type=(arg1->type->type_def==(def_type)function_it)?lf_true:lf_false; // REV401PLUS _def & (def_type) & _it
+    other->type=(arg1->type->wl_type==function_it)?lf_true:lf_false; // REV401PLUS _def &  & _it
     resid_aim=NULL;
     push_goal(unify,result,other,NULL);
   }
@@ -1480,7 +1479,7 @@ static long c_is_predicate()
     deref(arg1);
     deref_args(g,set_1);
     other=stack_psi_term(4); /* 19.11 */
-    other->type=(arg1->type->type_def==(def_type)predicate_it)?lf_true:lf_false; // REV401PLUS _def & (def_type) & _it
+    other->type=(arg1->type->wl_type==predicate_it)?lf_true:lf_false; // REV401PLUS _def &  & _it
     resid_aim=NULL;
     push_goal(unify,result,other,NULL);
   }
@@ -1511,7 +1510,7 @@ static long c_is_sort()
     deref(arg1);
     deref_args(g,set_1);
     other=stack_psi_term(4); /* 19.11 */
-    other->type=(arg1->type->type_def==(def_type)type_it)?lf_true:lf_false; // REV401PLUS _def & (def_type) & _it
+    other->type=(arg1->type->wl_type==type_it)?lf_true:lf_false; // REV401PLUS _def &  & _it
     resid_aim=NULL;
     push_goal(unify,result,other,NULL);
   }
@@ -2096,7 +2095,8 @@ long c_halt()   /*  RM: Jan  8 1993  Used to be 'void' */ // REV401PLUS chg to l
 void exit_life(long nl_flag)
 // long nl_flag;
 {
-  open_input_file((char*)"stdin");   // CHAR * MSVC
+    exit(0);
+  open_input_file(str_constants->STDIN);   // CHAR * MSVC
   life_end = clock();
   if (NOTQUIET) { /* 21.1 */
     if (nl_flag) printf("\n");
@@ -2111,7 +2111,7 @@ void exit_life(long nl_flag)
   arity_end();
 #endif
   
-  exit(1);
+  exit(0);
 }
 
 
@@ -2129,7 +2129,7 @@ long c_abort()   /*  RM: Feb 15 1993  */
 long abort_life(int nlflag) /*  RM: Feb 15 1993  */
 // int nlflag;
 {
-  if ( aborthooksym->type_def!=(def_type)function_it ||
+  if ( aborthooksym->wl_type!=function_it ||
        !aborthooksym->rule->bbbb_2 ||
        aborthooksym->rule->bbbb_2->type==abortsym) {
     /* Do a true abort if aborthook is not a function or is equal to 'abort'.*/
@@ -2216,10 +2216,10 @@ static long c_setq()
     deref_rec(arg2); /*  RM: Jan  6 1993  */
     deref_ptr(arg1);
     d=arg1->type;
-    if (d->type_def==(def_type)function_it || d->type_def==(def_type)undef_it) {
-      if (d->type_def==(def_type)undef_it || !d->wl_protected) {
+    if (d->wl_type==function_it || d->wl_type==undef_it) {
+      if (d->wl_type==undef_it || !d->wl_protected) {
         if (!arg1->attr_list) {
-          d->type_def=(def_type)function_it;
+          d->wl_type=function_it;
           d->wl_protected=FALSE;
           p=HEAP_ALLOC(pair_list);
           p->aaaa_2=heap_psi_term(4);
@@ -2326,7 +2326,7 @@ long pred_clause(ptr_psi_term t,long r,ptr_psi_term g)
       if (head) {
 	deref_ptr(head);
 	if (head && body &&
-            (head->type->type_def==(def_type)function_it || head->type->type_def==(def_type)undef_it))
+            (head->type->wl_type==function_it || head->type->wl_type==undef_it))
 	  success=TRUE;
       }
     }
@@ -2335,7 +2335,7 @@ long pred_clause(ptr_psi_term t,long r,ptr_psi_term g)
       if (head) {
         deref_ptr(head);
         if (head &&
-            (head->type->type_def==(def_type)predicate_it || head->type->type_def==(def_type)undef_it)) {
+            (head->type->wl_type==predicate_it || head->type->wl_type==undef_it)) {
           success=TRUE;
           if (!body) {
             body=stack_psi_term(4);
@@ -2345,7 +2345,7 @@ long pred_clause(ptr_psi_term t,long r,ptr_psi_term g)
       }
     }
     /* There is no body, so t is a fact */
-    else if (t->type->type_def==(def_type)predicate_it || t->type->type_def==(def_type)undef_it) {
+    else if (t->type->wl_type==predicate_it || t->type->wl_type==undef_it) {
       head=t;
       body=stack_psi_term(4);
       body->type=succeed;
@@ -2464,9 +2464,9 @@ void global_error_check(ptr_node n, long *error_2, long *eval_2)
         if (deref_eval(a2)) *eval_2=TRUE;
       }
     }
-    if (!bad_init && t->type->type_def!=(def_type)undef_it && t->type->type_def!=(def_type)global_it) {
+    if (!bad_init && t->type->wl_type!=undef_it && t->type->wl_type!=global_it) {
       Errorline("%T %P cannot be redeclared as a global variable (%E).\n",
-		t->type->type_def,
+		t->type->wl_type,
 		t);
       t->type=error_psi_term->type;
       t->value_3=NULL; /*  RM: Mar 23 1993  */
@@ -2508,7 +2508,7 @@ void global_one(ptr_psi_term t)
     u=stack_psi_term(4);
   
   clear_copy();
-  t->type->type_def=(def_type)global_it;
+  t->type->wl_type=global_it;
   t->type->init_value=quote_copy(u,HEAP); /*  RM: Mar 23 1993  */
 
   /* eval_global_var(t);   RM: Feb  4 1994  */
@@ -2560,9 +2560,9 @@ void persistent_error_check(ptr_node n, long *error) //REV401PLUS add void
 
     t=(ptr_psi_term)n->data;
     deref_ptr(t);
-    if (t->type->type_def!=(def_type)undef_it && t->type->type_def!=(def_type)global_it) {
+    if (t->type->wl_type!=undef_it && t->type->wl_type!=global_it) {
       Errorline("%T %P cannot be redeclared persistent (%E).\n",
-	         t->type->type_def,
+	         t->type->wl_type,
 	         t);
       t->type=error_psi_term->type;
       *error=TRUE;
@@ -2592,7 +2592,7 @@ void persistent_tree(ptr_node n) // REV401PLUS add void
 void persistent_one(ptr_psi_term t) // REV401PLUS add void
 // ptr_psi_term t;
 { 
-  t->type->type_def=(def_type)global_it;
+  t->type->wl_type=global_it;
 
 
   if ((GENERIC)t->type->global_value<(GENERIC)heap_pointer)
@@ -3205,7 +3205,7 @@ static long c_cond()
   if (arg1addr) {
     arg1= *arg1addr;
     deref_ptr(arg1);
-    if (arg1->type->type_def==(def_type)predicate_it) {
+    if (arg1->type->wl_type==predicate_it) {
       ptr_psi_term call_once;
       ptr_node ca;
 
@@ -3483,8 +3483,8 @@ ptr_psi_term collect_symbols(long sel) /*  RM: Feb  3 1993  */
       /* Insert the node if it's a good one */
       if (((botflag?def->children:def->parents)==NULL &&
            def!=top && def!=nothing &&
-           def->type_def==(def_type)type_it ||
-           def->type_def==(def_type)undef_it)
+           def->wl_type==type_it ||
+           def->wl_type==undef_it)
           && !hidden_type(def)) {
         /* Create the node that will be inserted */
         wl_new=stack_psi_term(4);
@@ -4352,7 +4352,7 @@ static long c_freeze_inner(long freeze_flag)
     deref_args(g,set_1);
     deref_ptr(arg1);
     
-    if (arg1->type->type_def!=(def_type)predicate_it) {
+    if (arg1->type->wl_type!=predicate_it) {
       success=FALSE;
       Errorline("the argument %P of freeze must be a predicate.\n",arg1);
       /* main_loop_ok=FALSE; 8.9 */
@@ -4842,7 +4842,7 @@ void list_special(ptr_psi_term t) // REV401PLUS add void
   ptr_pair_list r = t->type->rule;
   long prflag=FALSE;
 
-  if (t->type->type_def==(def_type)type_it) {
+  if (t->type->wl_type==type_it) {
     if (!d->always_check) {
       if (is_built_in(r)) fprintf(output_stream,"%% ");
       fprintf(output_stream,"delay_check(");
@@ -4878,7 +4878,7 @@ static long c_listing()
 {
   long success=TRUE;
   ptr_psi_term arg1,arg2,g;
-  def_type fp;
+  char fp;
   ptr_pair_list r;
   ptr_node n;
   ptr_psi_term t,* a1, * a2;
@@ -4893,7 +4893,7 @@ static long c_listing()
   if (arg1) {
     deref_ptr(arg1);
     list_special(arg1);
-    fp=arg1->type->type_def;
+    fp=arg1->type->wl_type;
     r=arg1->type->rule;
     if (is_built_in(r) || !has_rules(r)) {
 
@@ -4944,11 +4944,11 @@ static long c_listing()
       }
     }
     else {
-      if (fp==(def_type)type_it || fp==(def_type)function_it || fp==(def_type)predicate_it) {
+      if (fp==type_it || fp==function_it || fp==predicate_it) {
         n = one_attr();
-        if (fp==(def_type)function_it)
+        if (fp==function_it)
           t = new_psi_term(2, funcsym, &a1, &a2);
-        else if (fp==(def_type)predicate_it)
+        else if (fp==predicate_it)
           t = new_psi_term(2, predsym, &a1, &a2);
         else { /* fp==type */
           t = new_psi_term(1, typesym, &a3, &a2); /* a2 is a dummy */
@@ -4960,8 +4960,8 @@ static long c_listing()
           *a2 = r->bbbb_2;
           if (r->aaaa_2) {
             /* Handle an attribute constraint with no predicate: */
-            if (fp==(def_type)type_it) { if (r->bbbb_2==NULL) *a3 = r->aaaa_2; else *a3 = t2; }
-            listing_pred_write(n, (fp==(def_type)function_it)||(fp==(def_type)type_it));
+            if (fp==type_it) { if (r->bbbb_2==NULL) *a3 = r->aaaa_2; else *a3 = t2; }
+            listing_pred_write(n, (fp==function_it)||(fp==type_it));
             fprintf(output_stream,".\n");
           }
           r = r->next;
@@ -5072,7 +5072,7 @@ static long c_funct()
   T=type (function or predicate).
   R=address of C routine to call.
 */
-void new_built_in(ptr_module m,const char *s,def_type t,long (*r)())
+void new_built_in(ptr_module m,const char *s,char t,long (*r)())
 //     ptr_module m;
 //     char *s;
 //     def_type t;
@@ -5089,7 +5089,7 @@ void new_built_in(ptr_module m,const char *s,def_type t,long (*r)())
     set_current_module(m);
   
   d=update_symbol(m,s); /* RM: Jan  8 1993 */
-  d->type_def=t;
+  d->wl_type=t;
   built_in_index++;
   d->rule=(ptr_pair_list )built_in_index;
   c_rule[built_in_index]=r;
@@ -5950,65 +5950,65 @@ void init_built_in_types()
   t=update_symbol(bi_module,"weekday");
   weekday_attr=t->keyword->symbol;
   
-  nothing->type_def=(def_type)type_it;
-  top->type_def=(def_type)type_it;
+  nothing->wl_type=type_it;
+  top->wl_type=type_it;
 
   /* Built-in routines */
 
   /* Program database */
-  new_built_in(bi_module,"dynamic",(def_type)predicate_it,c_dynamic);
-  new_built_in(bi_module,"static",(def_type)predicate_it,c_static);
-  new_built_in(bi_module,"assert",(def_type)predicate_it,c_assert_last);
-  new_built_in(bi_module,"asserta",(def_type)predicate_it,c_assert_first);
-  new_built_in(bi_module,"clause",(def_type)predicate_it,c_clause);
-  new_built_in(bi_module,"retract",(def_type)predicate_it,c_retract);
-  new_built_in(bi_module,"setq",(def_type)predicate_it,c_setq);
-  new_built_in(bi_module,"c_listing",(def_type)predicate_it,c_listing);
-  new_built_in(bi_module,"print_codes",(def_type)predicate_it,c_print_codes);
+  new_built_in(bi_module,"dynamic",predicate_it,c_dynamic);
+  new_built_in(bi_module,"static",predicate_it,c_static);
+  new_built_in(bi_module,"assert",predicate_it,c_assert_last);
+  new_built_in(bi_module,"asserta",predicate_it,c_assert_first);
+  new_built_in(bi_module,"clause",predicate_it,c_clause);
+  new_built_in(bi_module,"retract",predicate_it,c_retract);
+  new_built_in(bi_module,"setq",predicate_it,c_setq);
+  new_built_in(bi_module,"c_listing",predicate_it,c_listing);
+  new_built_in(bi_module,"print_codes",predicate_it,c_print_codes);
 
   /* File I/O */
-  new_built_in(bi_module,"get",(def_type)predicate_it,c_get);
-  new_built_in(bi_module,"put",(def_type)predicate_it,c_put);
-  new_built_in(bi_module,"open_in",(def_type)predicate_it,c_open_in);
-  new_built_in(bi_module,"open_out",(def_type)predicate_it,c_open_out);
-  new_built_in(bi_module,"set_input",(def_type)predicate_it,c_set_input);
-  new_built_in(bi_module,"set_output",(def_type)predicate_it,c_set_output);
-  new_built_in(bi_module,"exists_file",(def_type)predicate_it,c_exists);
-  new_built_in(bi_module,"close",(def_type)predicate_it,c_close);
-  new_built_in(bi_module,"simple_load",(def_type)predicate_it,c_load);
-  new_built_in(bi_module,"put_err",(def_type)predicate_it,c_put_err);
-  new_built_in(bi_module,"chdir",(def_type)predicate_it,c_chdir);
+  new_built_in(bi_module,"get",predicate_it,c_get);
+  new_built_in(bi_module,"put",predicate_it,c_put);
+  new_built_in(bi_module,"open_in",predicate_it,c_open_in);
+  new_built_in(bi_module,"open_out",predicate_it,c_open_out);
+  new_built_in(bi_module,"set_input",predicate_it,c_set_input);
+  new_built_in(bi_module,"set_output",predicate_it,c_set_output);
+  new_built_in(bi_module,"exists_file",predicate_it,c_exists);
+  new_built_in(bi_module,"close",predicate_it,c_close);
+  new_built_in(bi_module,"simple_load",predicate_it,c_load);
+  new_built_in(bi_module,"put_err",predicate_it,c_put_err);
+  new_built_in(bi_module,"chdir",predicate_it,c_chdir);
 
   /* Term I/O */
-  new_built_in(bi_module,"write",(def_type)predicate_it,c_write);
-  new_built_in(bi_module,"writeq",(def_type)predicate_it,c_writeq);
-  new_built_in(bi_module,"pretty_write",(def_type)predicate_it,c_pwrite);
-  new_built_in(bi_module,"pretty_writeq",(def_type)predicate_it,c_pwriteq);
-  new_built_in(bi_module,"write_canonical",(def_type)predicate_it,c_write_canonical);
-  new_built_in(bi_module,"page_width",(def_type)predicate_it,c_page_width);
-  new_built_in(bi_module,"print_depth",(def_type)predicate_it,c_print_depth);
-  new_built_in(bi_module,"put_err",(def_type)predicate_it,c_put_err);
-  new_built_in(bi_module,"parse",(def_type)function_it,c_parse);
-  new_built_in(bi_module,"read",(def_type)predicate_it,c_read_psi);
-  new_built_in(bi_module,"read_token",(def_type)predicate_it,c_read_token);
-  new_built_in(bi_module,"c_op",(def_type)predicate_it,c_op); /*  RM: Jan 13 1993  */
-  new_built_in(bi_module,"ops",(def_type)function_it,c_ops);
-  new_built_in(bi_module,"write_err",(def_type)predicate_it,c_write_err);
-  new_built_in(bi_module,"writeq_err",(def_type)predicate_it,c_writeq_err);
+  new_built_in(bi_module,"write",predicate_it,c_write);
+  new_built_in(bi_module,"writeq",predicate_it,c_writeq);
+  new_built_in(bi_module,"pretty_write",predicate_it,c_pwrite);
+  new_built_in(bi_module,"pretty_writeq",predicate_it,c_pwriteq);
+  new_built_in(bi_module,"write_canonical",predicate_it,c_write_canonical);
+  new_built_in(bi_module,"page_width",predicate_it,c_page_width);
+  new_built_in(bi_module,"print_depth",predicate_it,c_print_depth);
+  new_built_in(bi_module,"put_err",predicate_it,c_put_err);
+  new_built_in(bi_module,"parse",function_it,c_parse);
+  new_built_in(bi_module,"read",predicate_it,c_read_psi);
+  new_built_in(bi_module,"read_token",predicate_it,c_read_token);
+  new_built_in(bi_module,"c_op",predicate_it,c_op); /*  RM: Jan 13 1993  */
+  new_built_in(bi_module,"ops",function_it,c_ops);
+  new_built_in(bi_module,"write_err",predicate_it,c_write_err);
+  new_built_in(bi_module,"writeq_err",predicate_it,c_writeq_err);
 
   /* Type checks */
-  new_built_in(bi_module,"nonvar",(def_type)function_it,c_nonvar);
-  new_built_in(bi_module,"var",(def_type)function_it,c_var);
-  new_built_in(bi_module,"is_function",(def_type)function_it,c_is_function);
-  new_built_in(bi_module,"is_predicate",(def_type)function_it,c_is_predicate);
-  new_built_in(bi_module,"is_sort",(def_type)function_it,c_is_sort);
+  new_built_in(bi_module,"nonvar",function_it,c_nonvar);
+  new_built_in(bi_module,"var",function_it,c_var);
+  new_built_in(bi_module,"is_function",function_it,c_is_function);
+  new_built_in(bi_module,"is_predicate",function_it,c_is_predicate);
+  new_built_in(bi_module,"is_sort",function_it,c_is_sort);
   
-  /*  COMMENTED FOR LATER DJD
+    
   new_built_in(bi_module,
 	       disjunction->keyword->symbol,
-	       (def_type)function_it,
+	       function_it,
 	       c_eval_disjunction);
-  */
+  
   /*  RM: Dec 16 1992  So the symbol can be changed easily */
 
   
@@ -6016,121 +6016,121 @@ void init_built_in_types()
   insert_math_builtins();
 
   /* Comparison */
-  new_built_in(syntax_module,"<",(def_type)function_it,c_lt);  
-  new_built_in(syntax_module,"=<",(def_type)function_it,c_ltoe);  
-  new_built_in(syntax_module,">",(def_type)function_it,c_gt);  
-  new_built_in(syntax_module,">=",(def_type)function_it,c_gtoe);  
-  new_built_in(syntax_module,"=\\=",(def_type)function_it,c_diff);
-  new_built_in(syntax_module,"=:=",(def_type)function_it,c_equal);
-  new_built_in(syntax_module,"and",(def_type)function_it,c_and);
-  new_built_in(syntax_module,"or",(def_type)function_it,c_or);
-  new_built_in(syntax_module,"not",(def_type)function_it,c_not);
-  new_built_in(syntax_module,"xor",(def_type)function_it,c_xor);
-  new_built_in(syntax_module,"===",(def_type)function_it,c_same_address);
+  new_built_in(syntax_module,"<",function_it,c_lt);  
+  new_built_in(syntax_module,"=<",function_it,c_ltoe);  
+  new_built_in(syntax_module,">",function_it,c_gt);  
+  new_built_in(syntax_module,">=",function_it,c_gtoe);  
+  new_built_in(syntax_module,"=\\=",function_it,c_diff);
+  new_built_in(syntax_module,"=:=",function_it,c_equal);
+  new_built_in(syntax_module,"and",function_it,c_and);
+  new_built_in(syntax_module,"or",function_it,c_or);
+  new_built_in(syntax_module,"not",function_it,c_not);
+  new_built_in(syntax_module,"xor",function_it,c_xor);
+  new_built_in(syntax_module,"===",function_it,c_same_address);
   
   /* RM: Nov 22 1993  */
-  new_built_in(syntax_module,"\\===",(def_type)function_it,c_diff_address); 
+  new_built_in(syntax_module,"\\===",function_it,c_diff_address); 
 
   /* Psi-term navigation */
-  new_built_in(bi_module,"features",(def_type)function_it,c_features);
-  new_built_in(bi_module,"feature_values",(def_type)function_it,c_feature_values); /* RM: Mar  3 1994  */
+  new_built_in(bi_module,"features",function_it,c_features);
+  new_built_in(bi_module,"feature_values",function_it,c_feature_values); /* RM: Mar  3 1994  */
 
   /*  RM: Jul 20 1993  */
   
-  new_built_in(syntax_module,".",(def_type)function_it,c_project);/*  RM: Jul  7 1993  */
-  new_built_in(bi_module,"root_sort",(def_type)function_it,c_rootsort);
-  new_built_in(bi_module,"strip",(def_type)function_it,c_strip);
-  new_built_in(bi_module,"copy_pointer",(def_type)function_it,c_copy_pointer); /* PVR: Dec 17 1992 */
-  new_built_in(bi_module,"has_feature",(def_type)function_it,c_exist_feature); /* PVR: Dec 17 1992 */
+  new_built_in(syntax_module,".",function_it,c_project);/*  RM: Jul  7 1993  */
+  new_built_in(bi_module,"root_sort",function_it,c_rootsort);
+  new_built_in(bi_module,"strip",function_it,c_strip);
+  new_built_in(bi_module,"copy_pointer",function_it,c_copy_pointer); /* PVR: Dec 17 1992 */
+  new_built_in(bi_module,"has_feature",function_it,c_exist_feature); /* PVR: Dec 17 1992 */
 
   /* Unification and assignment */
-  new_built_in(syntax_module,"<-",(def_type)predicate_it,c_bk_assign);
-  /* new_built_in(syntax_module,"<<-",(def_type)predicate_it,c_assign);  RM: Feb 24 1993  */
+  new_built_in(syntax_module,"<-",predicate_it,c_bk_assign);
+  /* new_built_in(syntax_module,"<<-",predicate_it,c_assign);  RM: Feb 24 1993  */
   
   /*  RM: Feb 24 1993  */
-  new_built_in(syntax_module,"<<-",(def_type)predicate_it,c_global_assign);
-  /* new_built_in(syntax_module,"<<<-",(def_type)predicate_it,c_global_assign); */
+  new_built_in(syntax_module,"<<-",predicate_it,c_global_assign);
+  /* new_built_in(syntax_module,"<<<-",predicate_it,c_global_assign); */
   
   /*  RM: Feb  8 1993  */
-  new_built_in(syntax_module,"{}",(def_type)function_it,c_fail); /*  RM: Feb 16 1993  */
-  new_built_in(syntax_module,"=",(def_type)predicate_it,c_unify_pred);
-  new_built_in(syntax_module,"&",(def_type)function_it,c_unify_func);
-  new_built_in(bi_module,"copy_term",(def_type)function_it,c_copy_term);
-  /* UNI new_built_in(syntax_module,":",(def_type)function_it,c_unify_func); */
+  new_built_in(syntax_module,"{}",function_it,c_fail); /*  RM: Feb 16 1993  */
+  new_built_in(syntax_module,"=",predicate_it,c_unify_pred);
+  new_built_in(syntax_module,"&",function_it,c_unify_func);
+  new_built_in(bi_module,"copy_term",function_it,c_copy_term);
+  /* UNI new_built_in(syntax_module,":",function_it,c_unify_func); */
 
   /* Type hierarchy navigation */
   insert_type_builtins();
 
   /* String and character utilities */
-  new_built_in(bi_module,"str2psi",(def_type)function_it,c_string2psi);
-  new_built_in(bi_module,"psi2str",(def_type)function_it,c_psi2string);
-  new_built_in(bi_module,"int2str",(def_type)function_it,c_int2string);
-  new_built_in(bi_module,"asc",(def_type)function_it,c_ascii);
-  new_built_in(bi_module,"chr",(def_type)function_it,c_char);
+  new_built_in(bi_module,"str2psi",function_it,c_string2psi);
+  new_built_in(bi_module,"psi2str",function_it,c_psi2string);
+  new_built_in(bi_module,"int2str",function_it,c_int2string);
+  new_built_in(bi_module,"asc",function_it,c_ascii);
+  new_built_in(bi_module,"chr",function_it,c_char);
 
   /* Control */
-  new_built_in(syntax_module,"|",(def_type)function_it,c_such_that);
-  new_built_in(bi_module,"cond",(def_type)function_it,c_cond);
-  new_built_in(bi_module,"if",(def_type)function_it,c_cond);
-  new_built_in(bi_module,"eval",(def_type)function_it,c_eval);
-  new_built_in(bi_module,"evalin",(def_type)function_it,c_eval_inplace);
-  /* new_built_in(bi_module,"quote",(def_type)function_it,c_quote); */
-  /*new_built_in(bi_module,"call_once",(def_type)function_it,c_call_once);*/ /* DENYS: Jan 25 1995 */
-  /* new_built_in(bi_module,"call",(def_type)function_it,c_call); */
-  /* new_built_in(bi_module,"undefined",(def_type)function_it,c_fail); */ /* RM: Jan 13 1993 */
-  new_built_in(bi_module,"print_variables",(def_type)predicate_it,c_print_variables);
-  new_built_in(bi_module,"get_choice",(def_type)function_it,c_get_choice);
-  new_built_in(bi_module,"set_choice",(def_type)predicate_it,c_set_choice);
-  new_built_in(bi_module,"exists_choice",(def_type)function_it,c_exists_choice);
-  new_built_in(bi_module,"apply",(def_type)function_it,c_apply);
-  new_built_in(bi_module,"bool_pred",(def_type)predicate_it,c_boolpred);
+  new_built_in(syntax_module,"|",function_it,c_such_that);
+  new_built_in(bi_module,"cond",function_it,c_cond);
+  new_built_in(bi_module,"if",function_it,c_cond);
+  new_built_in(bi_module,"eval",function_it,c_eval);
+  new_built_in(bi_module,"evalin",function_it,c_eval_inplace);
+  /* new_built_in(bi_module,"quote",function_it,c_quote); */
+  /*new_built_in(bi_module,"call_once",function_it,c_call_once);*/ /* DENYS: Jan 25 1995 */
+  /* new_built_in(bi_module,"call",function_it,c_call); */
+  /* new_built_in(bi_module,"undefined",function_it,c_fail); */ /* RM: Jan 13 1993 */
+  new_built_in(bi_module,"print_variables",predicate_it,c_print_variables);
+  new_built_in(bi_module,"get_choice",function_it,c_get_choice);
+  new_built_in(bi_module,"set_choice",predicate_it,c_set_choice);
+  new_built_in(bi_module,"exists_choice",function_it,c_exists_choice);
+  new_built_in(bi_module,"apply",function_it,c_apply);
+  new_built_in(bi_module,"bool_pred",predicate_it,c_boolpred);
 
-  new_built_in(syntax_module,":-",(def_type)predicate_it,c_declaration);
-  new_built_in(syntax_module,"->",(def_type)predicate_it,c_declaration);
-  /* new_built_in(syntax_module,"::",(def_type)predicate_it,c_declaration); */
-  new_built_in(syntax_module,"<|",(def_type)predicate_it,c_declaration);
-  new_built_in(syntax_module,":=",(def_type)predicate_it,c_declaration);
-  new_built_in(syntax_module,";",(def_type)predicate_it,c_disj);
-  new_built_in(syntax_module,"!",(def_type)predicate_it,c_not_implemented);
-  new_built_in(syntax_module,",",(def_type)predicate_it,c_succeed);
-  new_built_in(bi_module,"abort",(def_type)predicate_it,c_abort);
-  new_built_in(bi_module,"halt",(def_type)predicate_it,c_halt);
-  new_built_in(bi_module,"succeed",(def_type)predicate_it,c_succeed);
-  new_built_in(bi_module,"repeat",(def_type)predicate_it,c_repeat);
-  new_built_in(bi_module,"fail",(def_type)predicate_it,c_fail);
-  /* new_built_in(bi_module,"freeze",(def_type)predicate_it,c_freeze); PVR 16.9.93 */
-  new_built_in(bi_module,"implies",(def_type)predicate_it,c_implies);
-  new_built_in(bi_module,"undo",(def_type)predicate_it,c_undo);
-  new_built_in(bi_module,"delay_check",(def_type)predicate_it,c_delay_check);
-  new_built_in(bi_module,"non_strict",(def_type)predicate_it,c_non_strict);
+  new_built_in(syntax_module,":-",predicate_it,c_declaration);
+  new_built_in(syntax_module,"->",predicate_it,c_declaration);
+  /* new_built_in(syntax_module,"::",predicate_it,c_declaration); */
+  new_built_in(syntax_module,"<|",predicate_it,c_declaration);
+  new_built_in(syntax_module,":=",predicate_it,c_declaration);
+  new_built_in(syntax_module,";",predicate_it,c_disj);
+  new_built_in(syntax_module,"!",predicate_it,c_not_implemented);
+  new_built_in(syntax_module,",",predicate_it,c_succeed);
+  new_built_in(bi_module,"abort",predicate_it,c_abort);
+  new_built_in(bi_module,"halt",predicate_it,c_halt);
+  new_built_in(bi_module,"succeed",predicate_it,c_succeed);
+  new_built_in(bi_module,"repeat",predicate_it,c_repeat);
+  new_built_in(bi_module,"fail",predicate_it,c_fail);
+  /* new_built_in(bi_module,"freeze",predicate_it,c_freeze); PVR 16.9.93 */
+  new_built_in(bi_module,"implies",predicate_it,c_implies);
+  new_built_in(bi_module,"undo",predicate_it,c_undo);
+  new_built_in(bi_module,"delay_check",predicate_it,c_delay_check);
+  new_built_in(bi_module,"non_strict",predicate_it,c_non_strict);
   
   /* System */
   insert_system_builtins();
 
-  new_built_in(bi_module,"strcon",(def_type)function_it,c_concatenate);
-  new_built_in(bi_module,"strlen",(def_type)function_it,c_string_length);
-  new_built_in(bi_module,"substr",(def_type)function_it,c_sub_string);
-  new_built_in(bi_module,"append_file",(def_type)predicate_it,c_append_file);
-  new_built_in(bi_module,"random",(def_type)function_it,c_random);
-  new_built_in(bi_module,"initrandom",(def_type)predicate_it,c_initrandom);
+  new_built_in(bi_module,"strcon",function_it,c_concatenate);
+  new_built_in(bi_module,"strlen",function_it,c_string_length);
+  new_built_in(bi_module,"substr",function_it,c_sub_string);
+  new_built_in(bi_module,"append_file",predicate_it,c_append_file);
+  new_built_in(bi_module,"random",function_it,c_random);
+  new_built_in(bi_module,"initrandom",predicate_it,c_initrandom);
 
   /*  RM: Jan  8 1993  */
-  new_built_in(bi_module,"set_module",(def_type)predicate_it,c_set_module);
-  new_built_in(bi_module,"open_module",(def_type)predicate_it,c_open_module);
-  new_built_in(bi_module,"public",(def_type)predicate_it,c_public);
-  new_built_in(bi_module,"private",(def_type)predicate_it,c_private);
-  new_built_in(bi_module,"display_modules",(def_type)predicate_it,c_display_modules);
-  new_built_in(bi_module,"trace_input",(def_type)predicate_it,c_trace_input);
-  new_built_in(bi_module,"substitute",(def_type)predicate_it,c_replace);
-  new_built_in(bi_module,"current_module",(def_type)function_it,c_current_module);
-  new_built_in(bi_module,"module_name",(def_type)function_it,c_module_name);
-  new_built_in(bi_module,"combined_name",(def_type)function_it,c_combined_name);
-  /* new_built_in(bi_module,"#",(def_type)function_it,c_module_access); */
+  new_built_in(bi_module,"set_module",predicate_it,c_set_module);
+  new_built_in(bi_module,"open_module",predicate_it,c_open_module);
+  new_built_in(bi_module,"public",predicate_it,c_public);
+  new_built_in(bi_module,"private",predicate_it,c_private);
+  new_built_in(bi_module,"display_modules",predicate_it,c_display_modules);
+  new_built_in(bi_module,"trace_input",predicate_it,c_trace_input);
+  new_built_in(bi_module,"substitute",predicate_it,c_replace);
+  new_built_in(bi_module,"current_module",function_it,c_current_module);
+  new_built_in(bi_module,"module_name",function_it,c_module_name);
+  new_built_in(bi_module,"combined_name",function_it,c_combined_name);
+  /* new_built_in(bi_module,"#",function_it,c_module_access); */
   
   /* Hack so '.set_up' doesn't issue a Warning message */
   /*  RM: Feb  3 1993  */
-//  hash_lookup(bi_module->symbol_table,"set_module")->wl_public=TRUE;  // DJD was crahing 
-  //hash_lookup(bi_module->symbol_table,"built_in")->wl_public=TRUE;
+  hash_lookup(bi_module->symbol_table,"set_module")->wl_public=TRUE;  // DJD was crahing 
+  hash_lookup(bi_module->symbol_table,"built_in")->wl_public=TRUE;
 
   /*  RM: Jan 29 1993  */
   abortsym=update_symbol(bi_module,"abort"); /* 26.1 */
@@ -6139,30 +6139,30 @@ void init_built_in_types()
 
   
   /*  RM: Feb  9 1993  */
-  new_built_in(bi_module,"global",(def_type)predicate_it,c_global);
-  new_built_in(bi_module,"persistent",(def_type)predicate_it,c_persistent);
-  new_built_in(bi_module,"display_persistent",(def_type)predicate_it,c_display_persistent);
-  new_built_in(bi_module,"alias",(def_type)predicate_it,c_alias);
+  new_built_in(bi_module,"global",predicate_it,c_global);
+  new_built_in(bi_module,"persistent",predicate_it,c_persistent);
+  new_built_in(bi_module,"display_persistent",predicate_it,c_display_persistent);
+  new_built_in(bi_module,"alias",predicate_it,c_alias);
 
   /*  RM: Mar 11 1993  */
-  new_built_in(bi_module,"private_feature",(def_type)predicate_it,c_private_feature);
+  new_built_in(bi_module,"private_feature",predicate_it,c_private_feature);
   add_module1=update_symbol(bi_module,"features");
   add_module2=update_symbol(bi_module,"str2psi");
   add_module3=update_symbol(bi_module,"feature_values"); /* RM: Mar  3 1994  */
 
   /*  RM: Jun 29 1993  */
-  new_built_in(bi_module,"split_double",(def_type)function_it,c_split_double);
-  new_built_in(bi_module,"string_address",(def_type)function_it,c_string_address);
+  new_built_in(bi_module,"split_double",function_it,c_split_double);
+  new_built_in(bi_module,"string_address",function_it,c_string_address);
 
   /*  RM: Jul 15 1993  */
-  new_built_in(bi_module,"deref_length",(def_type)function_it,c_deref_length);
+  new_built_in(bi_module,"deref_length",function_it,c_deref_length);
 
 
   /*  RM: Sep 20 1993  */
-  new_built_in(bi_module,"argv",(def_type)function_it,c_args);
+  new_built_in(bi_module,"argv",function_it,c_args);
 
   /* RM: Jan 28 1994  */
-  new_built_in(bi_module,"public_symbols",(def_type)function_it,all_public_symbols);
+  new_built_in(bi_module,"public_symbols",function_it,all_public_symbols);
 	       
 #ifdef CLIFE
   life_reals();

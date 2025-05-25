@@ -82,7 +82,7 @@ ptr_psi_term new_psi_term(long numargs,ptr_definition typ,ptr_psi_term **a1,ptr_
 long has_rules(ptr_pair_list r);
 long is_built_in(ptr_pair_list r);
 void list_special(ptr_psi_term t);
-void new_built_in(ptr_module m, const char *s,def_type t,long (*r)());
+void new_built_in(ptr_module m, const char *s,char t,long (*r)());
 long declare_operator(ptr_psi_term t);
 char *str_conc(char *s1,char *s2);
 char *sub_str(char *s,long p,long n);
@@ -267,7 +267,7 @@ void List_Cut (RefListHeader  header,Ref atom, RefListHeader newHeader);
 void get_two_args(ptr_node t, ptr_psi_term *a, ptr_psi_term *b);
 void get_one_arg(ptr_node t, ptr_psi_term *a);
 void get_one_arg_addr(ptr_node t, ptr_psi_term **a);
-void add_rule(ptr_psi_term head, ptr_psi_term body, def_type typ);
+void add_rule(ptr_psi_term head, ptr_psi_term body, char typ);
 void assert_rule(psi_term t, def_type typ);
 void assert_clause(ptr_psi_term t);
 void start_chrono();
