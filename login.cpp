@@ -2008,7 +2008,7 @@ long what_next_aim()
     for(i=1;i<=lev;i++) { *pr='-'; pr++; *pr='-'; pr++; }
     if (level>0)
       sprintf(pr,"%ld",level);
-    strcat(pr,PROMPT);
+    strcat(pr,str_constants->PROMPT);
     
     prompt=prompt_buffer;
   }
@@ -2182,7 +2182,7 @@ long load_aim()
       CURRENT_MODULE))->value);
       */
 	   
-    set_current_module(find_module((const char *)((ptr_psi_term)get_attr(input_state,(char*)CURRENT_MODULE))->value_3));
+    set_current_module(find_module((const char *)((ptr_psi_term)get_attr(input_state,str_constants->CURRENT_MODULE))->value_3));
   }
 
   

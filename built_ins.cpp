@@ -2776,7 +2776,7 @@ static long c_close()
     outclose=equal_types(arg1->type,stream) && arg1->value_3;
     inclose=FALSE;
     if (equal_types(arg1->type,inputfilesym)) {
-      ptr_node n=find(FEATCMP,(char*)STREAM,arg1->attr_list);
+      ptr_node n=find(FEATCMP,str_constants->STREAM,arg1->attr_list);
       if (n) {
         arg1=(ptr_psi_term)n->data;
         inclose=(arg1->value_3!=NULL);

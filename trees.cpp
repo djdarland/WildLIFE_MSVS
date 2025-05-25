@@ -32,7 +32,7 @@ long is_int(char **s, long *len, long *sgn)
 {
   char *sint; /* Ptr to first non-zero digit */
   char *stmp; /* Scratchpad for string ptr */
-
+  printf("trees is_int ****%s****\n", *s);
   /*
   { register char *p= *s;
     register char c= *p;
@@ -111,20 +111,20 @@ char *heap_ncopy_string(const char *s,int n)
 // char *s;
 // int n;
 {
-//  char *p;
-    GENERIC p;
+  char *p;
+//    GENERIC p;
 
   
   if (s==one || s==two) return (char*)s;
 
-  p=(GENERIC)heap_alloc(n+1);
+  p=(char*)heap_alloc(n+1);
    printf("DEBUG p = %p s = %p n = %p\n", (void*)p, (void*)s, (void*)n);
   
 //    exit(0);
 
-//   strncpy(p,s,n);
-   memcpy(p, s, n);
-  p[n]='\0';
+ strncpy(p,s,n);
+ //  memcpy(p, s, n);
+ //  p[n]='\0';
   
   return (char*)p;
 }
@@ -135,7 +135,7 @@ char *heap_ncopy_string(const char *s,int n)
 */
 char *heap_copy_string(const char *s)
 // char *s;
-{ return (char*)heap_ncopy_string(s,strlen(s)); }
+{ return (char*)heap_ncopy_string(s,strlen(s)+1); }
 
 
 

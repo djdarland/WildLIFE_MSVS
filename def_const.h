@@ -101,7 +101,7 @@
   In the final release, LOCALSETUP should be undefined. 
 */
 
-#define LOCALSETUPFILE	"./.set_up"
+// #define LOCALSETUPFILE	"./.set_up"
 
 /* RM: Mar 1 1994: replaced macros with variables. */
 
@@ -221,7 +221,7 @@
 
 */
 
-#define PROMPT "> "
+// #define PROMPT "> "
 
 /*! \def PROMPT_BUFFER
   \brief Size of prompt buffer 
@@ -235,7 +235,7 @@
 
 */
 
-#define MAX_LEVEL ((PROMPT_BUFFER-4-strlen(PROMPT))/2)
+#define MAX_LEVEL ((PROMPT_BUFFER-4-strlen(str_constants->PROMPT))/2)
 
 /*! \def XEVENTDELAY
   \brief Maximum number of goals executed between event polling 
@@ -879,70 +879,70 @@
   
 */
 
-#define STREAM "stream"
+// #define STREAM "stream"
 
 /*! \def INPUT_FILE_NAME
   \brief feature name
 
 */
 
-#define INPUT_FILE_NAME "input_file_name"
+// #define INPUT_FILE_NAME "input_file_name"
 
 /*! \def LINE_COUNT
   \brief feature name
 
 */
 
-#define LINE_COUNT "line_count"
+// #define LINE_COUNT "line_count"
 
 /*! \def START_OF_LINE
   \brief feature name
 
 */
 
-#define START_OF_LINE "start_of_line"
+// #define START_OF_LINE "start_of_line"
 
 /*! \def SAVED_CHAR
   \brief feature name
 
 */
 
-#define SAVED_CHAR "saved_char"
+// #define SAVED_CHAR "saved_char"
 
 /*! \def OLD_SAVED_CHAR
   \brief feature name
 
 */
 
-#define OLD_SAVED_CHAR "old_saved_char"
+// #define OLD_SAVED_CHAR "old_saved_char"
 
 /*! \def SAVED_PSI_TERM
   \brief feature name
 
 */
 
-#define SAVED_PSI_TERM "saved_psi_term"
+// #define SAVED_PSI_TERM "saved_psi_term"
 
 /*! \def OLD_SAVED_PSI_TERM
   \brief feature name
 
 */
 
-#define OLD_SAVED_PSI_TERM "old_saved_psi_term"
+// #define OLD_SAVED_PSI_TERM "old_saved_psi_term"
 
 /*! \def EOF_FLAG
   \brief feature name
 
 */
 
-#define EOF_FLAG "eof_flag"
+// #define EOF_FLAG "eof_flag"
 
 /*! \def CURRENT_MODULE
   \brief feature name
 
 */
 
-#define CURRENT_MODULE "current_module"
+// #define CURRENT_MODULE "current_module"
 
 // from xdisplaylist.h
 
@@ -1349,7 +1349,7 @@
 
 */
 
-#define DOTDOT ": "   /*  RM: Dec 14 1992, should be " : "  */
+// #define DOTDOT ": "   /*  RM: Dec 14 1992, should be " : "  */
 
 /*! \def NOTOP
   \brief used in pretty printing in print.c

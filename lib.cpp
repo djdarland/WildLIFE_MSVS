@@ -96,10 +96,10 @@ void init_system()
 
   /*  RM: Oct 13 1993  */
   if(current_module==user_module)
-    prompt=(char*)PROMPT;
+    prompt=str_constants->PROMPT;
   else {
     prompt=prompt_buffer;
-    sprintf(prompt_buffer,"%s%s",current_module->module_name,PROMPT);
+    sprintf(prompt_buffer,"%s%s",current_module->module_name,str_constants->PROMPT);
   }
     
   resid_aim=NULL;

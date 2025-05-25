@@ -227,7 +227,7 @@ GENERIC get_attr(ptr_psi_term t, char *attrname)
 FILE *get_stream(ptr_psi_term t)
 // ptr_psi_term t;
 {
-  return (FILE *) ((ptr_psi_term)get_attr(t,(char*)STREAM))->value_3;
+  return (FILE *) ((ptr_psi_term)get_attr(t,str_constants->STREAM))->value_3;
 }
 
 /***********************************************/
@@ -241,7 +241,7 @@ void save_state(ptr_psi_term t)
   ptr_node n;
   ptr_psi_term t1;
 
-  n=find(FEATCMP,(char*)STREAM,t->attr_list);
+  n=find(FEATCMP,str_constants->STREAM,t->attr_list);
   t1=(ptr_psi_term)n->data;
   t1->value_3=(GENERIC)input_stream;
 
@@ -249,24 +249,24 @@ void save_state(ptr_psi_term t)
   heap_mod_str_attr(t,CURRENT_MODULE,current_module->module_name);
   */
   
-  heap_mod_str_attr(t,(char*)INPUT_FILE_NAME,input_file_name);
-  heap_mod_int_attr(t,(char*)LINE_COUNT,line_count);
-  heap_mod_int_attr(t,(char*)SAVED_CHAR,saved_char);
-  heap_mod_int_attr(t,(char*)OLD_SAVED_CHAR,old_saved_char);
+  heap_mod_str_attr(t,str_constants->INPUT_FILE_NAME,input_file_name);
+  heap_mod_int_attr(t,str_constants->LINE_COUNT,line_count);
+  heap_mod_int_attr(t,str_constants->SAVED_CHAR,saved_char);
+  heap_mod_int_attr(t,str_constants->OLD_SAVED_CHAR,old_saved_char);
 
   t1=saved_psi_term?saved_psi_term:null_psi_term;
-  heap_add_psi_attr(t, (char*)SAVED_PSI_TERM, t1);
+  heap_add_psi_attr(t, str_constants->SAVED_PSI_TERM, t1);
 
   t1=old_saved_psi_term?old_saved_psi_term:null_psi_term;
-  heap_add_psi_attr(t,(char*)OLD_SAVED_PSI_TERM,t1);
+  heap_add_psi_attr(t,str_constants->OLD_SAVED_PSI_TERM,t1);
 
   t1=heap_psi_term(4);
   t1->type=(eof_flag?lf_true:lf_false);
-  heap_add_psi_attr(t,(char*)EOF_FLAG,t1);
+  heap_add_psi_attr(t,str_constants->EOF_FLAG,t1);
 
   t1=heap_psi_term(4);
   t1->type=(start_of_line?lf_true:lf_false);
-  heap_add_psi_attr(t,(char*)START_OF_LINE,t1);
+  heap_add_psi_attr(t,str_constants->START_OF_LINE,t1);
 }
 
 
@@ -279,22 +279,22 @@ void restore_state(ptr_psi_term t)
   char *str;
 
   
-  input_stream = (FILE *) ((ptr_psi_term)get_attr(t,(char*)STREAM))->value_3;
-  str = (char*) ((ptr_psi_term)get_attr(t,(char*)INPUT_FILE_NAME))->value_3;
+  input_stream = (FILE *) ((ptr_psi_term)get_attr(t,str_constants->STREAM))->value_3;
+  str = (char*) ((ptr_psi_term)get_attr(t,str_constants->INPUT_FILE_NAME))->value_3;
   strcpy(input_file_name,str);
   /* for (i=0;i++;i<=strlen(str)) input_file_name[i]=str[i]; */
-  line_count = *(REAL *) ((ptr_psi_term)get_attr(t,(char*)LINE_COUNT))->value_3;
-  saved_char = *(REAL *) ((ptr_psi_term)get_attr(t,(char*)SAVED_CHAR))->value_3;
-  old_saved_char= *(REAL *)((ptr_psi_term)get_attr(t,(char*)OLD_SAVED_CHAR))->value_3;
+  line_count = *(REAL *) ((ptr_psi_term)get_attr(t,str_constants->LINE_COUNT))->value_3;
+  saved_char = *(REAL *) ((ptr_psi_term)get_attr(t,str_constants->SAVED_CHAR))->value_3;
+  old_saved_char= *(REAL *)((ptr_psi_term)get_attr(t,str_constants->OLD_SAVED_CHAR))->value_3;
 
-  saved_psi_term=(ptr_psi_term)get_attr(t,(char*)SAVED_PSI_TERM);
+  saved_psi_term=(ptr_psi_term)get_attr(t,str_constants->SAVED_PSI_TERM);
   if (saved_psi_term==null_psi_term) saved_psi_term=NULL;
 
-  old_saved_psi_term=(ptr_psi_term)get_attr(t,(char*)OLD_SAVED_PSI_TERM);
+  old_saved_psi_term=(ptr_psi_term)get_attr(t,str_constants->OLD_SAVED_PSI_TERM);
   if (old_saved_psi_term==null_psi_term) old_saved_psi_term=NULL;
 
-  eof_flag = ((ptr_psi_term)get_attr(t,(char*)EOF_FLAG))->type==lf_true;
-  start_of_line = ((ptr_psi_term)get_attr(t,(char*)START_OF_LINE))->type==lf_true;
+  eof_flag = ((ptr_psi_term)get_attr(t,str_constants->EOF_FLAG))->type==lf_true;
+  start_of_line = ((ptr_psi_term)get_attr(t,str_constants->START_OF_LINE))->type==lf_true;
 
   
   /*  RM: Jan 27 1993
@@ -317,10 +317,10 @@ void new_state(ptr_psi_term *t)
   t1=heap_psi_term(4);
   t1->type=stream;
   t1->value_3=(GENERIC)input_stream;
-  heap_add_psi_attr(*t,(char*)STREAM,t1);
+  heap_add_psi_attr(*t,str_constants->STREAM,t1);
 
   /*  RM: Jan 27 1993  */
-  heap_add_str_attr(*t,(char*)CURRENT_MODULE,current_module->module_name);
+  heap_add_str_attr(*t,str_constants->CURRENT_MODULE,current_module->module_name);
   
   /*
     printf("Creating new state for file '%s', module '%s'\n",
@@ -328,24 +328,24 @@ void new_state(ptr_psi_term *t)
     current_module->module_name);
     */
   
-  heap_add_str_attr(*t,(char*)INPUT_FILE_NAME,input_file_name);
-  heap_add_int_attr(*t,(char*)LINE_COUNT,line_count);
-  heap_add_int_attr(*t,(char*)SAVED_CHAR,saved_char);
-  heap_add_int_attr(*t,(char*)OLD_SAVED_CHAR,old_saved_char);
+  heap_add_str_attr(*t,str_constants->INPUT_FILE_NAME,input_file_name);
+  heap_add_int_attr(*t,str_constants->LINE_COUNT,line_count);
+  heap_add_int_attr(*t,str_constants->SAVED_CHAR,saved_char);
+  heap_add_int_attr(*t,str_constants->OLD_SAVED_CHAR,old_saved_char);
 
   t1=saved_psi_term?saved_psi_term:null_psi_term;
-  heap_add_psi_attr(*t,(char*)SAVED_PSI_TERM,t1);
+  heap_add_psi_attr(*t,str_constants->SAVED_PSI_TERM,t1);
 
   t1=old_saved_psi_term?old_saved_psi_term:null_psi_term;
-  heap_add_psi_attr(*t,(char*)OLD_SAVED_PSI_TERM,t1);
+  heap_add_psi_attr(*t,str_constants->OLD_SAVED_PSI_TERM,t1);
 
   t1=heap_psi_term(4);
   t1->type=(eof_flag?lf_true:lf_false);
-  heap_add_psi_attr(*t,(char*)EOF_FLAG,t1);
+  heap_add_psi_attr(*t,str_constants->EOF_FLAG,t1);
 
   t1=heap_psi_term(4);
   t1->type=(start_of_line?lf_true:lf_false);
-  heap_add_psi_attr(*t,(char*)START_OF_LINE,t1);
+  heap_add_psi_attr(*t,str_constants->START_OF_LINE,t1);
 }
 
 
@@ -427,7 +427,7 @@ void begin_terminal_io()
 
   if (inchange) {
     old_state=input_state;
-    open_input_file((char*)"stdin");
+    open_input_file(str_constants->STDIN);
   }
 }
 
@@ -537,7 +537,7 @@ long open_input_file(char *file)
   
   if (input_stream==NULL) {
     Errorline("file '%s' does not exist.\n",file);
-    file=(char*)"stdin";
+    file=str_constants->STDIN;
     input_stream=stdin;
     noisy=TRUE;
     ok=FALSE;
@@ -1224,9 +1224,8 @@ void read_token_main(ptr_psi_term tok, long for_parser)
       put_back_char(c);
       c=0;
     }
-  } while(c && c!=EOF);
-  
-  if (for_parser) prompt=(char*) "|    ";
+  } while (c && c != EOF);
+  if (for_parser) prompt=str_constants->PROMPT2;
 }
 
 /****************************************************************************/
