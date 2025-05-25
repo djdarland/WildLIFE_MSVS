@@ -1103,9 +1103,9 @@ long check_out(ptr_psi_term t)
 /********************************************************************/
 
 static long deref_flag;
-void deref_rec_body();
-void deref_rec_args();
-void deref_rec_args_exc();
+// void deref_rec_body();
+// void deref_rec_args();
+// void deref_rec_args_exc();
 
 /* Ensure evaluation of top of psi-term */
 long deref_eval(ptr_psi_term t)

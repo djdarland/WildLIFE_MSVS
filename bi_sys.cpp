@@ -312,32 +312,10 @@ static long c_localtime()
 */
 static long c_statistics()
 {
-  ptr_psi_term t;
-  long success=TRUE;
-  long t1,t2,t3;
-
-  t=aim->aaaa_1;
-  deref_args(t,set_empty);
-
-  t1 = sizeof(mem_base)*(stack_pointer-mem_base);
-  t2 = sizeof(mem_base)*(mem_limit-heap_pointer);
-  t3 = sizeof(mem_base)*(mem_limit-mem_base);
-
-  printf("\n");
-  /* printf("************** SYSTEM< INFORMATION **************\n"); */
-  printf("Stack size  : %8ld bytes (%5ldK) (%ld%%)\n",t1,t1/1024,100*t1/t3);
-  printf("Heap size   : %8ld bytes (%5ldK) (%ld%%)\n",t2,t2/1024,100*t2/t3);
-  printf("Total memory: %8ld bytes (%5ldK)\n",t3,t3/1024);
-
-#ifdef X11
-  printf("X predicates are installed.\n");
-#else
-  printf("X predicates are not installed.\n");
-#endif
-  
-  /* printf("\n"); */
-  /* printf("************************************************\n"); */
-  return success;
+    long success;
+    success = wl_alloc::statistics();
+    
+    return success;
 }
 
 

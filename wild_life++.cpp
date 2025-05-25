@@ -69,7 +69,8 @@ int main(int argc, char *argv[])  // REV401PLUS correct main proto.
 
 
   init_io();
-  init_memory();
+  wl_mem = new wl_alloc();
+  // init_memory();
   exit_if_true(!mem_base || !other_base);
   assert(stack_pointer==mem_base); /* 8.10 */
   init_copy();

@@ -1,3 +1,4 @@
+#pragma once
 /*! \file def_proto.h
   \brief prototypes
 
@@ -338,7 +339,7 @@ void print_gc_info(long timeflag);
 void garbage();
 GENERIC heap_alloc(unsigned long s);
 GENERIC stack_alloc(unsigned long s);
-void init_memory ();
+// void init_memory ();
 long memory_check ();
 
 

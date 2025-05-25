@@ -1,3 +1,4 @@
+#pragma once
 /*! \file def_macro.h
   \brief macros
 
@@ -307,13 +308,7 @@
 #define Traceline  if (0) traceline
 #endif
 
-#ifdef TS
-extern void push_psi_ptr_value(); /* 9.6 */
-extern unsigned long global_time_stamp; /* 9.6 */
-/* Trail if q was last modified before the topmost choice point */
-#define TRAIL_CONDITION(Q) (choice_stack && \
-                            choice_stack->time_stamp>=Q->time_stamp)
-#endif
+
 
 #define dennis_debug(str) printf ("This is line %d of file \"%s\" in function \"%s\" str = %s.\n",	__LINE__, __FILE__,__FUNCTION__,str);
 // #define dennis_debug(str) 

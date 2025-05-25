@@ -1,3 +1,4 @@
+#pragma once
 /*
  * Definitions etc. for regexp(3) routines.
  *

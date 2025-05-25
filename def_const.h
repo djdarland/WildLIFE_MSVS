@@ -214,6 +214,7 @@
   \brief Size of print buffer 
 
 */
+#pragma once
 #define PRINT_BUFFER 100000L
 
 /*! \def PROMPT

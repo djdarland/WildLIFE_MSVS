@@ -61,7 +61,7 @@ void title()
 
   printf("num_tat = %s len = %ld, sign = %ld val = %ld\n", str_constants->num_tst, len, sign,val);
 
-  // exit(0);
+   exit(0); // TEMP for DEBUGGING DJD
   
 #ifndef X11
   printf("X interface not installed.\n");

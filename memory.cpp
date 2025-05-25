@@ -1738,7 +1738,7 @@ long memory_check ()
 
 #endif
 
-#ifdef REVISED
+#ifndef REVISED
 /****************************************************************************
 
   MEMORY ALLOCATION ROUTINES.

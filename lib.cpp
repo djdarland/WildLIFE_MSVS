@@ -141,7 +141,8 @@ void WFInit(long argc, char *argv[])
   quietflag = TRUE; /*  RM: Mar 31 1993  */
   
   init_io();
-  init_memory();
+  wl_mem = new wl_alloc();
+//  init_memory();
   exit_if_true(!mem_base || !other_base);
   assert(stack_pointer==mem_base); /* 8.10 */
   init_copy();

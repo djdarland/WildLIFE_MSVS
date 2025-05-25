@@ -40,6 +40,7 @@
 
 
 #endif
+#pragma once
 // #include <sys/wait.h>
 #include <sys/stat.h>
 #include <limits.h>
@@ -59,5 +60,6 @@
 #include "def_const.h"
 #include "def_macro.h"
 #include "def_struct.h"
+#include "wl_alloc.h"
 #include "def_glob.h"
 #include "def_proto.h"

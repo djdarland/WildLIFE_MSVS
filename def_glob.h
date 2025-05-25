@@ -1,10 +1,13 @@
+#pragma once
 /*! \file def_glob.h
   \brief globals
   
 */
+class wl_alloc;
 
 EXTERN str_const* str_constants;
 
+EXTERN wl_alloc* wl_mem;
 
 // from extern.h
 
@@ -29,47 +32,7 @@ EXTERN int arg_c;
 
 EXTERN char *arg_v[ARGNN]; // Modified DJD
 
-/*! \var alloc_words
-  \brief number of words to allocate - from either command lind or ALLOC_WORDS define
 
-*/
-
-EXTERN unsigned long alloc_words;
-
-/*! \var mem_size
-  \brief number of words from memory = alloc_words * sizeof word 
-
-*/
-
-EXTERN unsigned long mem_size;
-
-/*! \var mem_base
-  \brief mem_size memory allocated in init_memory by malloc 
-
-*/
-
-EXTERN GENERIC mem_base;
-
-/*! \var heap_pointer
-  \brief used to allocate from heap - size allocated subtracted - adj for alignment
-
-*/
-
-EXTERN GENERIC heap_pointer;
-
-/*! mem_limit
-  \brief starting point of heap - mem_base aligned
-
-*/
-
-EXTERN GENERIC mem_limit;
-
-/*! \var stack_pointer
-  \brief used to allocate from stack - size allocated added - adj for alignment
-
-*/
-
-EXTERN GENERIC stack_pointer;
 
 /*! \var garbage_time
   \brief total time on garbage collections - seconds
