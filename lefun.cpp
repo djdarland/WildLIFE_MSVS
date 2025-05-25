@@ -1009,45 +1009,58 @@ long check_out(ptr_psi_term t)
 // ptr_psi_term t;
 {
   long flag=FALSE;
+  static int cnt = 0;
   
+ 
   deref_ptr(t);
 
   /* Traceline("PVR: entering check_out with status %d and term %P\n",
             t->status,t); for brunobug.lf PVR 14.2.94 */
 
-  if (t->status || (GENERIC)t>=heap_pointer) /*  RM: Feb  8 1993  */
-    flag=TRUE;
+  if (t->status || (GENERIC)t >= heap_pointer) /*  RM: Feb  8 1993  */
+  {
+      prt("lefun check out A");
+      
+      flag = TRUE;
+  }
   else {
     t->status |= RMASK;
 
     switch(t->type->wl_type) { /*  RM: Feb  8 1993  */
       
     case function_it:
+        prt("lefun check out case function TOP");
       if (check_func_flag) {
+          prt("lefun check out case function IF");
 	check_func(t);
 	flag=TRUE;
       }
       else {
+          prt("lefun check out case function ELSE");
 	/* Function evaluation handled during matching and unification */
 	flag=TRUE;
       }
       break;
 
     case type_it:
+        prt("lefun check out case TYPE");
       flag=check_type(t);
       break;
 
     case global_it: /*  RM: Feb  8 1993  */
-      eval_global_var(t);
-      check_out(t);
+        prt("lefun check out case GLOBAL");
+        eval_global_var(t);
+       check_out(t);
       flag=FALSE;
       break;
       
     default:
+        prt("lefun check out case function DEFAULT");
       flag=eval_args(t->attr_list);
     }
     t->status &= ~RMASK;
   }
+ 
   return flag;	
 }
 
