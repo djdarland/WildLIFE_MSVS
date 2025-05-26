@@ -61,5 +61,6 @@
 #include "def_macro.h"
 #include "def_struct.h"
 #include "wl_alloc.h"
+#include "wl_node.h"
 #include "def_glob.h"
 #include "def_proto.h"

@@ -684,7 +684,7 @@ EXTERN ptr_module syntax_module;
 
 */
 
-EXTERN ptr_node module_table;     
+EXTERN wl_node * module_table;     
 
 /*! \var current_module
   \brief The current module for the tokenizer 
@@ -949,7 +949,7 @@ EXTERN FILE *outfile;
 EXTERN ptr_definition sys_bytedata; /* DENYS: BYTEDATA */
 
 // from token.c
-EXTERN ptr_node symbol_table;
+EXTERN wl_node * symbol_table;
 
 /* For parsing from a string */
 /****************************************************************************/
@@ -968,10 +968,10 @@ EXTERN ptr_int_list adults,children;
 
 // EXTERN long parser_stack_index;
 
-EXTERN ptr_node var_tree;
-EXTERN ptr_node printed_vars;
-EXTERN ptr_node printed_pointers;
-EXTERN ptr_node pointer_names;
+EXTERN wl_node * var_tree;
+EXTERN wl_node * printed_vars;
+EXTERN wl_node * printed_pointers;
+EXTERN wl_node * pointer_names;
 EXTERN long gen_sym_counter;
 
 EXTERN long noisy;

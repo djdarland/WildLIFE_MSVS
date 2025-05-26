@@ -102,7 +102,7 @@ long unchecked (GENERIC *p, long len);
  void check_operator_data(ptr_operator_data *op);
 void check_hash_table();          /*  RM: Feb  3 1993  */
  void check_module_list(ptr_int_list *c);    /*  RM: Jan 12 1993  */
- void check_module_tree(ptr_node *n);    /*  RM: Jan 13 1993  */
+ void check_module_tree(wl_node **n);    /*  RM: Jan 13 1993  */
 
  void check_module(ptr_module *m);        /*  RM: Jan 12 1993  */
      
@@ -113,13 +113,13 @@ void check_hash_table(ptr_hash_table table); /*  RM: Feb  3 1993  */
 void check_definition_list();   /*  RM: Feb 15 1993  */
  void check_def_code(ptr_definition *d);
  void check_def_rest(ptr_definition *d);
- void check_symbol(ptr_node *n);
+ void check_symbol(wl_node * *n);
  void check_type_disj(ptr_int_list *p);
  void check_goal_stack(ptr_goal *g);
  void check_resid(ptr_residuation *r);
 void check_resid_block(ptr_resid_block *rb);
 void check_psi_term(ptr_psi_term *t);
-void check_attr(ptr_node *n);
+void check_attr(wl_node * *n);
 void check_gamma_code();
  void check_gamma_rest();
  void check_undo_stack(ptr_stack *s);
@@ -128,7 +128,7 @@ void check_gamma_code();
  void check_special_addresses();
  void check_psi_list(ptr_int_list *l);
  void check_resid_list(ptr_resid_list *l);
- void check_var(ptr_node *n);
+ void check_var(wl_node * *n);
  void check();
 void print_gc_info(long timeflag);
 

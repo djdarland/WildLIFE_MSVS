@@ -155,6 +155,7 @@
     <ClCompile Include="types.cpp" />
     <ClCompile Include="wild_life++.cpp" />
     <ClCompile Include="wl_alloc.cpp" />
+    <ClCompile Include="wl_node.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="defs.h" />
@@ -168,6 +169,7 @@
     <ClInclude Include="regexp\regmagic.h" />
     <ClInclude Include="str_const.h" />
     <ClInclude Include="wl_alloc.h" />
+    <ClInclude Include="wl_node.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

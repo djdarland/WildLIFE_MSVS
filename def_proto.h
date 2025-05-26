@@ -8,11 +8,11 @@ void prt(const char*);
 #ifdef ARITY
 void arity_init();
 void arity_end();
-void rec_print_feat(ptr_node n);sys
-void print_features(ptr_node u);
-int check_equal(ptr_node u,ptr_node v);
+void rec_print_feat(wl_node * n);sys
+void print_features(wl_node * u);
+int check_equal(wl_node * u,wl_node * v);
 void arity_unify(ptr_psi_term u, ptr_psi_term v);
-void arity_merge(ptr_node u, ptr_node v);
+void arity_merge(wl_node * u, wl_node * v);
 void arity_add(ptr_psi_term u, char *s);
 #endif
 
@@ -58,7 +58,7 @@ ptr_psi_term stack_int(long n);
 ptr_psi_term stack_string(char *c);
 ptr_psi_term stack_bytes(char *s,int n);
 long psi_to_string(ptr_psi_term t,char **fn);
-ptr_psi_term make_feature_list(ptr_node tree,ptr_psi_term tail,ptr_module module, int val);
+ptr_psi_term make_feature_list(wl_node * tree,ptr_psi_term tail,ptr_module module, int val);
 long check_real(ptr_psi_term t,REAL *v,long *n);
 long get_real_value(ptr_psi_term t,REAL *v,long *n);
 void unify_bool_result(ptr_psi_term t,long v);
@@ -70,15 +70,15 @@ void exit_life(long nl_flag);
 long c_abort();
 long abort_life(int nlflag);
 long pred_clause(ptr_psi_term t, long r, ptr_psi_term  g);
-void global_error_check(ptr_node n,long *error,long *eval2); // REV401PLUS ->long
-void global_tree(ptr_node n);
+void global_error_check(wl_node * n,long *error,long *eval2); // REV401PLUS ->long
+void global_tree(wl_node * n);
 void global_one(ptr_psi_term t);
-void persistent_error_check(ptr_node n,long *error);  // REV401PLUS ->long
-void persistent_tree(ptr_node n);
+void persistent_error_check(wl_node * n,long *error);  // REV401PLUS ->long
+void persistent_tree(wl_node * n);
 void persistent_one(ptr_psi_term t);
 long hidden_type(ptr_definition t);
 ptr_psi_term collect_symbols(long sel);
-ptr_node one_attr();
+wl_node * one_attr();
 ptr_psi_term new_psi_term(long numargs,ptr_definition typ,ptr_psi_term **a1,ptr_psi_term **a2);
 long has_rules(ptr_pair_list r);
 long is_built_in(ptr_pair_list r);
@@ -108,21 +108,21 @@ ptr_psi_term quote_copy(ptr_psi_term t,long heap_flag);
 ptr_psi_term eval_copy(ptr_psi_term t,long heap_flag);
 ptr_psi_term inc_heap_copy(ptr_psi_term t);
 ptr_psi_term copy(ptr_psi_term t,long copy_flag,long heap_flag);
-ptr_node distinct_tree(ptr_node t);
+wl_node * distinct_tree(wl_node * t);
 ptr_psi_term distinct_copy(ptr_psi_term t);
 void mark_quote_c(ptr_psi_term t,long heap_flag);
-void mark_quote_tree_c(ptr_node n,long heap_flag);
+void mark_quote_tree_c(wl_node * n,long heap_flag);
 void mark_eval(ptr_psi_term t);
 void mark_nonstrict(ptr_psi_term t);
 void mark_quote_new2(ptr_psi_term t);
 void mark_eval_new(ptr_psi_term t);
-void mark_eval_tree_new(ptr_node n);
+void mark_eval_tree_new(wl_node * n);
 void mark_quote_new(ptr_psi_term t);
-void mark_quote_tree_new(ptr_node n);
+void mark_quote_tree_new(wl_node * n);
 void mark_quote(ptr_psi_term t);
-void mark_quote_tree(ptr_node t);
+void mark_quote_tree(wl_node * t);
 void bk_mark_quote(ptr_psi_term t);
-void bk_mark_quote_tree(ptr_node t);
+void bk_mark_quote_tree(wl_node * t);
 // from error.c
 
 void stack_info(FILE *outfile);
@@ -200,13 +200,13 @@ void release_resid(ptr_psi_term t);
 void release_resid_notrail(ptr_psi_term t);
 void append_resid(ptr_psi_term u, ptr_psi_term v);
 long eval_aim();
-void match_attr1(ptr_node *u,ptr_node v,ptr_resid_block rb); // no * v
-void match_attr2(ptr_node *u,ptr_node v,ptr_resid_block rb); // no * v
-void match_attr3(ptr_node *u,ptr_node v,ptr_resid_block rb); // no * v
-void match_attr(ptr_node *u,ptr_node v,ptr_resid_block rb); // no * v
+void match_attr1(wl_node * *u,wl_node * v,ptr_resid_block rb); // no * v
+void match_attr2(wl_node * *u,wl_node * v,ptr_resid_block rb); // no * v
+void match_attr3(wl_node * *u,wl_node * v,ptr_resid_block rb); // no * v
+void match_attr(wl_node * *u,wl_node * v,ptr_resid_block rb); // no * v
 long match_aim();
-long i_eval_args(ptr_node n);
-long eval_args(ptr_node n);
+long i_eval_args(wl_node * n);
+long eval_args(wl_node * n);
 void check_disj(ptr_psi_term t);
 void check_func(ptr_psi_term t);
 long check_type(ptr_psi_term t);
@@ -216,10 +216,10 @@ long check_out(ptr_psi_term t);
 long deref_eval(ptr_psi_term t);
 long deref_rec_eval(ptr_psi_term t);
 void deref_rec_body(ptr_psi_term t);
-void deref_rec_args(ptr_node n);
+void deref_rec_args(wl_node * n);
 long deref_args_eval(ptr_psi_term t,long set);
 long in_set(char *str,long set);
-void deref_rec_args_exc(ptr_node n,long set);
+void deref_rec_args_exc(wl_node * n,long set);
 void deref2_eval(ptr_psi_term t);
 void deref2_rec_eval(ptr_psi_term t);
 void save_resid(ptr_resid_block rb,ptr_psi_term match_date);
@@ -228,14 +228,14 @@ void eval_global_var(ptr_psi_term t);
 void init_global_vars();
 // from lib.c
 
-char **group_features(char **f, ptr_node n);
+char **group_features(char **f, wl_node * n);
 void exit_if_true(long exitflag);
 void init_io();
 void init_system();
 void WFInit(long argc, char **argv);
 int WFInput(char *query);
 PsiTerm WFGetVar(char *name);
-int WFfeature_count_loop(ptr_node n);
+int WFfeature_count_loop(wl_node * n);
 int WFFeatureCount(ptr_psi_term psi);
 char *WFType(ptr_psi_term psi);
 char **WFFeatures(ptr_psi_term psi);
@@ -265,9 +265,9 @@ void List_Cut (RefListHeader  header,Ref atom, RefListHeader newHeader);
 
 // from login.c
 
-void get_two_args(ptr_node t, ptr_psi_term *a, ptr_psi_term *b);
-void get_one_arg(ptr_node t, ptr_psi_term *a);
-void get_one_arg_addr(ptr_node t, ptr_psi_term **a);
+void get_two_args(wl_node * t, ptr_psi_term *a, ptr_psi_term *b);
+void get_one_arg(wl_node * t, ptr_psi_term *a);
+void get_one_arg_addr(wl_node * t, ptr_psi_term **a);
 void add_rule(ptr_psi_term head, ptr_psi_term body, char typ);
 void assert_rule(psi_term t, def_type typ);
 void assert_clause(ptr_psi_term t);
@@ -284,14 +284,14 @@ void undo(ptr_stack limit);
 void undo_actions();
 void backtrack();
 void clean_undo_window(long disp,long wind);
-void merge1(ptr_node *u, ptr_node v);  // no * v
-void merge2(ptr_node *u, ptr_node v);  // no * v
-void merge3(ptr_node *u, ptr_node v);  // no * v
-void merge(ptr_node *u, ptr_node v);  // no * v
-void merge_unify(ptr_node *u, ptr_node v);  // no * v
+void merge1(wl_node * *u, wl_node * v);  // no * v
+void merge2(wl_node * *u, wl_node * v);  // no * v
+void merge3(wl_node * *u, wl_node * v);  // no * v
+void merge(wl_node * *u, wl_node * v);  // no * v
+void merge_unify(wl_node * *u, wl_node * v);  // no * v
 void show_count();
 void fetch_def( ptr_psi_term u, long allflag);
-void fetch_def_lazy(ptr_psi_term u, ptr_definition old1, ptr_definition old2,    ptr_node old1attr, ptr_node old2attr, long old1stat, long old2stat);
+void fetch_def_lazy(ptr_psi_term u, ptr_definition old1, ptr_definition old2,    wl_node * old1attr, wl_node * old2attr, long old1stat, long old2stat);
 long unify_aim_noeval();
 long unify_aim();
 long unify_body(long eval_flag);
@@ -301,7 +301,7 @@ void type_disj_aim();
 long clause_aim(long r);
 long no_choices();
 long num_choices();
-long num_vars(ptr_node vt);
+long num_vars(wl_node * vt);
 long what_next_cut();
 ptr_choice_point topmost_what_next();
 void reset_stacks();
@@ -333,7 +333,7 @@ void check_definition(ptr_definition *d);
 void check_definition_list();
 void check_resid_block(ptr_resid_block *rb);
 void check_psi_term(ptr_psi_term *t);
-void check_attr(ptr_node *n);
+void check_attr(wl_node * *n);
 void check_gamma_code();
 void print_gc_info(long timeflag);
 void garbage();
@@ -365,10 +365,10 @@ void pretty_symbol(ptr_keyword k);
 void pretty_quote_symbol(ptr_keyword k);
 long c_set_module();
 long c_open_module();
-void open_module_tree(ptr_node n,int *onefailed);
+void open_module_tree(wl_node * n,int *onefailed);
 void open_module_one(ptr_psi_term t,int *onefailed);
 long make_public(ptr_psi_term term,long wl_bool);
-void traverse_tree(ptr_node n,int flag);
+void traverse_tree(wl_node * n,int flag);
 long c_public();
 long c_private();
 long c_display_modules();
@@ -376,12 +376,12 @@ long c_display_persistent();
 long c_trace_input();
 void replace(ptr_definition old,ptr_definition wl_new, ptr_psi_term term);
 void rec_replace(ptr_definition old, ptr_definition wl_new, ptr_psi_term term);
-void replace_attr(ptr_node old_attr,ptr_psi_term term,ptr_definition old, ptr_definition wl_new);
+void replace_attr(wl_node * old_attr,ptr_psi_term term,ptr_definition old, ptr_definition wl_new);
 long c_replace();
 long c_current_module();
 long c_module_access();
 int global_unify(ptr_psi_term u,  ptr_psi_term v);
-int global_unify_attr(ptr_node u, ptr_node v);
+int global_unify_attr(wl_node * u, wl_node * v);
 long c_alias();
 int get_module(ptr_psi_term psi, ptr_module *module);
 int make_feature_private(ptr_psi_term term);
@@ -398,7 +398,7 @@ long look();
 long precedence(psi_term tok,long typ);
 ptr_psi_term stack_copy_psi_term(psi_term t); // added ptr_ to arg REV401PLUS -- LATER Had to take ptr_ back out - conflict in built_ins.c
 ptr_psi_term heap_copy_psi_term(psi_term t);  // added ptr_ to arg REV401PLUS -- LATER Had to take ptr_ back out - conflict in built_ins.c (to match above)
-void feature_insert(char *keystr,ptr_node *tree,ptr_psi_term psi);
+void feature_insert(char *keystr,wl_node * *tree,ptr_psi_term psi);
 psi_term list_nil(ptr_definition type);
 psi_term parse_list(ptr_definition typ, char e, char s);
 psi_term read_psi_term();
@@ -416,10 +416,10 @@ void print_bin(long b);
 void print_code(FILE *s,ptr_int_list c);
 void print_operator_kind(FILE *s,long kind);
 void check_pointer(ptr_psi_term p);
-void go_through_tree(ptr_node t);
+void go_through_tree(wl_node * t);
 void go_through(ptr_psi_term t);
-void insert_variables(ptr_node vars,long force);
-void forbid_variables(ptr_node n);
+void insert_variables(wl_node * vars,long force);
+void forbid_variables(wl_node * n);
 void prettyf_inner(char *s,long q,char c);
 long starts_nonlower(char *s);
 long has_non_alpha(char *s);
@@ -434,24 +434,24 @@ void mark_tab(ptr_tab_brk t);
 void new_tab(ptr_tab_brk *t);
 long strpos(long pos,char *str);
 void work_out_length();
-long count_features(ptr_node t);
+long count_features(wl_node * t);
 long check_legal_cons(ptr_psi_term t,ptr_definition t_type);
 void pretty_list(ptr_psi_term t,long depth);
 void pretty_tag_or_psi_term(ptr_psi_term p,long sprec,long depth);
-long check_opargs(ptr_node n);
+long check_opargs(wl_node * n);
 long opcheck(ptr_psi_term t,long *prec,long *type);
 long pretty_psi_with_ops(ptr_psi_term t,long sprec,long depth);
 void pretty_psi_term(ptr_psi_term t, long sprec, long depth);
-void do_pretty_attr(ptr_node t,ptr_tab_brk tab,long *cnt,long two,long depth);
-long two_or_more(ptr_node t);
-void pretty_attr(ptr_node t,long depth);
+void do_pretty_attr(wl_node * t,ptr_tab_brk tab,long *cnt,long two,long depth);
+long two_or_more(wl_node * t);
+void pretty_attr(wl_node * t,long depth);
 void pretty_output();
-void pretty_variables(ptr_node n,ptr_tab_brk tab);
+void pretty_variables(wl_node * n,ptr_tab_brk tab);
 long print_variables(long printflag);
-void write_attributes(ptr_node n,ptr_tab_brk tab);
-void listing_pred_write(ptr_node n,long fflag);
-void pred_write(ptr_node n);
-void main_pred_write(ptr_node n);
+void write_attributes(wl_node * n,ptr_tab_brk tab);
+void listing_pred_write(wl_node * n,long fflag);
+void pred_write(wl_node * n);
+void main_pred_write(wl_node * n);
 void display_psi_stdout(ptr_psi_term t);
 void display_psi_stderr(ptr_psi_term t);
 void display_psi_stream(ptr_psi_term t);
@@ -541,16 +541,16 @@ long featcmp(char *str1,char *str2);
 char *heap_ncopy_string(const char *s,int n);
 char *heap_copy_string(const char *s);
 char *stack_copy_string(char *s);
-ptr_node general_insert(long comp,char *keystr,ptr_node *tree,GENERIC info,long heapflag, long copystr,long bkflag);
-void heap_insert_copystr(char *keystr,ptr_node *tree,GENERIC info);
-void stack_insert_copystr(char *keystr,ptr_node *tree,GENERIC info);
-ptr_node heap_insert(long comp,char *keystr,ptr_node *tree,GENERIC info);
-ptr_node stack_insert(long comp,char *keystr,ptr_node *tree,GENERIC info);
-ptr_node bk_stack_insert(long comp,char *keystr,ptr_node *tree,GENERIC info);
-ptr_node bk2_stack_insert(long comp,char *keystr,ptr_node *tree,GENERIC info);
-ptr_node find(long comp,char *keystr,ptr_node tree);
-ptr_node find_data(GENERIC p,ptr_node t);
-void delete_attr(char *s,ptr_node *n);
+wl_node * general_insert(long comp,char *keystr,wl_node * *tree,GENERIC info,long heapflag, long copystr,long bkflag);
+void heap_insert_copystr(char *keystr,wl_node * *tree,GENERIC info);
+void stack_insert_copystr(char *keystr,wl_node * *tree,GENERIC info);
+wl_node * heap_insert(long comp,char *keystr,wl_node * *tree,GENERIC info);
+wl_node * stack_insert(long comp,char *keystr,wl_node * *tree,GENERIC info);
+wl_node * bk_stack_insert(long comp,char *keystr,wl_node * *tree,GENERIC info);
+wl_node * bk2_stack_insert(long comp,char *keystr,wl_node * *tree,GENERIC info);
+wl_node * find(long comp,char *keystr,wl_node * tree);
+wl_node * find_data(GENERIC p,wl_node * t);
+void delete_attr(char *s,wl_node * *n);
 // from types.c 
 
 void print_def_type(def_type t);
@@ -559,10 +559,10 @@ void remove_cycles(ptr_definition d,ptr_int_list *dl);
 long redefine(ptr_psi_term t);
 ptr_int_list cons(GENERIC v,ptr_int_list l);
 long assert_less(ptr_psi_term t1, ptr_psi_term t2);
-void assert_protected(ptr_node n,long prot);
-void assert_args_not_eval(ptr_node n);
-void assert_delay_check(ptr_node n);
-void clear_already_loaded(ptr_node n);
+void assert_protected(wl_node * n,long prot);
+void assert_args_not_eval(wl_node * n);
+void assert_delay_check(wl_node * n);
+void clear_already_loaded(wl_node * n);
 void assert_type(ptr_psi_term t);
 void assert_complicated_type(ptr_psi_term t);
 void assert_attributes(ptr_psi_term t);

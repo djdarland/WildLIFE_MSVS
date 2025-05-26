@@ -675,14 +675,14 @@ void wl_alloc::check_module_list(ptr_int_list* c)    /*  RM: Jan 12 1993  */
 /******** CHECK_MODULE_TREE
   This goes through the module table, checking all nodes.
 */
-void wl_alloc::check_module_tree(ptr_node* n)    /*  RM: Jan 13 1993  */
-//     ptr_node *n;
+void wl_alloc::check_module_tree(wl_node ** n)    /*  RM: Jan 13 1993  */
+//     wl_node * *n;
 {
 	if (unchecked((GENERIC*)n, sizeof(node))) {
 		check_module_tree(&((*n)->left));
 		check_string((GENERIC*)&((*n)->key));
 		check_module((ptr_module*)&((*n)->data));
-		check_module_tree((ptr_node*)&((*n)->right));
+		check_module_tree((wl_node **)&((*n)->right));
 	}
 }
 
@@ -843,8 +843,8 @@ void wl_alloc::check_def_rest(ptr_definition* d)
   This goes through the symbol table, checking all nodes, symbols, strings
   and definitions not contained in the type table.
 */
-void wl_alloc::check_symbol(ptr_node* n)
-// ptr_node *n;
+void wl_alloc::check_symbol(wl_node ** n)
+// wl_node * *n;
 {
 	if (unchecked((GENERIC*)n, sizeof(node))) {
 		check_symbol(&((*n)->left));
@@ -1121,8 +1121,8 @@ void wl_alloc::check_psi_term(ptr_psi_term* t)
   for last call optimization.  This would never overflow, even on
   very skewed attribute trees.)
 */
-void wl_alloc::check_attr(ptr_node* n)
-// ptr_node *n;
+void wl_alloc::check_attr(wl_node ** n)
+// wl_node * *n;
 {
 	while (unchecked((GENERIC*)n, sizeof(node))) {
 		check_attr(&((*n)->left));
@@ -1316,8 +1316,8 @@ void wl_alloc::check_resid_list(ptr_resid_list* l)
   Go through the VARiable tree.
   (This could be made tail recursive.)
 */
-void wl_alloc::check_var(ptr_node* n)
-// ptr_node *n;
+void wl_alloc::check_var(wl_node ** n)
+// wl_node * *n;
 {
 	if (unchecked((GENERIC*)n, sizeof(node))) {
 		check_var(&((*n)->left));
