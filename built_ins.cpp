@@ -91,7 +91,7 @@ ptr_psi_term stack_int(long n)
   ptr_psi_term m;
   m=stack_psi_term(4);
   m->type=integer;
-  m->value_3=heap_alloc(sizeof(REAL));
+  m->value_3=wl_mem->heap_alloc(sizeof(REAL));
   *(REAL *)m->value_3=(REAL)n;
   return m;
 }
@@ -192,7 +192,7 @@ ptr_psi_term make_feature_list(ptr_node tree,ptr_psi_term tail,
       else {
 	wl_new=stack_psi_term(4);      
 	wl_new->type=(d==floor(d))?integer:real;
-	wl_new->value_3=heap_alloc(sizeof(REAL));
+	wl_new->value_3=wl_mem->heap_alloc(sizeof(REAL));
 	*(REAL *)wl_new->value_3=(REAL)d;
 	tail=stack_cons(wl_new,tail);
       }
@@ -263,7 +263,7 @@ long get_real_value(ptr_psi_term t,REAL *v,long *n)
 	}
       }
       else {
-	if((GENERIC)t<heap_pointer) { /*  RM: Jun  8 1993  */
+	if((GENERIC)t<wl_mem->heap_pointer_val()) { /*  RM: Jun  8 1993  */
 	  push_ptr_value(def_ptr,(GENERIC *)&(t->type)); //cast REV401PLUS
 	  push_ptr_value(int_ptr,(GENERIC *)&(t->status)); //cast REV401PLUS
 	  t->type=real;
@@ -308,7 +308,7 @@ static long get_bool_value(ptr_psi_term t,REAL *v,long *n)
 	  }
       }
       else {
-	if((GENERIC)t<heap_pointer) { /*  RM: Jun  8 1993  */
+	if((GENERIC)t<wl_mem->heap_pointer_val()) { /*  RM: Jun  8 1993  */
 	  push_ptr_value(def_ptr,(GENERIC *)&(t->type)); //cast REV401PLUS
 	  push_ptr_value(int_ptr,(GENERIC *)&(t->status)); //cast REV401PLUS
 	  t->type=boolean;
@@ -341,7 +341,7 @@ void unify_bool_result(ptr_psi_term t,long v)
   /* Completely commented out by Richard on Nov 25th 1993
      What's *your* Birthday? Maybe you'd like a Birthday-Bug-Card!
      
-  if((GENERIC)t<heap_pointer) {
+  if((GENERIC)t<wl_mem->heap_pointer_val()) {
     push_ptr_value(def_ptr,(GENERIC *)&(t->type)); //cast REV401PLUS
     if (v) {
       t->type=true;
@@ -382,11 +382,11 @@ long unify_real_result(ptr_psi_term t,REAL v)
   }
 #endif
 
-  if((GENERIC)t<heap_pointer) { /*  RM: Jun  8 1993  */
+  if((GENERIC)t<wl_mem->heap_pointer_val()) { /*  RM: Jun  8 1993  */
     deref_ptr(t);
     assert(t->value_3==NULL); /* 10.6 */
     push_ptr_value(int_ptr,(GENERIC *)&(t->value_3)); //cast REV401PLUS
-    t->value_3=heap_alloc(sizeof(REAL)); /* 12.5 */
+    t->value_3=wl_mem->heap_alloc(sizeof(REAL)); /* 12.5 */
     *(REAL *)t->value_3 = v;
     
     matches(t->type,integer,&smaller);
@@ -1213,8 +1213,8 @@ static long c_project()
       }
       else {
 	deref_ptr(result);
-	if((GENERIC)arg1>=heap_pointer) { /*  RM: Feb  9 1993  */
-	  if((GENERIC)result<heap_pointer)
+	if((GENERIC)arg1>=wl_mem->heap_pointer_val()) { /*  RM: Feb  9 1993  */
+	  if((GENERIC)result<wl_mem->heap_pointer_val())
 	    push_psi_ptr_value(result,(GENERIC *)&(result->coref)); //REV401PLUS cast
 	  clear_copy();
 	  result->coref=inc_heap_copy(result);
@@ -2050,7 +2050,7 @@ static long c_read(long psi_flag)
 	  arg3=(ptr_psi_term)n->data;
 	  g=stack_psi_term(4);
 	  g->type=integer;
-	  g->value_3=heap_alloc(sizeof(REAL));
+	  g->value_3=wl_mem->heap_alloc(sizeof(REAL));
 	  *(REAL *)g->value_3=line;
 	  push_goal(unify,g,arg3,NULL);
 	}
@@ -2515,7 +2515,7 @@ void global_one(ptr_psi_term t)
   
   /*  RM: Nov 10 1993 
       val=t->type->global_value;
-      if (val && (GENERIC)val<heap_pointer) {
+      if (val && (GENERIC)val<wl_mem->heap_pointer_val()) {
       deref_ptr(val);
       push_psi_ptr_value(val,&(val->coref));
       val->coref=u;
@@ -2595,7 +2595,7 @@ void persistent_one(ptr_psi_term t) // REV401PLUS add void
   t->type->wl_type=global_it;
 
 
-  if ((GENERIC)t->type->global_value<(GENERIC)heap_pointer)
+  if ((GENERIC)t->type->global_value<(GENERIC)wl_mem->heap_pointer_val())
     t->type->global_value=heap_psi_term(4);
 }
 
@@ -2839,7 +2839,7 @@ static long c_get()
       }
       else {
         t->type=integer;
-        t->value_3=heap_alloc(sizeof(REAL)); /* 12.5 */
+        t->value_3=wl_mem->heap_alloc(sizeof(REAL)); /* 12.5 */
         * (REAL *)t->value_3 = (REAL) c;
       }
     }
@@ -4051,7 +4051,7 @@ static long c_bk_assign()
     if (arg1 != arg2) {
 
       /*  RM: Mar 10 1993  */
-      if((GENERIC)arg1>=heap_pointer) {
+      if((GENERIC)arg1>=wl_mem->heap_pointer_val()) {
 	Errorline("cannot use '<-' on persistent value in %P\n",g);
 	return c_abort();
       }
@@ -4106,7 +4106,7 @@ static long c_assign()
     deref_rec(arg2); /* 17.9 */
     /* deref(arg2); 17.9 */
     deref_args(g,set_1_2);
-    if ((GENERIC)arg1<heap_pointer || arg1!=arg2) {
+    if ((GENERIC)arg1<wl_mem->heap_pointer_val() || arg1!=arg2) {
       clear_copy();
       *arg1 = *exact_copy(arg2,HEAP);
     }
@@ -4145,7 +4145,7 @@ static long c_global_assign()
       clear_copy();
       wl_new=inc_heap_copy(arg2);
       
-      if((GENERIC)arg1<heap_pointer) {
+      if((GENERIC)arg1<wl_mem->heap_pointer_val()) {
 	push_psi_ptr_value(arg1,(GENERIC *)&(arg1->coref)); // REV401PLUS cast
 	arg1->coref= wl_new;
       }
@@ -4359,7 +4359,7 @@ static long c_freeze_inner(long freeze_flag)
       return success;
     }
     resid_aim=aim;
-    match_date=(ptr_psi_term)stack_pointer;
+    match_date=(ptr_psi_term)wl_mem->stack_pointer_val();
     cutpt=choice_stack; /* 13.6 */
     /* Third argument of freeze's aim is used to keep track of which */
     /* clause is being tried in the frozen goal. */
@@ -4373,7 +4373,7 @@ static long c_freeze_inner(long freeze_flag)
 
     if (rule) {
       Traceline("evaluate frozen predicate %P\n",g);
-      /* resid_limit=(ptr_goal )stack_pointer; 12.6 */
+      /* resid_limit=(ptr_goal )wl_mem->stack_pointer_val(); 12.6 */
       
       if ((unsigned long)rule<=MAX_BUILT_INS) {
         success=FALSE; /* 8.9 */
@@ -4483,7 +4483,7 @@ static long c_char()
 
         t=stack_psi_term(4);
 	t->type=quoted_string;
-	str=(char *)heap_alloc(2);
+	str=(char *)wl_mem->heap_alloc(2);
         str[0] = (unsigned char) floor(*(REAL *) arg1->value_3);
 	str[1] = 0;
 	t->value_3=(GENERIC)str;
@@ -5116,7 +5116,7 @@ static void op_declare(long p,wl_operator t,char *s)
   }
   d=update_symbol(NULL,s);
 
-  od= (ptr_operator_data) heap_alloc (sizeof(operator_data));
+  od= (ptr_operator_data) wl_mem->heap_alloc (sizeof(operator_data));
   /* od= (ptr_operator_data) malloc (sizeof(operator_data)); 12.6 */
     
   od->precedence=p;
@@ -5195,7 +5195,7 @@ char *str_conc(char *s1,char *s2)
 {
   char *result;
 
-  result=(char *)heap_alloc(strlen(s1)+strlen(s2)+1);
+  result=(char *)wl_mem->heap_alloc(strlen(s1)+strlen(s2)+1);
   sprintf(result,"%s%s",s1,s2);
 
   return result;
@@ -5219,7 +5219,7 @@ char *sub_str(char *s,long p,long n)
     if(p+n-1>l)
       n=l-p+1;
 
-  result=(char *)heap_alloc(n+1);
+  result=(char *)wl_mem->heap_alloc(n+1);
   for(i=0;i<n;i++)
     *(result+i)= *(s+p+i-1);
 

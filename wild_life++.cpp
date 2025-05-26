@@ -71,12 +71,13 @@ int main(int argc, char *argv[])  // REV401PLUS correct main proto.
   init_io();
   wl_mem = new wl_alloc();
   // init_memory();
-  exit_if_true(!mem_base || !other_base);
-  assert(stack_pointer==mem_base); /* 8.10 */
+  exit_if_true(!wl_mem->mem_base_val() || !wl_mem->other_base_val());
+  assert(wl_mem->stack_pointer_val() == wl_mem->mem_base_val()); /* 8.10 */
   init_copy();
-  assert(stack_pointer==mem_base); /* 8.10 */
+  assert(wl_mem->stack_pointer_val() == wl_mem->mem_base_val()); /* 8.10 */
   init_print();
   assert(stack_pointer==mem_base); /* 8.10 */
+  assert(wl_mem->stack_pointer_val() == wl_mem->mem_base_val()); /* 8.10 */
 
   /* Timekeeping initialization */
   _tzset();

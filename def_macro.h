@@ -18,8 +18,8 @@
 // from print.h
 
 
-#define HEAP_ALLOC(A) (A *)heap_alloc(sizeof(A))
-#define STACK_ALLOC(A) (A *)stack_alloc(sizeof(A))
+#define HEAP_ALLOC(A) (A *)wl_mem->heap_alloc(sizeof(A))
+#define STACK_ALLOC(A) (A *)wl_mem->stack_alloc(sizeof(A))
 
 #define UN_CODED (CODE)0L
 
@@ -29,7 +29,7 @@
    matching:
    */
 
-#define FUNC_ARG(t)  ((t)<match_date || (GENERIC)(t)>=heap_pointer)
+#define FUNC_ARG(t)  ((t)<match_date || (GENERIC)(t)>=wl_mem->heap_pointer_val())
 
 
 
@@ -115,17 +115,17 @@
 
 /* Object is inside Life data space */
 
-/* #define VALID_RANGE(A) ((GENERIC)A>=mem_base && (GENERIC)A<mem_limit) \
+/* #define VALID_RANGE(A) ((GENERIC)A>=wl_mem->mem_base_val() && (GENERIC)A<wl_mem->mem_limit_val()) \
   ?TRUE \
   :printf("*** Address out of range: %ld, base=%ld, limit=%ld\n",   \
 	  (unsigned long) A,   \
-	  (unsigned long) mem_base,   \
-	  (unsigned long) mem_limit),FALSE;
+	  (unsigned long) wl_mem->mem_base_value(),   \
+	  (unsigned long) wl_mem->mem_limit_value()),FALSE;
 
 	    RM: Jan  4 1993   An idea
 */
 
-#define VALID_RANGE(A) ((GENERIC)A>=mem_base && (GENERIC)A<mem_limit)
+#define VALID_RANGE(A) ((GENERIC)A>=wl_mem->mem_base_val() && (GENERIC)A<wl_mem->mem_limit_val())
 
 /* Object has valid address to be modified in garbage collector */
 #ifdef X11

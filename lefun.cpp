@@ -54,7 +54,7 @@ ptr_psi_term real_stack_psi_term(long stat,REAL thereal)
   result->time_stamp=global_time_stamp; /* 9.6 */
 #endif
   result->resid=NULL;
-  result->value_3=(GENERIC)heap_alloc(sizeof(REAL));
+  result->value_3=(GENERIC)wl_mem->heap_alloc(sizeof(REAL));
   (* (REAL *)(result->value_3)) = thereal;
 
   return result;
@@ -188,7 +188,7 @@ long residuateGoalOnVar(ptr_goal g, ptr_psi_term var, ptr_psi_term othervar)
   ptr_residuation *r;
     
   /* 5.8 PVR */
-  if ((GENERIC)var>=heap_pointer) {
+  if ((GENERIC)var>=wl_mem->heap_pointer_val()) {
     Errorline("attempt to residuate on psi-term %P in the heap.\n",var);
 
     return FALSE;
@@ -475,7 +475,7 @@ long eval_aim()
   result=(ptr_psi_term )aim->bbbb_1;
   rule=(ptr_pair_list )aim->cccc_1;
 
-  match_date=(ptr_psi_term )stack_pointer;
+  match_date=(ptr_psi_term )wl_mem->stack_pointer_val();
   cutpt=choice_stack; /* 13.6 */
 
   /* For currying and residuation */
@@ -483,7 +483,7 @@ long eval_aim()
   can_curry=TRUE;
   /* resid_aim=aim; */
   resid_vars=NULL;
-  /* resid_limit=(ptr_goal )stack_pointer; 12.6 */
+  /* resid_limit=(ptr_goal )wl_mem->stack_pointer_val(); 12.6 */
       
   if (rule) {
     Traceline("evaluate %P\n",funct);
@@ -1017,7 +1017,7 @@ long check_out(ptr_psi_term t)
   /* Traceline("PVR: entering check_out with status %d and term %P\n",
             t->status,t); for brunobug.lf PVR 14.2.94 */
 
-  if (t->status || (GENERIC)t >= heap_pointer) /*  RM: Feb  8 1993  */
+  if (t->status || (GENERIC)t >= wl_mem->heap_pointer_val()) /*  RM: Feb  8 1993  */
   {
       prt("lefun check out A");
       
@@ -1129,7 +1129,7 @@ long deref_eval(ptr_psi_term t)
       }
       else {
 	if (t->status!=2) {
-	  if((GENERIC)t<heap_pointer)
+	  if((GENERIC)t<wl_mem->heap_pointer_val())
 	    push_ptr_value(int_ptr,(GENERIC *)&(t->status)); /*  RM: Jul 15 1993  */ // REV401PLUS cast
 	  t->status=4;
 	  deref_flag=FALSE;
@@ -1172,7 +1172,7 @@ void deref_rec_body(ptr_psi_term t)
       }
       else {
 	/* if (t->status!=2) Tried adding this -- PVR 9.2.94 */
-	  if((GENERIC)t<heap_pointer)
+	  if((GENERIC)t<wl_mem->heap_pointer_val())
 	    push_ptr_value(int_ptr,(GENERIC *)&(t->status));/*  RM: Jul 15 1993  */ // REV401PLUS cast
 	  t->status=4;
 	  deref_rec_args(t->attr_list);
@@ -1371,7 +1371,7 @@ void init_global_vars()  /*  RM: Feb 15 1993  */
   
   /*
     for(def=first_definition;def;def=def->next) {
-    if(def->type==global && ((GENERIC)def->global_value<heap_pointer)) {
+    if(def->type==global && ((GENERIC)def->global_value<wl_mem->heap_pointer_val())) {
     clear_copy();
     def->global_value=eval_copy(def->init_value,STACK); 
     }
@@ -1379,7 +1379,7 @@ void init_global_vars()  /*  RM: Feb 15 1993  */
     */
 
   for(def=first_definition;def;def=def->next)
-    if((GENERIC)(def->global_value)<(GENERIC)heap_pointer)
+    if((GENERIC)(def->global_value)<(GENERIC)wl_mem->heap_pointer_val())
       def->global_value=NULL;
 }
 

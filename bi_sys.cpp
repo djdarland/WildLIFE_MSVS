@@ -313,7 +313,7 @@ static long c_localtime()
 static long c_statistics()
 {
     long success;
-    success = wl_alloc::statistics();
+    success = wl_mem->c_statistics();
     
     return success;
 }
@@ -328,7 +328,7 @@ static long c_garbage()
 
   t=aim->aaaa_1;
   deref_args(t,set_empty);
-  garbage();
+  wl_mem->garbage();
   return TRUE;
 }
 

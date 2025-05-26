@@ -563,7 +563,7 @@ void prettyf_quote(char* s)
 void end_tab()
 {
   if (indent) {
-    indx->str=(char *)heap_alloc(strlen((char*)buffer)+1);
+    indx->str=(char *)wl_mem->heap_alloc(strlen((char*)buffer)+1);
     strcpy(indx->str,(char*)buffer);
     indx++;
     *buffer=0;
@@ -1063,7 +1063,7 @@ void pretty_psi_term(ptr_psi_term t,long sprec,long depth)
 
     /*  RM: Feb 12 1993  */
     if(display_persistent &&
-       (GENERIC)t>heap_pointer)
+       (GENERIC)t>wl_mem->heap_pointer_val())
       prettyf(" $");
     
     if((t->type==alist || t->type==disjunction) && check_legal_cons(t,t->type))
@@ -1353,7 +1353,7 @@ long print_variables(long printflag)
   
   outfile=output_stream;
   listing_flag=FALSE;
-  old_heap_pointer=heap_pointer;
+  old_heap_pointer=wl_mem->heap_pointer_val();
   
   pointer_names=NULL;
   printed_pointers=NULL;
@@ -1382,7 +1382,7 @@ long print_variables(long printflag)
       pretty_output();
     }
   }
-  heap_pointer=old_heap_pointer;
+  wl_mem->set_heap_pointer(old_heap_pointer);
   return (var_tree!=NULL);
 }
 
@@ -1455,7 +1455,7 @@ void main_pred_write(ptr_node n)
  
     if (!write_corefs) main_pred_write(n->left);
 
-    old_heap_pointer=heap_pointer;
+    old_heap_pointer=wl_mem->heap_pointer_val();
     pointer_names=NULL;
     printed_pointers=NULL;
     gen_sym_counter=0;
@@ -1485,7 +1485,7 @@ void main_pred_write(ptr_node n)
       pretty_output();
     }
     
-    heap_pointer=old_heap_pointer;
+    wl_mem->set_heap_pointer(old_heap_pointer);
 
     if (!write_corefs) main_pred_write(n->right);
   }
@@ -1552,7 +1552,7 @@ void main_display_psi_term(ptr_psi_term t)
 
     deref_ptr(t);
     
-    old_heap_pointer=heap_pointer;
+    old_heap_pointer=wl_mem->heap_pointer_val();
     pointer_names=NULL;
     printed_pointers=NULL;
     gen_sym_counter=0;
@@ -1575,7 +1575,7 @@ void main_display_psi_term(ptr_psi_term t)
       pretty_output();
     }
     
-    heap_pointer=old_heap_pointer;
+    wl_mem->set_heap_pointer(old_heap_pointer);
   }
   else
     printf("*null psi_term*");
@@ -1597,7 +1597,7 @@ void display_couple(ptr_psi_term u,char *s,ptr_psi_term v)
 
   output_stream=stdout;
   listing_flag=FALSE;
-  old_heap_pointer=heap_pointer;
+  old_heap_pointer=wl_mem->heap_pointer_val();
   
   pointer_names=NULL;
   printed_pointers=NULL;
@@ -1624,7 +1624,7 @@ void display_couple(ptr_psi_term u,char *s,ptr_psi_term v)
     pretty_output();
   }
   
-  heap_pointer=old_heap_pointer;
+  wl_mem->set_heap_pointer(old_heap_pointer);
 }
 
 
@@ -1643,7 +1643,7 @@ void print_resid_message(ptr_psi_term t,ptr_resid_list r)
   
   outfile=stdout;
   listing_flag=FALSE;
-  old_heap_pointer=heap_pointer;
+  old_heap_pointer=wl_mem->heap_pointer_val();
   
   pointer_names=NULL;
   printed_pointers=NULL;
@@ -1683,5 +1683,5 @@ void print_resid_message(ptr_psi_term t,ptr_resid_list r)
   prettyf("}\n");
   end_tab();
   
-  heap_pointer=old_heap_pointer;
+  wl_mem->set_heap_pointer(old_heap_pointer);
 }

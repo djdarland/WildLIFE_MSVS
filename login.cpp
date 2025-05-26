@@ -367,10 +367,10 @@ void push_ptr_value(type_ptr t,GENERIC *p)
 {
   ptr_stack n;
   
-  assert((GENERIC)p<heap_pointer); /*  RM: Feb 15 1993  */
+  assert((GENERIC)p<wl_mem->heap_pointer_val()); /*  RM: Feb 15 1993  */
   
   assert(VALID_ADDRESS(p));
-  if (p < (GENERIC *)choice_stack || p > (GENERIC *)stack_pointer) 
+  if (p < (GENERIC *)choice_stack || p > (GENERIC *)wl_mem->stack_pointer_val()) 
     {
       n=STACK_ALLOC(stack);
       n->type=t;
@@ -401,12 +401,12 @@ void push_def_ptr_value(ptr_psi_term q,GENERIC *p)
 #ifdef TS
   if (TRAIL_CONDITION(q) &&
       /* (q->time_stamp != global_time_stamp) && */
-      (p < (GENERIC *)choice_stack || p > (GENERIC *)stack_pointer))
+      (p < (GENERIC *)choice_stack || p > (GENERIC *)wl_mem->stack_pointer_val()))
     {
 #define TRAIL_TS
 #ifdef TRAIL_TS
       
-      assert((GENERIC)q<heap_pointer); /*  RM: Feb 15 1993  */
+      assert((GENERIC)q<wl_mem->heap_pointer_val()); /*  RM: Feb 15 1993  */
       
       m=STACK_ALLOC(stack); /* Trail time_stamp */
       m->type=int_ptr;
@@ -455,7 +455,7 @@ void push_psi_ptr_value(ptr_psi_term q,GENERIC *p)
 #ifdef TS
   if (TRAIL_CONDITION(q) &&
       /* (q->time_stamp != global_time_stamp) && */
-      (p < (GENERIC *)choice_stack || p > (GENERIC *)stack_pointer))
+      (p < (GENERIC *)choice_stack || p > (GENERIC *)wl_mem->stack_pointer_val()))
     {
 #define TRAIL_TS
 #ifdef TRAIL_TS
@@ -539,7 +539,7 @@ void push2_ptr_value(type_ptr t,GENERIC *p,GENERIC v)
 {
   ptr_stack n;
   
-  if (p<(GENERIC *)choice_stack || p>(GENERIC *)stack_pointer) {
+  if (p<(GENERIC *)choice_stack || p>(GENERIC *)wl_mem->stack_pointer_val()) {
     n=STACK_ALLOC(stack);
     n->type=t;
     n->aaaa_3= (GENERIC *)p; // REV401PLUS add * to cast
@@ -611,7 +611,7 @@ void push_choice_point(goals t,ptr_psi_term a,ptr_psi_term b,GENERIC c)
   alternative->next=goal_stack;
   alternative->pending=FALSE;
   
-  top=stack_pointer;
+  top=wl_mem->stack_pointer_val();
   
   choice=STACK_ALLOC(choice_point);
   
@@ -734,24 +734,24 @@ void backtrack()
 #ifdef TS
   /* global_time_stamp=choice_stack->time_stamp; */ /* 9.6 */
 #endif
-  stack_pointer=choice_stack->stack_top;
+  wl_mem->set_stack_pointer(choice_stack->stack_top);
   choice_stack=choice_stack->next;
   resid_aim=NULL;
   
   
-  /* assert((unsigned long)stack_pointer>=(unsigned long)cut_point); 13.6 */
+  /* assert((unsigned long)wl_mem->stack_pointer_val()>=(unsigned long)cut_point); 13.6 */
   /* This situation occurs frequently in some benchmarks (e.g comb) */
   /* printf("*** Possible GC error: cut_point is dangling\n"); */
   /* fflush(stdout); */
   
-  /* assert((unsigned long)stack_pointer>=(unsigned long)match_date); 13.6 */
+  /* assert((unsigned long)wl_mem->stack_pointer_val()>=(unsigned long)match_date); 13.6 */
 }
 
 
 
 /******** CLEAN_TRAIL(cutpt)
   This routine removes all trail entries between the top of the undo_stack
-  and the cutpt, whose addresses are between the cutpt and stack_pointer.
+  and the cutpt, whose addresses are between the cutpt and wl_mem->stack_pointer_val().
   (The cutpt is the choice point that will become the most recent
   one after the cut.)
   This routine should be called when a cut built-in is done.
@@ -771,14 +771,14 @@ static void clean_trail(ptr_choice_point cutpt)
     cut_limit = cutpt->undo_point;
   }
   else {
-    cut_sp = mem_base; /* Empty stack */
+    cut_sp = wl_mem->mem_base_val(); /* Empty stack */
     cut_limit = NULL;  /* Empty undo_stack */
   }
   
   while ((unsigned long)u > (unsigned long)cut_limit) {
     clean_iter++;
     if (!(u->type & undo_action) && VALID_RANGE(u->aaaa_3) &&
-        (unsigned long)u->aaaa_3>(unsigned long)cut_sp && (unsigned long)u->aaaa_3<=(unsigned long)stack_pointer) {
+        (unsigned long)u->aaaa_3>(unsigned long)cut_sp && (unsigned long)u->aaaa_3<=(unsigned long)wl_mem->stack_pointer_val()) {
       *prev = u->next;
       clean_succ++;
     }
@@ -1104,8 +1104,8 @@ void show_count()
     
     if (t!=0.0) printf(" (%0.0f/s)",goal_count/t);
     
-    printf(", %ld stack",sizeof(mem_base)*(stack_pointer-mem_base));
-    printf(", %ld heap",sizeof(mem_base)*(mem_limit-heap_pointer));
+    printf(", %ld stack",sizeof(wl_mem->mem_base_val())*(wl_mem->stack_pointer_val()-wl_mem->mem_base_val()));
+    printf(", %ld heap",sizeof(wl_mem->mem_base_val())*(long)(((GENERIC)(wl_mem->mem_limit_val()))-wl_mem->heap_pointer_val()));
     
     printf("]");
   }
@@ -1333,7 +1333,7 @@ long unify_body(long eval_flag)
 #endif
     
     /***** Deal with global vars ****   RM: Feb  8 1993  */
-    if((GENERIC)v>=heap_pointer)
+    if((GENERIC)v>=wl_mem->heap_pointer_val())
       return global_unify(u,v);
     
     
@@ -1644,7 +1644,7 @@ long prove_aim()
 		curried=FALSE;
 		can_curry=TRUE;
 		resid_vars=NULL;
-		/* resid_limit=(ptr_goal )stack_pointer; 12.6 */
+		/* resid_limit=(ptr_goal )wl_mem->stack_pointer_val(); 12.6 */
 		
 		if (thegoal->type!=tracesym) /* 26.1 */
 		  Traceline("prove built-in %P\n", thegoal);
@@ -1669,7 +1669,7 @@ long prove_aim()
 		curried=FALSE;
 		can_curry=TRUE;
 		resid_vars=NULL;
-		/* resid_limit=(ptr_goal )stack_pointer; 12.6 */
+		/* resid_limit=(ptr_goal )wl_mem->stack_pointer_val(); 12.6 */
 		
 		while (rule && (rule->aaaa_2==NULL || rule->bbbb_2==NULL)) {
 		  rule=rule->next;
@@ -1899,7 +1899,7 @@ long what_next_cut()
       /* It is not needed for variable undoing, but for actions (like */
       /* closing windows). */
       undo(NULL);
-      /* undo(mem_base); 7.8 */
+      /* undo(wl_mem->mem_base_val()); 7.8 */
 #ifdef TS
       /* global_time_stamp=INIT_TIME_STAMP; */ /* 9.6 */
 #endif
@@ -2219,7 +2219,7 @@ void main_prove()
     { 
       ptr_choice_point c=choice_stack;
       while(c) {
-	if((GENERIC)stack_pointer<(GENERIC)c) {
+	if((GENERIC)wl_mem->stack_pointer_val()<(GENERIC)c) {
 	  printf("########### Choice stack corrupted! %x\n",c);
 	  trace=TRUE;
 	  c=NULL;
@@ -2475,8 +2475,8 @@ void main_prove()
         }
       }
       
-      if (heap_pointer-stack_pointer < GC_THRESHOLD)
-        memory_check();
+      if (wl_mem->heap_pointer_val()-wl_mem->stack_pointer_val() < GC_THRESHOLD)
+        wl_mem->memory_check();
       
       if (interrupted || (stepflag && steptrace))
           ; // handle_interrupt();

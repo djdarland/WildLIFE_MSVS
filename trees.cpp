@@ -117,7 +117,7 @@ char *heap_ncopy_string(const char *s,int n)
   
   if (s==one || s==two) return (char*)s;
 
-  p=(char*)heap_alloc(n+1);
+  p=(char*)wl_mem->heap_alloc(n+1);
    printf("DEBUG p = %p s = %p n = %p\n", (void*)p, (void*)s, (void*)n);
   
 //    exit(0);
@@ -150,7 +150,7 @@ char *stack_copy_string(char *s)
   
   if (s==one || s==two) return s;
 
-  p=(char *)stack_alloc(strlen(s)+1);
+  p=(char *)wl_mem->stack_alloc(strlen(s)+1);
   strcpy(p,s);
   
   return p;

@@ -1138,13 +1138,13 @@ int global_unify(ptr_psi_term u,ptr_psi_term v)      /*  RM: Feb 11 1993  */
 
   Traceline("match persistent %P with %P\n",u,v);
 
-  /* printf("u=%ld, v=%ld, heap_pointer=%ld\n",u,v,heap_pointer);*/
+  /* printf("u=%ld, v=%ld, wl_mem->heap_pointer_val()=%ld\n",u,v,wl_mem->heap_pointer_val());*/
 
   /* printf("u=%s, v=%s\n",
      u->type->keyword->symbol,
      v->type->keyword->symbol); */
   
-  if((GENERIC)u>=heap_pointer) {
+  if((GENERIC)u>=wl_mem->heap_pointer_val()) {
     Errorline("cannot unify persistent values\n");
     return c_abort();
   }

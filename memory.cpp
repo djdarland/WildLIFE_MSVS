@@ -158,7 +158,7 @@ int GetIntOption(const char *name,int def)
 
 
 
-
+#ifdef OLD_MEM
 
 void pchoices() /*  RM: Oct 28 1993  For debugging. */
 {
@@ -1588,7 +1588,7 @@ void garbage()
 
 }
 
-
+#endif
 
 #ifndef REVISED
 

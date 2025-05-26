@@ -1058,7 +1058,7 @@ void encode_types()
     /*  RM: Feb 17 1993  */
     Traceline("*** Codes:\n%C= %s\n", NULL, nothing->keyword->symbol);
     
-    gamma_table=(ptr_definition *) heap_alloc(type_count*sizeof(definition));
+    gamma_table=(ptr_definition *) wl_mem->heap_alloc(type_count*sizeof(definition));
     
     layer=nothing->parents;
     

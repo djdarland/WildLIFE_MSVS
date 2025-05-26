@@ -205,7 +205,7 @@ ptr_int_list lub(ptr_psi_term a,ptr_psi_term b,ptr_psi_term *pp)
 	
 	/* initialize the table to be non-searched */
 	
-	flags = (long *)stack_alloc(sizeof(unsigned long) * type_count);
+	flags = (long *)wl_mem->stack_alloc(sizeof(unsigned long) * type_count);
 	memset(flags, 0, sizeof(unsigned long) * type_count);
 
 	/* now do a breadth first search for each of arg1 and arg2 */
