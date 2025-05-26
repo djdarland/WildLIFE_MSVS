@@ -177,27 +177,28 @@ GENERIC wl_alloc::heap_pointer_val()
 
 GENERIC wl_alloc::stack_pointer_val()
 {
-	return wl_alloc::stack_pointer;
+	return stack_pointer;
 }
 GENERIC wl_alloc::mem_base_val()
 {
-	return wl_alloc::mem_base;
+	return mem_base;
 }
 
 GENERIC wl_alloc::mem_limit_val()
 {
-	return wl_alloc::mem_limit;
+	return mem_limit;
 }
 GENERIC wl_alloc::other_base_val()
 {
-	return wl_alloc::other_base;
+	return other_base;
 }
 
 
 unsigned long wl_alloc::alloc_words_val()
 {
-	return wl_alloc::alloc_words_val();
+	return alloc_words;
 }
+
 void wl_alloc::set_stack_pointer(GENERIC val)
 {
 	stack_pointer = val;
@@ -205,7 +206,7 @@ void wl_alloc::set_stack_pointer(GENERIC val)
 }
 void wl_alloc::set_heap_pointer(GENERIC val)
 {
-	wl_alloc::heap_pointer = val;
+	heap_pointer = val;
 
 }
 

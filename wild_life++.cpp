@@ -76,14 +76,14 @@ int main(int argc, char *argv[])  // REV401PLUS correct main proto.
   init_copy();
   assert(wl_mem->stack_pointer_val() == wl_mem->mem_base_val()); /* 8.10 */
   init_print();
-  assert(stack_pointer==mem_base); /* 8.10 */
+//   assert(stack_pointer==mem_base); /* 8.10 */
   assert(wl_mem->stack_pointer_val() == wl_mem->mem_base_val()); /* 8.10 */
 
   /* Timekeeping initialization */
   _tzset();
   life_start = clock();
   assert(stack_pointer==mem_base); /* 8.10 */
-
+  assert(wl_mem->stack_pointer_val() == wl_mem->mem_base_val()); /* 8.10 */
   init_modules(); /*  RM: Jan  8 1993  */
   
   init_built_in_types();
@@ -91,16 +91,19 @@ int main(int argc, char *argv[])  // REV401PLUS correct main proto.
 #ifdef X11
   x_setup_builtins();
   assert(stack_pointer==mem_base); /* 8.10 */
+  assert(wl_mem->stack_pointer_val() == wl_mem->mem_base_val()); /* 8.10 */
 #endif
 //  init_interrupt();
-  assert(stack_pointer==mem_base); /* 8.10 */
+//  assert(stack_pointer==mem_base); /* 8.10 */
+  assert(wl_mem->stack_pointer_val() == wl_mem->mem_base_val()); /* 8.10 */
   title();
-  assert(stack_pointer==mem_base); /* 8.10 */
+  assert(wl_mem->stack_pointer_val() == wl_mem->mem_base_val()); /* 8.10 */
+  //assert(stack_pointer==mem_base); /* 8.10 */
   init_trace();
   noisy=FALSE;
 
-  assert(stack_pointer==mem_base); /* 8.10 */
-
+ // assert(stack_pointer==mem_base); /* 8.10 */
+  assert(wl_mem->stack_pointer_val() == wl_mem->mem_base_val()); /* 8.10 */
 
   set_current_module(user_module); /*  RM: Jan 27 1993  */
   

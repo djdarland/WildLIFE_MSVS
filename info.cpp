@@ -47,7 +47,7 @@ void title()
 	if (quietflag)
 		return; /*  RM: Feb 17 1993  */
 
-	printf("Wild_Life Interpreter Version 4.20 Sun May 18 03:20:48 PM CDT 2025\n");
+	printf("Wild_Life Interpreter Version 5.10 Sun May 18 03:20:48 PM CDT 2025\n");
 	printf("Copyright (C) 1991-93 DEC Paris Research Laboratory\n");
 	printf("Extensions, Copyright (C) 1994-1995 Intelligent Software Group, SFU\n");
 	printf("Ported to Linux and Cygwin December 2022 after many efforts since 1995\n");
@@ -61,12 +61,12 @@ void title()
 
 	printf("num_tat = %s len = %ld, sign = %ld val = %ld\n", str_constants->num_tst, len, sign, val);
 
-	exit(0); // TEMP for DEBUGGING DJD
+	
 
 #ifndef X11
 	printf("X interface not installed.\n");
 #endif
-
+//	exit(0); // TEMP for DEBUGGING DJD
 #if 0
 	printf("\n- Main data-structure sizes:\n");
 	pnf("rule", sizeof(struct pair_list));
