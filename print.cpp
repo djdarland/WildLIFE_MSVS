@@ -2,13 +2,14 @@
 ** All Rights Reserved.
 *****************************************************************/
 /* 	$Id: print.c,v 1.4 1995/01/14 00:27:20 duchier Exp $	 */
-#define REV401PLUS
+
 #ifndef lint
 static char vcid[] = "$Id: print.c,v 1.4 1995/01/14 00:27:20 duchier Exp $";
 #endif /* lint */
 
 #define DOTDOT ": "   /*  RM: Dec 14 1992, should be " : "  */
-#define EXTERN extern
+#define REV401PLUS
+
 #ifdef REV401PLUS
 #include "defs.h"
 #endif
@@ -324,12 +325,12 @@ PAGE_WIDTH columns by inserting line feeds whereever possible */
 
 /* Does the work of prettyf and prettyf_quote */
 /* The q argument is a flag telling whether to quote or not. */
-void prettyf_inner(const char *s,long q,char c)
+void prettyf_inner(char *s,long q,char c)
 // char *s;
 // long q;
 // char c; /* the quote character */
 {
-    char* sb = (char*)buffer;
+  char *sb=buffer;
 
   if (indent) {
     while (*sb) sb++;
@@ -352,34 +353,6 @@ void prettyf_inner(const char *s,long q,char c)
   }
 }
 
-void prettyf_inner(char* s, long q, char c)
-// char *s;
-// long q;
-// char c; /* the quote character */
-{
-    char* sb = (char*)buffer;
-
-    if (indent) {
-        while (*sb) sb++;
-        if (q) { *sb = c; sb++; }
-        while (*s) {
-            if (q && *s == c) { *sb = *s; sb++; }
-            *sb = *s; sb++; s++;
-        }
-        if (q) { *sb = c; sb++; }
-        *sb = 0;
-    }
-    else {
-        if (q) putc(c, outfile);
-        while (*s) {
-            if (q && *s == c) { putc(*s, outfile); }
-            putc(*s, outfile);
-            s++;
-        }
-        if (q) putc(c, outfile);
-    }
-}
-
 
 /* Return TRUE iff s starts with a non-lowercase character. */
 long starts_nonlower(char *s)
@@ -400,7 +373,7 @@ long has_non_alpha(char *s)
 }
 
 /* Return TRUE iff s contains only SYMBOL characters. */
-long all_symbol(const char *s)
+long all_symbol(char *s)
 // char *s;
 {
   while (*s) {
@@ -408,16 +381,6 @@ long all_symbol(const char *s)
     s++;
   }
   return TRUE;
-}
-
-long all_symbol(char* s)
-// char *s;
-{
-    while (*s) {
-        if (!SYMBOL(*s)) return FALSE;
-        s++;
-    }
-    return TRUE;
 }
 
 /* Return TRUE if s represents an integer. */
@@ -436,7 +399,7 @@ long is_integer(char *s)
 /* Return TRUE if s does not have to be quoted, i.e., */
 /* s starts with '_' or a lowercase symbol and contains */
 /* all digits, letters, and '_'. */
-long no_quote(const char *s)
+long no_quote(char *s)
 // char *s;
 {
   if (!s[0]) return FALSE;
@@ -456,36 +419,16 @@ long no_quote(const char *s)
 }
   
 
-long no_quote(char* s)
-// char *s;
-{
-    if (!s[0]) return FALSE;
-
-    if (s[0] == '%') return FALSE;
-    if (SINGLE(s[0]) && s[1] == 0) return TRUE;
-    if (s[0] == '_' && s[1] == 0) return FALSE;
-    if (all_symbol(s)) return TRUE;
-
-    if (!LOWER(s[0])) return FALSE;
-    s++;
-    while (*s) {
-        if (!ISALPHA(*s)) return FALSE;
-        s++;
-    }
-    return TRUE;
-}
-
 
 /******** PRETTYF(s)
   This prints the string S into the BUFFER.
 */
-
-
-void prettyf(const char* s)
+void prettyf(char *s)
 // char *s;
 {
-    prettyf_inner(s, FALSE, '\'');
+  prettyf_inner(s,FALSE,'\'');
 }
+
 
 void prettyf_quoted_string(char *s)
 // char *s;
@@ -507,40 +450,10 @@ void prettyf_quoted_string(char *s)
     (4) if S has only one character, it is a single space or underscore.
   When S is surrounded by quotes, a quote inside S is printed as two quotes.
 */
-void prettyf_quote(const char *s)
+void prettyf_quote(char *s)
 //char *s;
 {
   prettyf_inner(s, const_quote && !no_quote(s), '\'');
-}
-/*
-                  !is_integer(s) &&
-                  (starts_nonlower(s) || has_non_alpha(s)) &&
-                  ((int)strlen(s)>1
-                  ? !all_symbol(s):
-                    ((int)strlen(s)==1
-                    ? (s[0]==' ' || s[0]=='_' || UPPER(s[0]) || DIGIT(s[0]))
-                    : TRUE
-                    )
-                  ),
-                '\'');
-*/
-
-/****** PRETTYF_QUOTE(s)
-  This prints the string S into the buffer.
-  S is surrounded by quotes if:
-    (1) const_quote==TRUE, and
-    (2) S does not represent an integer, and
-    (2) S contains a non-alphanumeric character
-        or starts with a non-lowercase character, and
-    (3) if S is longer than one character, it is not true that S has only
-        non-SINGLE SYMBOL characters (in that case, S does not need quotes),and
-    (4) if S has only one character, it is a single space or underscore.
-  When S is surrounded by quotes, a quote inside S is printed as two quotes.
-*/
-void prettyf_quote(char* s)
-//char *s;
-{
-    prettyf_inner(s, const_quote && !no_quote(s), '\'');
 }
 /*
                   !is_integer(s) &&
@@ -563,8 +476,8 @@ void prettyf_quote(char* s)
 void end_tab()
 {
   if (indent) {
-    indx->str=(char *)heap_alloc(strlen((char*)buffer)+1);
-    strcpy(indx->str,(char*)buffer);
+    indx->str=(char *)heap_alloc(strlen(buffer)+1);
+    strcpy(indx->str,buffer);
     indx++;
     *buffer=0;
   }
@@ -885,12 +798,8 @@ long check_opargs(ptr_node n)
 {
   if (n) {
     long f=check_opargs(n->left) | check_opargs(n->right);
-          prt("print featcmp 1");
-
-    if (!featcmp(n->key,(char*)"1")) return 1 | f;
-          prt("print featcmp 2");
-
-    if (!featcmp(n->key,(char*)"2")) return 2 | f;
+    if (!featcmp(n->key,"1")) return 1 | f;
+    if (!featcmp(n->key,"2")) return 2 | f;
     return 4 | f;
   }
   else

@@ -32,7 +32,7 @@ static char vcid[] = "$Id: bi_math.c,v 1.2 1994/12/08 23:07:37 duchier Exp $";
 #define FALSE 0
 #endif
 */
-#define EXTERN extern
+
 #define REV401PLUS
 #ifdef REV401PLUS
 #include "defs.h"
@@ -362,7 +362,7 @@ static long c_intdiv()
 	    success=unify_real_result(arg3,trunc(val1/val2));
 	  else {
 	    success=FALSE;
-            Errorline("Division by zero in % P.\n",t); /* 8.9 */
+            Errorline("division by zero in %P.\n",t); /* 8.9 */
           }
 	  break;
 	case 4:
@@ -1339,24 +1339,24 @@ static long c_exp()
 
 void insert_math_builtins()
 {
-  new_built_in(syntax_module,"*",function_it,c_mult);
-  new_built_in(syntax_module,"+",function_it,c_add);
-  new_built_in(syntax_module,"-",function_it,c_sub);
-  new_built_in(syntax_module,"/",function_it,c_div);  
-  new_built_in(syntax_module,"//",function_it,c_intdiv);  
-  new_built_in(syntax_module,"mod",function_it,c_mod); /* PVR 24.2.94 */
-  new_built_in(syntax_module,"/\\",function_it,c_bit_and);
-  new_built_in(syntax_module,"\\/",function_it,c_bit_or);
-  new_built_in(syntax_module,"\\",function_it,c_bit_not);
-  new_built_in(syntax_module,">>",function_it,c_shift_right);
-  new_built_in(syntax_module,"<<",function_it,c_shift_left);
-  new_built_in(bi_module,"floor",function_it,c_floor);
-  new_built_in(bi_module,"ceiling",function_it,c_ceiling);
-  new_built_in(bi_module,"exp",function_it,c_exp);
-  new_built_in(bi_module,"log",function_it,c_log);
-  new_built_in(bi_module,"cos",function_it,c_cos);
-  new_built_in(bi_module,"sin",function_it,c_sin);
-  new_built_in(bi_module,"tan",function_it,c_tan);
-  new_built_in(bi_module,"sqrt",function_it,c_sqrt);
+  new_built_in(syntax_module,"*",(def_type)function_it,c_mult);
+  new_built_in(syntax_module,"+",(def_type)function_it,c_add);
+  new_built_in(syntax_module,"-",(def_type)function_it,c_sub);
+  new_built_in(syntax_module,"/",(def_type)function_it,c_div);  
+  new_built_in(syntax_module,"//",(def_type)function_it,c_intdiv);  
+  new_built_in(syntax_module,"mod",(def_type)function_it,c_mod); /* PVR 24.2.94 */
+  new_built_in(syntax_module,"/\\",(def_type)function_it,c_bit_and);
+  new_built_in(syntax_module,"\\/",(def_type)function_it,c_bit_or);
+  new_built_in(syntax_module,"\\",(def_type)function_it,c_bit_not);
+  new_built_in(syntax_module,">>",(def_type)function_it,c_shift_right);
+  new_built_in(syntax_module,"<<",(def_type)function_it,c_shift_left);
+  new_built_in(bi_module,"floor",(def_type)function_it,c_floor);
+  new_built_in(bi_module,"ceiling",(def_type)function_it,c_ceiling);
+  new_built_in(bi_module,"exp",(def_type)function_it,c_exp);
+  new_built_in(bi_module,"log",(def_type)function_it,c_log);
+  new_built_in(bi_module,"cos",(def_type)function_it,c_cos);
+  new_built_in(bi_module,"sin",(def_type)function_it,c_sin);
+  new_built_in(bi_module,"tan",(def_type)function_it,c_tan);
+  new_built_in(bi_module,"sqrt",(def_type)function_it,c_sqrt);
 }
 

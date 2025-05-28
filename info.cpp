@@ -2,11 +2,12 @@
 ** All Rights Reserved.
 *****************************************************************/
 /* 	$Id: info.c,v 1.4 1995/01/30 21:03:55 duchier Exp $	 */
-#define REV401PLUS
+
 #ifndef lint
 static char vcid[] = "$Id: info.c,v 1.4 1995/01/30 21:03:55 duchier Exp $";
 #endif /* lint */
-#define EXTERN extern
+#define REV401PLUS
+
 #ifdef REV401PLUS
 #include "defs.h"
 #endif
@@ -37,31 +38,15 @@ static void pnf(char *s,long n)
 */
 void title()
 {
-//    char** it;
-    long len;
-    long sign;
-    long val;
-    char *it2 = (char*) "5234";
-    char **it = &it2;
-
   if(quietflag)
     return; /*  RM: Feb 17 1993  */
   
-  printf("Wild_Life Interpreter Version 4.20 Sun May 18 03:20:48 PM CDT 2025\n");
+  printf("Wild_Life Interpreter Version +VERSION+ +DATE+\n");
   printf("Copyright (C) 1991-93 DEC Paris Research Laboratory\n");
   printf("Extensions, Copyright (C) 1994-1995 Intelligent Software Group, SFU\n"); 
   printf("Ported to Linux and Cygwin December 2022 after many efforts since 1995\n");
   printf("By Dennis J. Darland dennis.darland@hotmail.com\n");
-
-  val = is_int(it, &len, &sign);
-
-  printf("it = %s len = %ld, sign = %ld val = %ld\n", *it, len, sign, val);
-
-  val = is_int(&str_constants->num_tst, &len, &sign);
-
-  printf("num_tat = %s len = %ld, sign = %ld val = %ld\n", str_constants->num_tst, len, sign,val);
-
-  // exit(0);
+  
   
 #ifndef X11
   printf("X interface not installed.\n");

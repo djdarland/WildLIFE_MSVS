@@ -2,11 +2,12 @@
 ** All Rights Reserved.
 *****************************************************************/
 /* 	$Id: trees.c,v 1.3 1995/07/27 21:22:21 duchier Exp $	 */
-#define REV401PLUS
+
 #ifndef lint
 static char vcid[] = "$Id: trees.c,v 1.3 1995/07/27 21:22:21 duchier Exp $";
 #endif /* lint */
-#define EXTERN extern
+#define REV401PLUS
+
 #ifdef REV401PLUS
 #include "defs.h"
 #endif
@@ -32,7 +33,7 @@ long is_int(char **s, long *len, long *sgn)
 {
   char *sint; /* Ptr to first non-zero digit */
   char *stmp; /* Scratchpad for string ptr */
-  printf("trees is_int ****%s****\n", *s);
+
   /*
   { register char *p= *s;
     register char c= *p;
@@ -82,8 +83,8 @@ long featcmp(char *str1, char *str2)
     return *str1 - *str2;
   
   
-  s1=(char*)str1; /* Local copies of the pointers */
-  s2=(char*)str2;
+  s1=str1; /* Local copies of the pointers */
+  s2=str2;
 
   if (is_int(&s1,&len1,&sgn1)) {
     if (is_int(&s2,&len2,&sgn2)) {
@@ -107,35 +108,28 @@ long featcmp(char *str1, char *str2)
   Make a copy of the string in the heap, and return a pointer to that.
   Exceptions: "1" and "2" are unique (and in the heap).
 */
-char *heap_ncopy_string(const char *s,int n)
+char *heap_ncopy_string(char *s,int n)
 // char *s;
 // int n;
 {
   char *p;
-//    GENERIC p;
-
   
-  if (s==one || s==two) return (char*)s;
+  if (s==one || s==two) return s;
 
-  p=(char*)heap_alloc(n+1);
-   printf("DEBUG p = %p s = %p n = %p\n", (void*)p, (void*)s, (void*)n);
+  p=(char *)heap_alloc(n+1);
+  strncpy(p,s,n);
+  p[n]='\0';
   
-//    exit(0);
-
- strncpy(p,s,n);
- //  memcpy(p, s, n);
- //  p[n]='\0';
-  
-  return (char*)p;
+  return p;
 }
 
 /******** HEAP_COPY_STRING(string)
   Make a copy of the string in the heap, and return a pointer to that.
   Exceptions: "1" and "2" are unique (and in the heap).
 */
-char *heap_copy_string(const char *s)
+char *heap_copy_string(char *s)
 // char *s;
-{ return (char*)heap_ncopy_string(s,strlen(s)+1); }
+{ return heap_ncopy_string(s,strlen(s)); }
 
 
 
@@ -186,7 +180,7 @@ ptr_node general_insert(long comp,char *keystr,
 // long heapflag, copystr, bkflag;
 {
   long cmp;
-  ptr_node result=NULL;  // Added INIT for MS C++ 
+  ptr_node result;
   long to_do=TRUE;
 
   
@@ -327,12 +321,12 @@ ptr_node bk2_stack_insert(long comp,char *keystr,ptr_node *tree,GENERIC info)
   Return the NODE address corresponding to key KEYSTR in TREE using function
   COMP to compare keys.
 */
-ptr_node find(long comp, char *keystr,ptr_node tree)
+ptr_node find(long comp,char *keystr,ptr_node tree)
 // long comp;
 //char *keystr;
 // ptr_node tree;
 {
-  ptr_node result=NULL;  // INIT ADDED MS C++
+  ptr_node result;
   long cmp;
   long to_do=TRUE;
 

@@ -2,11 +2,12 @@
  ** All Rights Reserved.
  *****************************************************************/
 /* 	$Id: login.c,v 1.4 1995/01/14 00:25:33 duchier Exp $	 */
-#define REV401PLUS
+
 #ifndef lint
 static char vcid[] = "$Id: login.c,v 1.4 1995/01/14 00:25:33 duchier Exp $";
 #endif /* lint */
-#define EXTERN extern
+#define REV401PLUS
+
 #ifdef REV401PLUS
 #include "defs.h"
 #endif
@@ -149,7 +150,7 @@ void get_one_arg_addr(ptr_node t,ptr_psi_term **a)
   The global flag ASSERT_FIRST indicates whether to do the insertion at the
   head or the tail of the existing list.
   */
-void add_rule(ptr_psi_term head,ptr_psi_term body,char typ)
+void add_rule(ptr_psi_term head,ptr_psi_term body,def_type typ)
 //     ptr_psi_term head;
 //     ptr_psi_term body;
 //     def_type typ;
@@ -159,7 +160,7 @@ void add_rule(ptr_psi_term head,ptr_psi_term body,char typ)
   ptr_definition def;
   ptr_pair_list p, *p2;
   
-  if (!body && typ==predicate_it) {
+  if (!body && typ==(def_type)predicate_it) {
     succ.type=succeed;
     succ.value_3=NULL;
     succ.coref=NULL;
@@ -178,7 +179,7 @@ void add_rule(ptr_psi_term head,ptr_psi_term body,char typ)
     
     def=head->type;
     
-    if (def->wl_type==undef_it || def->wl_type==typ)
+    if (def->type_def==(def_type)undef_it || def->type_def==(def_type)typ)
       
       /*  RM: Jan 27 1993  */
       if(TRUE
@@ -188,10 +189,10 @@ void add_rule(ptr_psi_term head,ptr_psi_term body,char typ)
 	 ) {
 	if (def->rule && (unsigned long)def->rule<=MAX_BUILT_INS) {
 	  Errorline("the built-in %T '%s' may not be redefined.\n",
-		    def->wl_type, def->keyword->symbol);
+		    def->type_def, def->keyword->symbol);
 	}
 	else {
-	  def->wl_type=typ;
+	  def->type_def=typ;
 	  
 	  /* PVR single allocation in source */
 	  p=HEAP_ALLOC(pair_list);
@@ -219,13 +220,13 @@ void add_rule(ptr_psi_term head,ptr_psi_term body,char typ)
       }
       else { /*  RM: Jan 27 1993  */
 	Errorline("the %T '%s' may not be redefined from within module %s.\n",
-		  def->wl_type,
+		  def->type_def,
 		  def->keyword->combined_name,
 		  current_module->module_name);
       }
     else {
       Errorline("the %T '%s' may not be redefined as a %T.\n",
-                def->wl_type, def->keyword->symbol, typ);
+                def->type_def, def->keyword->symbol, typ);
     }
   }
 }
@@ -238,7 +239,7 @@ void add_rule(ptr_psi_term head,ptr_psi_term body,char typ)
   The psi_term T is of the form 'H :- B' or 'H -> B', but it may be incorrect
   (report errors). TYP is the type, function or predicate.
   */
-void assert_rule(psi_term t,char typ)
+void assert_rule(psi_term t,def_type typ)
 //     psi_term t;
 //     def_type typ;
 {
@@ -297,10 +298,10 @@ void assert_clause(ptr_psi_term t)
       */
   
   if (equ_tok((*t),":-"))
-    assert_rule((*t),predicate_it);
+    assert_rule((*t),(def_type)predicate_it);
   else
     if (equ_tok((*t),"->"))
-      assert_rule((*t),function_it);
+      assert_rule((*t),(def_type)function_it);
     else
       if (equ_tok((*t),"::"))
 	assert_attributes(t);
@@ -320,7 +321,7 @@ void assert_clause(ptr_psi_term t)
 	  if (equ_tok((*t),"<|") || equ_tok((*t),":="))
 	    assert_complicated_type(t);
 	  else
-	    add_rule(t,NULL,predicate_it);
+	    add_rule(t,NULL,(def_type)predicate_it);
   
   /* if (!assert_ok && warning()) perr("the declaration is ignored.\n"); */
 }
@@ -333,7 +334,7 @@ void assert_clause(ptr_psi_term t)
 
 void start_chrono()
 {
-    start_time = clock();
+  times(&start_time);
 }
 
 
@@ -421,7 +422,7 @@ void push_def_ptr_value(ptr_psi_term q,GENERIC *p)
       undo_stack=n;
 #else
       n=STACK_ALLOC(stack); /* Trail definition field (top of undo_stack) */
-     n->type=def_ptr;
+      n->type=def_ptr;
       n->aaaa_3= (GENERIC *)p;  // REV401PLUS add * to cast
       n->bbbb_3= (GENERIC *)*p;  // REV401PLUS add cast
       n->next=undo_stack;
@@ -848,7 +849,6 @@ void merge1(ptr_node *u, ptr_node v)
       /* more_v_attr=TRUE; */
     }
     else {
-      prt("login featcmp 1");
       cmp=featcmp((*u)->key,v->key);
       if (cmp==0) {
 	if (v->right)
@@ -901,7 +901,6 @@ void merge2(ptr_node *u,ptr_node v)
       merge2(u,v->left);
     }
     else {
-      prt("login featcmp 2");
       cmp=featcmp((*u)->key,v->key);
       if (cmp==0) {
 	/* if (v->right) */
@@ -952,7 +951,6 @@ void merge3(ptr_node *u,ptr_node v)
     }
     else {
       ptr_psi_term t1,t2;
-      prt("login featcmp 3");
       
       cmp=featcmp((*u)->key,v->key);
       if (cmp==0) {
@@ -1027,7 +1025,6 @@ void merge(ptr_node *u,ptr_node v)
       merge(u,v->left);
     }
     else {
-      prt("login featcmp 4");
       cmp=featcmp((*u)->key,v->key);
       if (cmp==0) {
         /* if (v->right) */
@@ -1093,12 +1090,12 @@ void merge_unify(ptr_node *u,ptr_node v)
 void show_count()
 {
   float t;
-  verbose = FALSE; // DJD  
+  
   if (verbose) {
     printf("  [");
     
-    end_time = clock();
-    t = (float)(end_time - start_time)/(float)CLOCKS_PER_SEC;
+    times(&end_time);
+    t = (end_time.tms_utime - start_time.tms_utime)/60.0;
     
     printf("%1.3fs cpu, %ld goal%s",t,goal_count,(goal_count!=1?"s":""));
     
@@ -1310,8 +1307,8 @@ long unify_body(long eval_flag)
     if (u>v) { tmp=v; v=u; u=tmp; }
       
     /**** Check for curried functions ****/
-    u_func=(u->type->wl_type==function_it);
-    v_func=(v->type->wl_type==function_it);
+    u_func=(u->type->type_def==(def_type)function_it);
+    v_func=(v->type->type_def==(def_type)function_it);
     old1stat=u->status; /* 18.2.94 */
     old2stat=v->status; /* 18.2.94 */
     
@@ -1425,7 +1422,7 @@ long unify_body(long eval_flag)
 	      unsigned long ulen = *((unsigned long *)u->value_3);
 	      unsigned long vlen = *((unsigned long *)v->value_3);
               success=(ulen==vlen &&
-		       (memcmp((char *)u->value_3,(char *)v->value_3,ulen)==0));
+		       (bcmp((char *)u->value_3,(char *)v->value_3,ulen)==0));
 	    }
             else if (u->type==cut && v->type==cut) { /* 22.9 */
               GENERIC mincut;
@@ -1510,7 +1507,7 @@ long unify_body(long eval_flag)
 	/**** VERIFY CONSTRAINTS ****/
 	/* if ((old1stat<4 || old2stat<4) &&
 	     (u->type->type==type || v->type->type==type)) { 18.2.94 */
-        if (new_stat<4 && u->type->wl_type==type_it) {
+        if (new_stat<4 && u->type->type_def==(def_type)type_it) {
           /* This does not check the already-checked properties     */
           /* (i.e. those in types t with t>=old1 or t>=old2),       */
           /* and it does not check anything if u has no attributes. */
@@ -1581,16 +1578,16 @@ long prove_aim()
 	    
 	    if ((unsigned long)rule==DEFRULES) {
 	      rule=(ptr_pair_list)thegoal->type->rule;
-	      if (thegoal->type->wl_type==predicate_it) {
+	      if (thegoal->type->type_def==(def_type)predicate_it) {
 		if (!rule) /* This can happen when RETRACT is used */
 		  success=FALSE;
 	      }
-	      else if ( thegoal->type->wl_type==function_it
-			|| ( thegoal->type->wl_type==type_it
+	      else if ( thegoal->type->type_def==(def_type)function_it
+			|| ( thegoal->type->type_def==(def_type)type_it
 			 && sub_type(boolean,thegoal->type)
 			 )
 	              ) {
-		if (thegoal->type->wl_type==function_it && !rule)
+		if (thegoal->type->type_def==(def_type)function_it && !rule)
 		  /* This can happen when RETRACT is used */
 		  success=FALSE;
 		else {
@@ -1609,7 +1606,7 @@ long prove_aim()
 		  return success; /* We're done! */
 		}
 	      }
-	      else if (!thegoal->type->wl_protected && thegoal->type->wl_type==undef_it) {
+	      else if (!thegoal->type->wl_protected && thegoal->type->type_def==(def_type)undef_it) {
 		/* Don't give an error message for undefined dynamic objects */
 		/* that do not yet have a definition */
 		success=FALSE;
@@ -1630,7 +1627,7 @@ long prove_aim()
 		
 		call_handler=stack_psi_term(0);
 		call_handler->type=call_handlersym;
-		stack_add_psi_attr(call_handler,(char*)"1",thegoal);
+		stack_add_psi_attr(call_handler,"1",thegoal);
 		push_goal(prove,call_handler,(ptr_psi_term)DEFRULES,NULL); // REV401PLUS cast
 		return success; /* We're done! */
 	      }
@@ -2008,7 +2005,7 @@ long what_next_aim()
     for(i=1;i<=lev;i++) { *pr='-'; pr++; *pr='-'; pr++; }
     if (level>0)
       sprintf(pr,"%ld",level);
-    strcat(pr,str_constants->PROMPT);
+    strcat(pr,PROMPT);
     
     prompt=prompt_buffer;
   }
@@ -2182,13 +2179,15 @@ long load_aim()
       CURRENT_MODULE))->value);
       */
 	   
-    set_current_module(find_module((const char *)((ptr_psi_term)get_attr(input_state,str_constants->CURRENT_MODULE))->value_3));
+    set_current_module(
+		       find_module((char *)((ptr_psi_term)get_attr(input_state,
+       CURRENT_MODULE))->value_3));
   }
 
   
   noisy=old_noisy;
   file_date=old_file_date;
-  open_input_file((char*)"stdin");
+  open_input_file("stdin");
 
   
   return success;
@@ -2414,7 +2413,7 @@ void main_prove()
       goal_count++;
       p=(ptr_pair_list*)aim->aaaa_1;
       Traceline("deleting clause (%P%s%P)\n",
-                (*p)->aaaa_2,((*p)->aaaa_2->type->wl_type==function_it?"->":":-"),(*p)->bbbb_2);
+                (*p)->aaaa_2,((*p)->aaaa_2->type->type_def==(def_type)function_it?"->":":-"),(*p)->bbbb_2);
       (*p)->aaaa_2=NULL;
       (*p)->bbbb_2=NULL;
       (*p)=(*p)->next; /* Remove retracted element from pairlist */
@@ -2479,12 +2478,12 @@ void main_prove()
         memory_check();
       
       if (interrupted || (stepflag && steptrace))
-          ; // handle_interrupt();
+        handle_interrupt();
       else if (stepcount>0) {
         stepcount--;
         if (stepcount==0 && !stepflag) {
           stepflag=TRUE;
-//          handle_interrupt();
+          handle_interrupt();
         }
       }
     }
@@ -2492,7 +2491,7 @@ void main_prove()
 }
 
 
-int dummy_printf(const char *f,char *s,char *t)
+int dummy_printf(char *f,char *s,char *t)
      
 //     char *f, *s, *t;
 {

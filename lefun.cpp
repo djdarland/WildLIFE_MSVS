@@ -2,11 +2,12 @@
 ** All Rights Reserved.
 *****************************************************************/
 /* 	$Id: lefun.c,v 1.4 1995/01/14 00:24:55 duchier Exp $	 */
-#define REV401PLUS
+
 #ifndef lint
 static char vcid[] = "$Id: lefun.c,v 1.4 1995/01/14 00:24:55 duchier Exp $";
 #endif /* lint */
-#define EXTERN extern
+
+#define REV401PLUS
 #ifdef REV401PLUS
 #include "defs.h"
 #endif
@@ -562,7 +563,6 @@ long eval_aim()
     if (*u==NULL)
       attr_missing=TRUE;
     else {
-      prt("lefun featcmp 1");
       cmp=featcmp((*u)->key,v->key);
       if(cmp==0) {
         ptr_psi_term t;
@@ -608,7 +608,6 @@ long eval_aim()
       match_attr1(u,v->left,rb);
     }
     else {
-      prt("lefun featcmp 2");
       cmp=featcmp((*u)->key,v->key);
       if(cmp==0) {
   	/* RESID */ match_attr2(&((*u)->right),v->right,rb);
@@ -655,7 +654,6 @@ long eval_aim()
     if (*u==NULL)
       attr_missing=TRUE;
     else {
-      prt("lefun featcmp 3");
       cmp=featcmp((*u)->key,v->key);
       if(cmp==0) {
         ptr_psi_term t1,t2;
@@ -744,7 +742,7 @@ long match_aim()
               else if (overlap_type(v->type,sys_bytedata)) {
 		unsigned long ulen = *((unsigned long *) u->value_3);
 		unsigned long vlen = *((unsigned long *) v->value_3);
-                success=(ulen==vlen && memcmp((char *)u->value_3,(char *)v->value_3,ulen)==0);  // was bcmp in Linux
+                success=(ulen==vlen && bcmp((char *)u->value_3,(char *)v->value_3,ulen)==0);
 	      }
             }
             else
@@ -814,8 +812,8 @@ long match_aim()
 
 
 /* Forward declarations */
-//long check_out();
-//long eval_args();
+long check_out();
+long eval_args();
 
 
 
@@ -1009,58 +1007,45 @@ long check_out(ptr_psi_term t)
 // ptr_psi_term t;
 {
   long flag=FALSE;
-  static int cnt = 0;
   
- 
   deref_ptr(t);
 
   /* Traceline("PVR: entering check_out with status %d and term %P\n",
             t->status,t); for brunobug.lf PVR 14.2.94 */
 
-  if (t->status || (GENERIC)t >= heap_pointer) /*  RM: Feb  8 1993  */
-  {
-      prt("lefun check out A");
-      
-      flag = TRUE;
-  }
+  if (t->status || (GENERIC)t>=heap_pointer) /*  RM: Feb  8 1993  */
+    flag=TRUE;
   else {
     t->status |= RMASK;
 
-    switch(t->type->wl_type) { /*  RM: Feb  8 1993  */
+    switch((long)t->type->type_def) { /*  RM: Feb  8 1993  */
       
     case function_it:
-        prt("lefun check out case function TOP");
       if (check_func_flag) {
-          prt("lefun check out case function IF");
 	check_func(t);
 	flag=TRUE;
       }
       else {
-          prt("lefun check out case function ELSE");
 	/* Function evaluation handled during matching and unification */
 	flag=TRUE;
       }
       break;
 
     case type_it:
-        prt("lefun check out case TYPE");
       flag=check_type(t);
       break;
 
     case global_it: /*  RM: Feb  8 1993  */
-        prt("lefun check out case GLOBAL");
-        eval_global_var(t);
-       check_out(t);
+      eval_global_var(t);
+      check_out(t);
       flag=FALSE;
       break;
       
     default:
-        prt("lefun check out case function DEFAULT");
       flag=eval_args(t->attr_list);
     }
     t->status &= ~RMASK;
   }
- 
   return flag;	
 }
 
@@ -1117,12 +1102,12 @@ long deref_eval(ptr_psi_term t)
   goal_stack=aim;
 
   if (t->status==0) {
-      if (t->type->wl_type == function_it) {
+    if(t->type->type_def==(def_type)function_it) {
       check_func(t);    /* Push eval goals to evaluate the function. */
       deref_flag=TRUE;  /* TRUE so that caller will return to main_prove. */
     }
     else
-      if(t->type->wl_type==global_it) { /*  RM: Feb 10 1993  */
+      if(t->type->type_def==(def_type)global_it) { /*  RM: Feb 10 1993  */
 	eval_global_var(t);
 	deref_ptr(t);/*  RM: Jun 25 1993  */
 	deref_flag=deref_eval(t);
@@ -1160,12 +1145,12 @@ void deref_rec_body(ptr_psi_term t)
 // ptr_psi_term t;
 {
   if (t->status==0) {
-    if (t->type->wl_type==function_it) {
+    if (t->type->type_def==(def_type)function_it) {
       check_func(t);
       deref_flag=TRUE;
     }
     else
-      if(t->type->wl_type==global_it) { /*  RM: Feb 10 1993  */
+      if(t->type->type_def==(def_type)global_it) { /*  RM: Feb 10 1993  */
 	eval_global_var(t);
 	deref_ptr(t);/*  RM: Jun 25 1993  */
 	deref_rec_body(t);
@@ -1217,14 +1202,10 @@ long in_set(char *str,long set)
 // char *str;
 // long set;
 {
-  prt("lefun featcmp 4");
-  if (set&1 && !featcmp(str,str_constants->ONE)) return TRUE;
-  prt("lefun featcmp 5");
-  if (set&2 && !featcmp(str,str_constants->TWO)) return TRUE;
-  prt("lefun featcmp 6");
-  if (set&4 && !featcmp(str,str_constants->THREE)) return TRUE;
-  prt("lefun featcmp 7");
-  if (set&8 && !featcmp(str,str_constants->FOUR)) return TRUE;
+  if (set&1 && !featcmp(str,"1")) return TRUE;
+  if (set&2 && !featcmp(str,"2")) return TRUE;
+  if (set&4 && !featcmp(str,"3")) return TRUE;
+  if (set&8 && !featcmp(str,"4")) return TRUE;
   return FALSE;
 }
 
@@ -1254,11 +1235,11 @@ void deref2_eval(ptr_psi_term t)
 {
   deref_ptr(t);
   if (t->status==0) {
-    if (t->type->wl_type==function_it) {
+    if (t->type->type_def==(def_type)function_it) {
       check_func(t);
     }
     else 
-      if(t->type->wl_type==global_it) { /*  RM: Feb 10 1993  */
+      if(t->type->type_def==(def_type)global_it) { /*  RM: Feb 10 1993  */
       	eval_global_var(t);
 	deref_ptr(t);/*  RM: Jun 25 1993  */
 	deref2_eval(t);
@@ -1348,7 +1329,7 @@ void eval_global_var(ptr_psi_term t)     /*  RM: Feb 10 1993  */
 
   /* var_occurred=TRUE; RM: Feb  4 1994  */
 
-  if(t->type->wl_type==global_it && t!=t->type->global_value) {
+  if(t->type->type_def==(def_type) global_it && t!=t->type->global_value) {
     /*Traceline("dereferencing variable %P\n",t);*/
     push_psi_ptr_value(t,(GENERIC *)&(t->coref)); // REV401PLUS cast
     t->coref=t->type->global_value;

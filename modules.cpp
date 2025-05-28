@@ -6,11 +6,11 @@
 
     */
 /* 	$Id: modules.c,v 1.3 1994/12/15 22:05:39 duchier Exp $	 */
-#define EXTERN extern
-#define REV401PLUS
+
 #ifndef lint
 static char vcid[] = "$Id: modules.c,v 1.3 1994/12/15 22:05:39 duchier Exp $";
 #endif /* lint */
+#define REV401PLUS
 
 #ifdef REV401PLUS
 #include "defs.h"
@@ -41,13 +41,13 @@ void init_modules()
   Return a module if it exists.
   */
 
-ptr_module find_module(const char *module)
+ptr_module find_module(char *module)
 
 //     char *module;
 {
   ptr_node nodule;
 
-  nodule=find(STRCMP,(char*)module,module_table);
+  nodule=find(STRCMP,module,module_table);
   if(nodule)
     return (ptr_module)(nodule->data);
   else
@@ -69,18 +69,13 @@ ptr_module create_module(char *module)
 
   wl_new=find_module(module);
   if(!wl_new) {
-      printf("A0001\n");
     wl_new=HEAP_ALLOC(struct wl_module);
-    printf("A0002\n");
     wl_new->module_name=heap_copy_string(module);
-    printf("A0003\n");
     wl_new->source_file=heap_copy_string(input_file_name);
-    printf("A0004\n");
     wl_new->open_modules=NULL;
-    printf("A0005\n");
     wl_new->inherited_modules=NULL;
     wl_new->symbol_table=hash_create(16); /*  RM: Feb  3 1993  */
-    printf("A0006\n");
+
     heap_insert(STRCMP,wl_new->module_name,&module_table,(GENERIC)wl_new); // REV401PLUS cast
 
     /* printf("*** New module: '%s' from file %s\n",input_file_name); */
@@ -88,33 +83,6 @@ ptr_module create_module(char *module)
   return wl_new;
 }
 
-ptr_module create_module(const char* module)
-
-//     char *module;
-{
-    ptr_module wl_new;
-
-
-    wl_new = find_module(module);
-    if (!wl_new) {
-        printf("A0001\n");
-        wl_new = HEAP_ALLOC(struct wl_module);
-        printf("A0002\n");
-        wl_new->module_name = heap_copy_string(module);
-        printf("A0003\n");
-        wl_new->source_file = heap_copy_string(input_file_name);
-        printf("A0004\n");
-        wl_new->open_modules = NULL;
-        printf("A0005\n");
-        wl_new->inherited_modules = NULL;
-        wl_new->symbol_table = hash_create(16); /*  RM: Feb  3 1993  */
-        printf("A0006\n");
-        heap_insert(STRCMP, wl_new->module_name, &module_table, (GENERIC)wl_new); // REV401PLUS cast
-
-        /* printf("*** New module: '%s' from file %s\n",input_file_name); */
-    }
-    return wl_new;
-}
 
 
 /******** SET_CURRENT_MODULE(module)
@@ -137,14 +105,14 @@ ptr_module set_current_module(ptr_module module)
   Return NULL if only "#symbol".
   */
 
-ptr_module extract_module_from_name(const char *str)
+ptr_module extract_module_from_name(char *str)
 
 //     char *str;
 {
   char *s;
   ptr_module result=NULL;
 
-  s=(char*)str;
+  s=str;
   while(legal_in_name(*s))
     s++;
   if(s!=str && *s=='#' /* && *(s+1)!=0 */) {
@@ -159,39 +127,17 @@ ptr_module extract_module_from_name(const char *str)
   return result;
 }
 
-ptr_module extract_module_from_name(char* str)
-
-//     char *str;
-{
-    char* s;
-    ptr_module result = NULL;
-
-    s = (char*)str;
-    while (legal_in_name(*s))
-        s++;
-    if (s != str && *s == '#' /* && *(s+1)!=0 */) {
-        *s = 0;
-        result = create_module(str);
-        *s = '#';
-        /*
-        printf("Extracted module name '%s' from '%s'\n",result->module_name,str);
-        */
-    }
-
-    return result;
-}
-
 
 
 /******** STRIP_MODULE_NAME(symbol)
   Return the sub-string of symbol without the module prefix.
   */
 
-const char *strip_module_name(const char *str)
+char *strip_module_name(char *str)
 
 //     char *str;
 {
-  char *s=(char*)str;
+  char *s=str;
 
   while(legal_in_name(*s))
     s++;
@@ -204,22 +150,6 @@ const char *strip_module_name(const char *str)
     return str;
 }
 
-char* strip_module_name(char* str)
-
-//     char *str;
-{
-    char* s = str;
-
-    while (legal_in_name(*s))
-        s++;
-    if (s != str && *s == '#' /* && *(s+1)!=0 */) {
-        s++;
-        /* printf("Stripped module from '%s' yielding '%s'\n",str,s); */
-        return s;
-    }
-    else
-        return str;
-}
 
 
 /******** STRING_VAL(term)
@@ -249,7 +179,7 @@ char *string_val(ptr_psi_term term)
   The result must be immediately stored in a newly allocated string.
   */
 
-char *make_module_token(ptr_module module,const char *str)
+char *make_module_token(ptr_module module,char *str)
 
 //     ptr_module module;
 //     char *str;
@@ -273,29 +203,6 @@ char *make_module_token(ptr_module module,const char *str)
   return module_buffer;
 }
 
-char* make_module_token(ptr_module module, char* str)
-
-//     ptr_module module;
-//     char *str;
-{
-    ptr_module wl_explicit;
-
-
-    /* Check if the string already contains a module */
-    wl_explicit = extract_module_from_name(str);
-    if (wl_explicit)
-        strcpy(module_buffer, str);
-    else
-        if (module != no_module) {
-            strcpy(module_buffer, module->module_name);
-            strcat(module_buffer, "#");
-            strcat(module_buffer, str);
-        }
-        else
-            strcpy(module_buffer, str);
-
-    return module_buffer;
-}
 
 
 /******** NEW_DEFINITION(key)
@@ -322,7 +229,7 @@ ptr_definition new_definition(ptr_keyword key)    /*  RM: Feb 22 1993  */
   result->rule=NULL;
   result->properties=NULL;
   result->date=0;
-  result->wl_type=undef_it;
+  result->type_def=(def_type)undef_it;
   result->always_check=TRUE;
   result->wl_protected=TRUE;
   result->evaluate_args=TRUE;
@@ -351,7 +258,7 @@ ptr_definition new_definition(ptr_keyword key)    /*  RM: Feb 22 1993  */
   definition by scanning the opened modules.
   */
 
-ptr_definition update_symbol(ptr_module module,const char *symbol)   /*  RM: Jan  8 1993  */
+ptr_definition update_symbol(ptr_module module,char *symbol)   /*  RM: Jan  8 1993  */
 //     ptr_module module;
 //     char *symbol;
 {
@@ -560,7 +467,7 @@ void pretty_quote_symbol(ptr_keyword k)
     prettyf(k->module->module_name);
     prettyf("#");
   }
-  prettyf_quote((char *)k->symbol);
+  prettyf_quote(k->symbol);
 }
 
 
@@ -1218,7 +1125,6 @@ int global_unify_attr(ptr_node u,ptr_node v)    /*  RM: Feb  9 1993  */
     if(v) {
       /*  RM: Feb 16 1993  Avoid C optimiser bug */
       dummy_printf("%s %s\n",u->key,v->key);
-      prt("modules featcmp 1");
       
       cmp=featcmp(u->key,v->key);
       if(cmp<0) {

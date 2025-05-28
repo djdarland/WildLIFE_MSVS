@@ -10,15 +10,12 @@
   All definition are stores in a linked list starting at first_definition.
   */
 /* 	$Id: hash_table.c,v 1.2 1994/12/08 23:24:09 duchier Exp $	 */
-#define EXTERN extern
-#define REV401PLUS
-#define _CRT_SECURE_NO_WARNINGS
-
 
 #ifndef lint
 static char vcid[] = "$Id: hash_table.c,v 1.2 1994/12/08 23:24:09 duchier Exp $";
 #endif /* lint */
 
+#define REV401PLUS
 
 #ifdef REV401PLUS
 #include "defs.h"
@@ -74,7 +71,7 @@ void hash_expand(ptr_hash_table table,int new_size)
   
   for(i=0;i<old_size;i++)
     if(old_data[i])
-      hash_insert(table,( char*)old_data[i]->symbol,old_data[i]);
+      hash_insert(table,old_data[i]->symbol,old_data[i]);
 
   free(old_data);
 }
@@ -85,7 +82,7 @@ void hash_expand(ptr_hash_table table,int new_size)
   Return the hash code for a symbol
   */
 
-int hash_code(ptr_hash_table table,const char *symbol)
+int hash_code(ptr_hash_table table,char *symbol)
      
 //     ptr_hash_table table;
 //     char *symbol;
@@ -108,34 +105,9 @@ int hash_code(ptr_hash_table table,const char *symbol)
   return n;
 }
 
-// same except 2nd arg not const
-
-int hash_code(ptr_hash_table table, char* symbol)
-
-//     ptr_hash_table table;
-//     char *symbol;
-{
-    int n = 0;
-
-    /* printf("code of %s ",symbol); */
-
-    while (*symbol) {
-        n ^= rand_array[*symbol] + rand_array[n & 255];
-        n++;
-        symbol++;
-    }
-
-    n &= (table->size - 1);
 
 
-    /* printf("=%d\n",n); */
-
-    return n;
-}
-
-
-
-int hash_find(ptr_hash_table table,const char *symbol)
+int hash_find(ptr_hash_table table,char *symbol)
 
 //     ptr_hash_table table;
 //     char *symbol;
@@ -156,36 +128,13 @@ int hash_find(ptr_hash_table table,const char *symbol)
   return n;
 }
 
-// same except 2nd arg not const
-
-int hash_find(ptr_hash_table table, char* symbol)
-
-//     ptr_hash_table table;
-//     char *symbol;
-
-{
-    int n;
-    int i = 1;
-
-    n = hash_code(table, symbol);
-
-    while (table->data[n] && strcmp(table->data[n]->symbol, symbol)) {
-        /* Not a direct hit... */
-        n += i * i;
-        /* i++; */
-        n &= table->size - 1;
-    }
-
-    return n;
-}
-
 
 
 /******** HASH_LOOKUP(table,symbol)
   Look up a symbol in the symbol table.
   */
 
-ptr_keyword hash_lookup(ptr_hash_table table,const char *symbol)
+ptr_keyword hash_lookup(ptr_hash_table table,char *symbol)
      
 //     ptr_hash_table table;
 //     char *symbol;
@@ -207,7 +156,7 @@ ptr_keyword hash_lookup(ptr_hash_table table,const char *symbol)
   Add a symbol and data to a table. Overwrite previous data.
   */
 
-void hash_insert(ptr_hash_table table,const char *symbol,ptr_keyword keyword)
+void hash_insert(ptr_hash_table table,char *symbol,ptr_keyword keyword)
      
 //     ptr_hash_table table;
 //     char *symbol;
@@ -227,34 +176,6 @@ void hash_insert(ptr_hash_table table,const char *symbol,ptr_keyword keyword)
   if(table->used*2>table->size)
     hash_expand(table,table->size*2);
 }
-
-/******** HASH_INSERT(table,symbol,keyword)
-  Add a symbol and data to a table. Overwrite previous data.
-  */
-
-// same thing except 2nd arg not const
-
-void hash_insert(ptr_hash_table table, char* symbol, ptr_keyword keyword)
-
-//     ptr_hash_table table;
-//     char *symbol;
-//     ptr_keyword keyword;
-{
-    int n;
-
-
-    n = hash_find(table, symbol);
-
-    /* printf("inserting %s at %d keyword %x\n",symbol,n,keyword); */
-
-    if (!table->data[n])
-        table->used++;
-    table->data[n] = keyword;
-
-    if (table->used * 2 > table->size)
-        hash_expand(table, table->size * 2);
-}
-
 
 
 
@@ -281,7 +202,7 @@ void hash_display(ptr_hash_table table)
     if(table->data[i]) {
       t++;
       s=table->data[i]->symbol;
-      n=hash_code(table,(const char*)s);
+      n=hash_code(table,s);
       
       printf("%4d %4d %s %s\n",
 	     i,

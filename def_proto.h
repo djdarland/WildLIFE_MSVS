@@ -2,12 +2,12 @@
   \brief prototypes
 
 */
-void prt(const char*);
+
 // from arity.c
 #ifdef ARITY
 void arity_init();
 void arity_end();
-void rec_print_feat(ptr_node n);sys
+void rec_print_feat(ptr_node n);
 void print_features(ptr_node u);
 int check_equal(ptr_node u,ptr_node v);
 void arity_unify(ptr_psi_term u, ptr_psi_term v);
@@ -82,7 +82,7 @@ ptr_psi_term new_psi_term(long numargs,ptr_definition typ,ptr_psi_term **a1,ptr_
 long has_rules(ptr_pair_list r);
 long is_built_in(ptr_pair_list r);
 void list_special(ptr_psi_term t);
-void new_built_in(ptr_module m, const char *s,char t,long (*r)());
+void new_built_in(ptr_module m, char *s,def_type t,long (*r)());
 long declare_operator(ptr_psi_term t);
 char *str_conc(char *s1,char *s2);
 char *sub_str(char *s,long p,long n);
@@ -125,13 +125,13 @@ void bk_mark_quote_tree(ptr_node t);
 // from error.c
 
 void stack_info(FILE *outfile);
-void outputline(const char *format, ...);
-void traceline(const char *format, ...);
-void infoline(const char *format, ...);
-void warningline(const char *format, ...);
-void Errorline(const char *format, ...);
-void Syntaxerrorline(const char *format, ...);
-void vinfoline(const char *format, FILE *outfile, ...);
+void outputline(char *format, ...);
+void traceline(char *format, ...);
+void infoline(char *format, ...);
+void warningline(char *format, ...);
+void Errorline(char *format, ...);
+void Syntaxerrorline(char *format, ...);
+void vinfoline(char *format, FILE *outfile, ...);
 void init_trace();
 void reset_step();
 void tracing();
@@ -140,15 +140,15 @@ void new_step(long newstep);
 void set_trace_to_prove();
 void toggle_trace();
 void toggle_step();
-void perr(const char *str);
-void perr_s(const char *s1,char *s2);
-void perr_s2(const char *s1,char *s2,char *s3);
-void perr_i(const char *str,long i);
+void perr(char *str);
+void perr_s(char *s1,char *s2);
+void perr_s2(char *s1,char *s2,char *s3);
+void perr_i(char *str,long i);
 long warning();
 long warningx();
-void report_error_main(ptr_psi_term g,char *s,const char *s2);
+void report_error_main(ptr_psi_term g,char *s,char *s2);
 void report_error(ptr_psi_term g,char *s);
-long reportAndAbort(ptr_psi_term g,const char *s);
+long reportAndAbort(ptr_psi_term g,char *s);
 void report_warning(ptr_psi_term g,char *s);
 void report_error2_main(ptr_psi_term g,char *s, char *s2);
 void report_error2(ptr_psi_term g,char *s);
@@ -168,7 +168,7 @@ ptr_hash_table hash_create(int size);
 void hash_expand(ptr_hash_table table, int new_size);
 int hash_code(ptr_hash_table table, char *symbol);
 int hash_find(ptr_hash_table table,char *symbol);
-ptr_keyword hash_lookup(ptr_hash_table table, const char *symbol);
+ptr_keyword hash_lookup(ptr_hash_table table, char *symbol);
 void hash_insert(ptr_hash_table table,char *symbol,ptr_keyword keyword);
 void hash_display(ptr_hash_table table);
 
@@ -267,7 +267,7 @@ void List_Cut (RefListHeader  header,Ref atom, RefListHeader newHeader);
 void get_two_args(ptr_node t, ptr_psi_term *a, ptr_psi_term *b);
 void get_one_arg(ptr_node t, ptr_psi_term *a);
 void get_one_arg_addr(ptr_node t, ptr_psi_term **a);
-void add_rule(ptr_psi_term head, ptr_psi_term body, char typ);
+void add_rule(ptr_psi_term head, ptr_psi_term body, def_type typ);
 void assert_rule(psi_term t, def_type typ);
 void assert_clause(ptr_psi_term t);
 void start_chrono();
@@ -307,7 +307,7 @@ void reset_stacks();
 long what_next_aim();
 long load_aim();
 void main_prove();
-int dummy_printf(const char *f, char *s, char *t);
+int dummy_printf(char *f, char *s, char *t);
 long trail_condition(psi_term *Q);
 
 
@@ -320,9 +320,9 @@ ptr_int_list lub(ptr_psi_term a,ptr_psi_term b,ptr_psi_term *pp);
 
 // from memory.c
 
-char *GetStrOption(char *name,const char *def);
-int GetBoolOption(const char *name);
-int GetIntOption(const char *name,int def);
+char *GetStrOption(char *name,char *def);
+int GetBoolOption(char *name);
+int GetIntOption(char *name,int def);
 void pchoices();
 void print_undo_stack();
 long bounds_undo_stack();
@@ -336,8 +336,8 @@ void check_attr(ptr_node *n);
 void check_gamma_code();
 void print_gc_info(long timeflag);
 void garbage();
-GENERIC heap_alloc(unsigned long s);
-GENERIC stack_alloc(unsigned long s);
+GENERIC heap_alloc(long s);
+GENERIC stack_alloc(long s);
 void init_memory ();
 long memory_check ();
 
@@ -346,19 +346,15 @@ long memory_check ();
 // from modules.c
 
 void init_modules();
-ptr_module find_module(const char *module);
-ptr_module create_module(const char *module);
-ptr_module create_module(char* module);
-
+ptr_module find_module(char *module);
+ptr_module create_module(char *module);
 ptr_module set_current_module(ptr_module module);
 ptr_module extract_module_from_name(char *str);
-ptr_module extract_module_from_name(const char* str);
-
 char *strip_module_name(char *str);
 char *string_val(ptr_psi_term term);
 char *make_module_token(ptr_module module,char *str);
 ptr_definition new_definition(ptr_keyword key);
-ptr_definition update_symbol(ptr_module module,const char *symbol);
+ptr_definition update_symbol(ptr_module module,char *symbol);
 char *print_symbol(ptr_keyword k);
 void pretty_symbol(ptr_keyword k);
 void pretty_quote_symbol(ptr_keyword k);
@@ -425,7 +421,7 @@ long has_non_alpha(char *s);
 long all_symbol(char *s);
 long is_integer(char *s);
 long no_quote(char *s);
-void prettyf(const char *s);
+void prettyf(char *s);
 void prettyf_quoted_string(char *s);
 void prettyf_quote(char *s);
 void end_tab();
@@ -499,11 +495,11 @@ void TOKEN_ERROR(ptr_psi_term p);
 void stdin_cleareof();
 void heap_add_int_attr(ptr_psi_term t,char *attrname,long value);
 void stack_add_int_attr(ptr_psi_term t,char *attrname,long value);
-void heap_mod_int_attr(ptr_psi_term t, char *attrname,long value);
+void heap_mod_int_attr(ptr_psi_term t,char *attrname,long value);
 void heap_add_str_attr(ptr_psi_term t,char *attrname,char *str);
 void stack_add_str_attr(ptr_psi_term t,char *attrname,char *str);
 void heap_mod_str_attr(ptr_psi_term t,char *attrname,char *str);
-void heap_add_psi_attr(ptr_psi_term t, char *attrname,ptr_psi_term g);
+void heap_add_psi_attr(ptr_psi_term t,char *attrname,ptr_psi_term g);
 void stack_add_psi_attr(ptr_psi_term t,char *attrname,ptr_psi_term g);
 void bk_stack_add_psi_attr(ptr_psi_term t,char *attrname,ptr_psi_term g);
 GENERIC get_attr(ptr_psi_term t,char *attrname);
@@ -537,8 +533,8 @@ void read_token_main(ptr_psi_term tok,long for_parser);
 long intcmp(long a,long b);
 long is_int(char **s,long *len,long *sgn);
 long featcmp(char *str1,char *str2);
-char *heap_ncopy_string(const char *s,int n);
-char *heap_copy_string(const char *s);
+char *heap_ncopy_string(char *s,int n);
+char *heap_copy_string(char *s);
 char *stack_copy_string(char *s);
 ptr_node general_insert(long comp,char *keystr,ptr_node *tree,GENERIC info,long heapflag, long copystr,long bkflag);
 void heap_insert_copystr(char *keystr,ptr_node *tree,GENERIC info);

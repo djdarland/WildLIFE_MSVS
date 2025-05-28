@@ -3,9 +3,6 @@
   
 */
 
-EXTERN str_const* str_constants;
-
-
 // from extern.h
 
 /*! \var first_definition
@@ -34,14 +31,14 @@ EXTERN char *arg_v[ARGNN]; // Modified DJD
 
 */
 
-EXTERN unsigned long alloc_words;
+EXTERN int alloc_words;
 
 /*! \var mem_size
   \brief number of words from memory = alloc_words * sizeof word 
 
 */
 
-EXTERN unsigned long mem_size;
+EXTERN int mem_size;
 
 /*! \var mem_base
   \brief mem_size memory allocated in init_memory by malloc 
@@ -82,20 +79,30 @@ EXTERN float garbage_time;
   \brief time life started - seconds
 
 */
-
+#ifdef __unix__
+EXTERN struct tms life_start;
+EXTERN struct tms life_end;
+EXTERN struct tms start_time;
+EXTERN struct tms end_time;
+#endif
+#ifdef _WIN64
+EXTERN clock_t life_end;
 EXTERN clock_t life_start;
+EXTERN clock_t start_time;
+EXTERN clock_t end_time;
+#endif
+
 
 /*! \var life_start
   \brief time life ended - seconds
 
 */
 
-EXTERN clock_t life_end;
 
 /*! \var other_base
   \brief mem_size memory allocated in init_memory by malloc 
 
-  only used for the half-space garbage collectorg
+  only used for the half-space garbage collector
 */
 
 EXTERN GENERIC other_base;
@@ -780,7 +787,7 @@ EXTERN char *no_name;
 
 */
 
-EXTERN GENERIC buffer;
+EXTERN char *buffer;
 
 /*! \var print_depth
   \brief Global flag that modifies how writing is done. 
@@ -939,7 +946,6 @@ EXTERN long clean_succ;
 
 /* ptr_choice_point prompt_choice_stack; 12.7 */
 
-EXTERN long start_time,end_time;
 
 EXTERN long xeventdelay;
 EXTERN long xcount;

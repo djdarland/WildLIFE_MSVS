@@ -3,8 +3,7 @@
  * All Rights Reserved.
  */
 /* 	$Id: list.c,v 1.2 1994/12/08 23:28:16 duchier Exp $	 */
-#define EXTERN extern
-#define REV401PLUS
+
 #ifndef lint
 static char vcid[] = "$Id: list.c,v 1.2 1994/12/08 23:28:16 duchier Exp $";
 #endif /* lint */
@@ -15,6 +14,7 @@ static char vcid[] = "$Id: list.c,v 1.2 1994/12/08 23:28:16 duchier Exp $";
 ** Links belongs to each atom
 */
 
+#define REV401PLUS
 #ifdef REV401PLUS
 #include "defs.h"
 #endif

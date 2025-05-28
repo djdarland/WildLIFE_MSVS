@@ -2,14 +2,15 @@
  ** All Rights Reserved.
  *****************************************************************/
 /* 	$Id: lib.c,v 1.2 1994/12/08 23:26:47 duchier Exp $	 */
-#define REV401PLUS
+
 #ifndef lint
 static char vcid[] = "$Id: lib.c,v 1.2 1994/12/08 23:26:47 duchier Exp $";
 #endif /* lint */
 
 /* VERSION of Wild-LIFE for calling from C */
 /*  RM: Mar 31 1993  */
-#define EXTERN extern
+
+#define REV401PLUS
 #ifdef REV401PLUS
 #include "defs.h"
 #endif
@@ -70,7 +71,7 @@ void init_io()
 {
   struct stat buffer;
   
-  fstat(_fileno(stdin), &buffer);
+  fstat(fileno(stdin), &buffer);
   /* True iff stdin is from a terminal */
   stdin_terminal=(S_IFCHR & buffer.st_mode)!=0;
   input_state=NULL;
@@ -96,10 +97,10 @@ void init_system()
 
   /*  RM: Oct 13 1993  */
   if(current_module==user_module)
-    prompt=str_constants->PROMPT;
+    prompt=PROMPT;
   else {
     prompt=prompt_buffer;
-    sprintf(prompt_buffer,"%s%s",current_module->module_name,str_constants->PROMPT);
+    sprintf(prompt_buffer,"%s%s",current_module->module_name,PROMPT);
   }
     
   resid_aim=NULL;
@@ -123,7 +124,7 @@ void WFInit(long argc, char *argv[])
     rand_array[i]=rand_r(&libseed);
 #else
   for(i=0;i<256;i++)
-    rand_array[i]=rand();
+    rand_array[i]=random();
 #endif
   
   if (argc < 10)
@@ -150,8 +151,8 @@ void WFInit(long argc, char *argv[])
   assert(stack_pointer==mem_base); /* 8.10 */
   
   /* Timekeeping initialization */
-  _tzset();
-  life_start = clock();
+  tzset();
+  times(&life_start);
   assert(stack_pointer==mem_base); /* 8.10 */
   
   init_modules(); /*  RM: Jan  8 1993  */
@@ -162,8 +163,10 @@ void WFInit(long argc, char *argv[])
   x_setup_builtins();
   assert(stack_pointer==mem_base); /* 8.10 */
 #endif
- // init_interrupt();
- assert(stack_pointer==mem_base); /* 8.10 */
+#ifdef __unix__
+  init_interrupt();
+#endif
+  assert(stack_pointer==mem_base); /* 8.10 */
   title();
   assert(stack_pointer==mem_base); /* 8.10 */
   init_trace();
@@ -182,9 +185,8 @@ void WFInit(long argc, char *argv[])
 #endif
   
   
-//   open_input_file("~/life_local/Source/.set_up");
-  open_input_file((char*)".set_up");
-  push_goal(load,input_state,(ptr_psi_term)file_date,(GENERIC)heap_copy_string("~/life_local/Source/.set_up")); // REV401PLUS casts
+  open_input_file("+SETUP+");
+  push_goal(load,input_state,(ptr_psi_term)file_date,(GENERIC)heap_copy_string("+SETUP+")); // REV401PLUS casts
   file_date+=2;
   main_prove();
   

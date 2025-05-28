@@ -13,9 +13,8 @@
 #ifndef lint
 static char vcid[] = "$Id: error.c,v 1.3 1995/07/11 01:53:03 duchier Exp $";
 #endif /* lint */
-#define EXTERN extern
 #define REV401PLUS
-#define _CRT_SECURE_NO_WARNINGS
+
 #ifdef REV401PLUS
 #include "defs.h"
 #endif
@@ -100,14 +99,14 @@ void stack_info(FILE *outfile)
   }
 }
 
-/*! \brief void outputline(const char *format,...)
+/*! \brief void outputline(char *format,...)
   \brief outputline
   \param format - char *format
   \param ...
 
 */
 
-void outputline(const char *format,...)
+void outputline(char *format,...)
 {
   va_list VarArg;
   // int l;	    
@@ -122,7 +121,7 @@ void outputline(const char *format,...)
   va_start(VarArg,format);
   //  vinfoline(format,output_stream, VarArg);
   //  #define vinfoline(format, outfile, xxxx)  {	
-  for (p=(char*)format;p &&  *p; p++) 
+  for (p=format;p &&  *p; p++) 
     { 
       if (*p == '%') 
 	{ 
@@ -192,7 +191,7 @@ void outputline(const char *format,...)
 
 */
 
-void traceline(const char *format,...)
+void traceline(char *format,...)
 {
   va_list VarArg;
   //  int l;	    
@@ -216,7 +215,7 @@ void traceline(const char *format,...)
       
       //      vinfoline(format, stdout, VarArg);
       // #define vinfoline(format, outfile, xxxx)  { 
-      for (p=(char*)format;p &&  *p; p++) 
+      for (p=format;p &&  *p; p++) 
 	{ 
 	  if (*p == '%') 
 	    { 
@@ -287,7 +286,7 @@ void traceline(const char *format,...)
 
 */
 
-void infoline(const char *format,...)
+void infoline(char *format,...)
 {
   va_list VarArg;
   //  int l;	    
@@ -306,7 +305,7 @@ void infoline(const char *format,...)
       
       //      vinfoline(format, stdout, VarArg);
       //#define vinfoline(format, outfile, xxxx)  {	
-      for (p=(char*)format;p &&  *p; p++) 
+      for (p=format;p &&  *p; p++) 
 	{ 
 	  if (*p == '%') 
 	    { 
@@ -377,7 +376,7 @@ void infoline(const char *format,...)
 
 */
 
-void warningline(const char *format,...)
+void warningline(char *format,...)
 {
   va_list VarArg;
   //  int l;		      
@@ -399,7 +398,7 @@ void warningline(const char *format,...)
     fprintf(stderr,"*** Warning: ");
     //    vinfoline(format, stderr, VarArg);
     // #define vinfoline(format, stderr, xxxx)  {	
-    for (p=(char*)format;p &&  *p; p++) 
+    for (p=format;p &&  *p; p++) 
       { 
 	if (*p == '%') 
 	  { 
@@ -471,7 +470,7 @@ void warningline(const char *format,...)
   New error printing routine 
 */
 
-void Errorline(const char *format,...)
+void Errorline(char *format,...)
 {
   va_list VarArg;
   //  int l;	    
@@ -490,7 +489,7 @@ void Errorline(const char *format,...)
   //  fprintf(stderr,"format2 = %lx %s\n",(long)format,format);
   // vinfoline(format, stderr, VarArg);
   //#define vinfoline(format, stderr, xxxx)  { 
-  for (p=(char*)format;p &&  *p; p++) 
+  for (p=format;p &&  *p; p++) 
     { 
       if (*p == '%') 
 	{ 
@@ -563,7 +562,7 @@ void Errorline(const char *format,...)
   
 */
 
-void Syntaxerrorline(const char *format,...)
+void Syntaxerrorline(char *format,...)
 {
   va_list VarArg;
   //  int l;	    
@@ -583,7 +582,7 @@ void Syntaxerrorline(const char *format,...)
     //    fprintf(stderr,"format2 = %lx %s\n",(long)format,format);
     // vinfoline(format, stderr, VarArg);
     //#define vinfoline(format, outfile, xxxx)  {	
-    for (p=(char*)format;p &&  *p; p++) 
+    for (p=format;p &&  *p; p++) 
       { 
 	if (*p == '%') 
 	  { 
@@ -769,7 +768,7 @@ void toggle_step()
 
 */
 
-void perr(const char *str)
+void perr(char *str)
 {
   (void)fputs(str, stderr);
 }
@@ -781,12 +780,12 @@ void perr(const char *str)
 
 */
 
-void perr_s(const char *s1, char *s2)
+void perr_s(char *s1,char *s2)
 {
   fprintf(stderr,s1,s2);
 }
 
-/*! \fn void perr_s2(const char *s1,char *s2,char *s3)
+/*! \fn void perr_s2(char *s1,char *s2,char *s3)
   \brief perr_s2
   \param s1 - char *s1
   \param s2 - char *s2
@@ -794,7 +793,7 @@ void perr_s(const char *s1, char *s2)
 
 */
 
-void perr_s2(const char* s1, const char* s2, const char* s3)
+void perr_s2(char *s1,char *s2,char *s3)
 {
   fprintf(stderr,s1,s2,s3);
 }
@@ -806,7 +805,7 @@ void perr_s2(const char* s1, const char* s2, const char* s3)
 
 */
 
-void perr_i(const char *str,long i)
+void perr_i(char *str,long i)
 {
   fprintf(stderr,str,i);
 }
@@ -842,7 +841,7 @@ long warningx()
   Main routine for report_error and report_warning 
 */
 
-void report_error_main(ptr_psi_term g,const char *s,const char *s2)
+void report_error_main(ptr_psi_term g,char *s,char *s2)
 {
   //  FILE *f;
 
@@ -851,7 +850,7 @@ void report_error_main(ptr_psi_term g,const char *s,const char *s2)
   perr("'.\n");
 }
 
-/*! \fn void report_error(ptr_psi_term g,const char *s)
+/*! \fn void report_error(ptr_psi_term g,char *s)
   \brief report_error
   \param g - ptr_psi_term g
   \param s - char *s
@@ -862,7 +861,7 @@ void report_error_main(ptr_psi_term g,const char *s,const char *s2)
   Format: '*** Error: %s in 'g'.'
 */
 
-void report_error(ptr_psi_term g, const char *s)
+void report_error(ptr_psi_term g,char *s)
 {
   report_error_main(g,s,"Error");
 }
@@ -878,7 +877,7 @@ void report_error(ptr_psi_term g, const char *s)
   Format: '*** Error: %s in 'g'.'
 */
 
-long reportAndAbort(ptr_psi_term g,const char *s)
+long reportAndAbort(ptr_psi_term g,char *s)
 {
   report_error_main(g,s,"Error");
   return abort_life(TRUE); // djd added TRUE
@@ -896,12 +895,12 @@ long reportAndAbort(ptr_psi_term g,const char *s)
   Format: '*** Warning: %s in 'g'.'
 */
 
-void report_warning(ptr_psi_term g,const char *s)
+void report_warning(ptr_psi_term g,char *s)
 {
   if (warningflag) report_error_main(g,s,"Warning");
 }
 
-/*! \fn void report_error2_main(ptr_psi_term g,const char *s,const char *s2)
+/*! \fn void report_error2_main(ptr_psi_term g,char *s,char *s2)
   \brief report_error2_main
   \param g - ptr_psi_term g
   \param s - char *s
@@ -910,13 +909,13 @@ void report_warning(ptr_psi_term g,const char *s)
   Main routine for report_error2 and report_warning2 
 */
 
-void report_error2_main(ptr_psi_term g,const char *s,const char *s2)
+void report_error2_main(ptr_psi_term g,char *s,char *s2)
 {
   //  FILE *f;
 
-  perr_s("*** %s: argument '",(char*)s2);
+  perr_s("*** %s: argument '",s2);
   display_psi_stderr(g);
-  perr_s("' %s.\n",(char*)s);
+  perr_s("' %s.\n",s);
 }
 
 /*! \fn void report_error2(ptr_psi_term g,char *s)
@@ -944,7 +943,7 @@ void report_error2(ptr_psi_term g,char *s)
   Format: '*** Warning: argument 'g' %s.'
 */
 
-void report_warning2(ptr_psi_term g,const char *s)
+void report_warning2(ptr_psi_term g,char *s)
 {
   if (warningflag) report_error2_main(g,s,"Warning");
 }
@@ -980,7 +979,7 @@ void nonnum_warning(ptr_psi_term t,ptr_psi_term arg1,ptr_psi_term arg2)
 
 */
 
-long nonint_warning(ptr_psi_term arg, REAL val, const char *msg)
+long nonint_warning(ptr_psi_term arg, REAL val, char *msg)
 {
   long err=FALSE;
 

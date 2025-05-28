@@ -4,8 +4,6 @@
  * Caveat:  this is V8 regexp(3) [actually, a reimplementation thereof],
  * not the System V one.
  */
-#define _CRT_SECURE_NO_WARNINGS
-#include <cstdlib>
 #define NSUBEXP  10
 typedef struct regexp {
 	char *startp[NSUBEXP];

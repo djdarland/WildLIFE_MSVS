@@ -22,11 +22,12 @@
  * History:
  */
 /* 	$Id: lub.c,v 1.3 1995/08/25 21:34:37 duchier Exp $	 */
-#define REV401PLUS
+
 #ifndef lint
 static char vcid[] = "$Id: lub.c,v 1.3 1995/08/25 21:34:37 duchier Exp $";
 #endif /* lint */
-#define EXTERN extern
+
+#define REV401PLUS
 #ifdef REV401PLUS
 #include "defs.h"
 #endif

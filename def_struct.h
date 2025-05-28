@@ -1,6 +1,6 @@
 /*! \file def_struct.h
   \brief typedefs and structures
-  symbo
+
 */
 
 /*! \typedef type_ptr
@@ -27,7 +27,7 @@ typedef void *PsiTerm;
 /******************************* TYPES ************************************/
 
 /*! \typedef GENERIC 
-  \brief void *GENERIC 
+  \brief unsigned long *GENERIC 
   
   GENERIC is the type of a pointer to any type.  This might not work on 
   some machines, but it should be possible as MALLOC() uses something of/
@@ -102,7 +102,8 @@ typedef struct wl_resid_list {
 typedef struct wl_hash_table * ptr_hash_table;
 
 /************ MODULES **************/
-/*        RM: Jan  7 1993         */
+/*        RM: Jan  7 1993          */
+
 struct wl_module {
   char *module_name;
   char *source_file;
@@ -151,8 +152,7 @@ typedef struct wl_definition {
   ptr_int_list code;
   ptr_int_list parents;
   ptr_int_list children;
-  // def_type type_def;
-  char wl_type;  // added to use in switch instead of type_def
+  def_type type_def;
   char always_check;  /* TRUE by default */
   char wl_protected;     /* TRUE by default */
   char evaluate_args; /* TRUE by default */
