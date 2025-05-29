@@ -11,7 +11,7 @@
 static char vcid[] = "$Id: sys.c,v 1.9 1996/01/17 00:33:09 duchier Exp $";
 #endif /* lint */
 #define REV401PLUS
-
+#define EXTERN extern
 #ifdef REV102
 #include <unistd.h>
 #include "extern.h"
@@ -155,7 +155,8 @@ static ptr_psi_term make_bytedata(ptr_definition sort, unsigned long bytes)
   ptr_psi_term temp_result;
   char *b = (char *) heap_alloc(bytes+sizeof(bytes));
   *((long *) b) = bytes;
-  bzero(b+sizeof(bytes),bytes);
+//  bzero(b+sizeof(bytes),bytes);
+  memcpy(b+sizeof(bytes),0,bytes);
   temp_result=stack_psi_term(0);
   temp_result->type=sort;
   temp_result->value_3=(GENERIC)b;
@@ -385,13 +386,13 @@ static long bitvector_bit_code(unsigned long *bv1,
   case BV_SET:
     temp_result = make_bytedata(sys_bitvector,size1);
     s2 = ((unsigned char *) temp_result->value_3)+ sizeof(size1);
-    bcopy(s1,s2,size1);
+    memcpy(s1,s2,size1);
     s2[i] |= 1<<j;
     break;
   case BV_CLEAR:
     temp_result = make_bytedata(sys_bitvector,size1);
 	  s2 = ((unsigned char *) temp_result->value_3)+ sizeof(size1);
-    bcopy(s1,s2,size1);
+    memcpy(s1,s2,size1);
     s2[i] &= ~ (1<<j);
     break;
   }
@@ -408,7 +409,7 @@ static long bitvector_bit_internal(ptr_psi_term args[],
 {
   return bitvector_bit_code((unsigned long *)args[0]->value_3,
 			    (long)*((REAL*)args[1]->value_3),
-			    result,(GENERIC)op,funct); // REV401PLUS
+			    result,*op,funct); // REV401PLUS
 }
 
 static long bitvector_bit(long op)
@@ -483,7 +484,7 @@ static long regexp_compile_internal(ptr_psi_term args[],
      are done.  Note that, if regmust is NULL we must leave it that way */
   if (re->regmust != NULL)
     re->regmust = (char *) ((unsigned long) (re->regmust - (char *)re));
-  bcopy((char*)re,((char*)temp_result->value_3)+sizeof(unsigned long),bytes);
+  memcpy((char*)re,((char*)temp_result->value_3)+sizeof(unsigned long),bytes);
   free(re);			/* free the regexp: no longer needed */
   /* return result */
   push_goal(unify,temp_result,result,NULL);
@@ -627,8 +628,16 @@ static long int2stream_internal(ptr_psi_term args[],
 				ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
+#ifdef __unix__
   FILE *fp = fdopen((int)*(REAL*)args[0]->value_3,
 		    (char*)args[1]->value_3);
+#endif
+#ifdef _WIN64
+  FILE* fp = _fdopen((int)*(REAL*)args[0]->value_3,
+      (char*)args[1]->value_3);
+#endif
+
+
   if (fp==NULL) return FALSE;
   else {
     push_goal(unify,fileptr2stream(fp,sys_stream),result,NULL);
@@ -748,7 +757,8 @@ static long get_buffer_internal(ptr_psi_term args[],
   ptr_psi_term t = stack_psi_term(4);
   t->type = quoted_string;
   t->value_3=(GENERIC)heap_alloc(size+1);
-  bzero((char*)t->value_3,size+1);
+ // bzero((char*)t->value_3,size+1);
+  memcpy((char*)t->value_3,0,size+1);
   FP_PREPARE(srm,FP_INPUT);
   if (fread((void*)t->value_3,sizeof(char),size,srm->fp) <= 0)
     return FALSE;
@@ -846,7 +856,8 @@ void text_buffer_push(struct text_buffer **buf,
       fprintf(stderr,"Fatal error: malloc failed in text_buffer_push\n");
       exit(-1);
     }
-    bzero((char*)(*buf)->next,sizeof(struct text_buffer));
+//    bzero((char*)(*buf)->next,sizeof(struct text_buffer));
+    memset((char*)(*buf)->next,0,sizeof(struct text_buffer));
     *buf = (*buf)->next;
     (*buf)->top = 1;
     (*buf)->data[0]=c;
@@ -883,7 +894,8 @@ get_record_internal(ptr_psi_term args[],
   char *cursep = sep;
 
   FP_PREPARE(srm,FP_INPUT);
-  bzero((char*)&rootbuf,sizeof(rootbuf));
+  // bzero((char*)&rootbuf,sizeof(rootbuf));
+  memset((char*)&rootbuf,0,sizeof(rootbuf));
   if (!sep || !*sep) {
     /* no separator: just grab as much as you can */
     while ((c=getc(fp)) != EOF)
@@ -936,7 +948,7 @@ get_record_internal(ptr_psi_term args[],
   t->value_3=(GENERIC)heap_alloc(size+1);
   for(lastbuf=&rootbuf,sep=(char*)t->value_3;
       lastbuf!=NULL;sep+=lastbuf->top,lastbuf=lastbuf->next)
-    bcopy(lastbuf->data,sep,lastbuf->top);
+    memcpy(lastbuf->data,sep,lastbuf->top);
   ((char*)t->value_3)[size]='\0';
   text_buffer_free(rootbuf.next);
   push_goal(unify,t,result,NULL);
@@ -1070,6 +1082,7 @@ static long c_sys_stream2stream()
 /* SOCKETS AND NETWORKING *
  **************************/
 
+#ifdef __unix__
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <sys/un.h>
@@ -1164,7 +1177,8 @@ static long bind_or_connect_internal(ptr_psi_term args[],
       return FALSE;
     }
 
-    bzero((char*)&name,sizeof(name));
+//    bzero((char*)&name,sizeof(name));
+    memset((char*)&name,0,sizeof(name));
     name.sin_family = AF_INET;
     name.sin_port = htons((unsigned short)*(REAL*)args[2]->value_3);
 
@@ -1288,7 +1302,7 @@ static long c_accept()
   return call_primitive((long (*)(wl_psi_term**,
 				  ptr_psi_term, ptr_psi_term, GENERIC))accept_internal,NARGS(args),args,0);
 }
-
+#endif
 /* SYSTEM ERRORS *
  *****************/
 
@@ -1388,7 +1402,7 @@ static long c_import_symbol()
 
 /* PROCESSES *
  *************/
-
+#ifdef __unix__
 static long fork_internal(ptr_psi_term args[],
 			  ptr_psi_term result,
 			  ptr_psi_term funct)
@@ -1404,6 +1418,8 @@ static long c_fork()
   return call_primitive((long (*)(wl_psi_term**,
 				  ptr_psi_term, ptr_psi_term, GENERIC))fork_internal,0,NULL,0);
 }
+
+#endif
 
 typedef struct {
   char * name;
@@ -1448,6 +1464,7 @@ char *get_numeric_feature(long n)
   }
 }
 
+#ifdef __unix__
 #ifndef WIFEXITED
 #include <sys/wait.h>
 #endif
@@ -1553,10 +1570,10 @@ static long c_kill()
   return call_primitive((long (*)(wl_psi_term**,
 				  ptr_psi_term, ptr_psi_term, GENERIC))kill_internal,NARGS(args),args,0);
 }
-
+#endif
 /* MISCELLANEOUS *
  ****************/
-
+#ifdef __unix__
 static long cuserid_internal(ptr_psi_term args[],
 			     ptr_psi_term result,
 			     ptr_psi_term funct)
@@ -1717,7 +1734,7 @@ static long c_my_wait_on_feature()
   return call_primitive((long (*)(wl_psi_term**,
 				  ptr_psi_term, ptr_psi_term, GENERIC))my_wait_on_feature_internal,NARGS(args),args,0);
 }
-
+#endif
 /* CALL_ONCE
  ************/
 /*
@@ -1789,7 +1806,7 @@ static long c_apply1()
   return call_primitive((long (*)(wl_psi_term**,
 				  ptr_psi_term, ptr_psi_term, GENERIC))apply1_internal,NARGS(args),args,0);
 }
-
+#ifdef __unix__
 static long getpid_internal(ptr_psi_term args[],
 			    ptr_psi_term result,
 			    ptr_psi_term funct)
@@ -1803,7 +1820,7 @@ static long c_getpid()
   return call_primitive((long (*)(wl_psi_term**,
 				  ptr_psi_term, ptr_psi_term, GENERIC))getpid_internal,0,0,0);
 }
-
+#endif
 /********************************************************************
   INITIALIZATION FUNCTIONS
   *******************************************************************/
@@ -1837,12 +1854,14 @@ check_sys_definitions()
   check_definition(&sys_regexp);
   check_definition(&sys_stream);
   check_definition(&sys_file_stream);
+#ifdef __unix__
   check_definition(&sys_socket_stream);
   check_definition(&sys_process_no_children);
   check_definition(&sys_process_exited);
   check_definition(&sys_process_signaled);
   check_definition(&sys_process_stopped);
   check_definition(&sys_process_continued);
+#endif
 #ifdef LIFE_NDBM
   check_ndbm_definitions();
 #endif
@@ -1865,13 +1884,14 @@ void insert_sys_builtins()
   sys_regexp		=update_symbol(sys_module,"regexp");
   sys_stream		=update_symbol(sys_module,"stream");
   sys_file_stream	=update_symbol(sys_module,"file_stream");
+#ifdef __unix__
   sys_socket_stream	=update_symbol(sys_module,"socket_stream");
   sys_process_no_children=update_symbol(sys_module,"process_no_children");
   sys_process_exited	=update_symbol(sys_module,"process_exited");
   sys_process_signaled	=update_symbol(sys_module,"process_signaled");
   sys_process_stopped	=update_symbol(sys_module,"process_stopped");
   sys_process_continued	=update_symbol(sys_module,"process_continued");
-
+#endif
   /* DENYS: BYTEDATA */
   /* purely for illustration
   new_built_in(sys_module,"string_to_bytedata",function,c_string_to_bytedata);
@@ -1896,16 +1916,21 @@ void insert_sys_builtins()
   new_built_in(sys_module,"get_code"		,(def_type)function_it ,c_get_code);
   new_built_in(sys_module,"ftell"		,(def_type)function_it ,c_ftell);
   new_built_in(sys_module,"fseek"		,(def_type)predicate_it,c_fseek);
+#ifdef __unix__
   new_built_in(sys_module,"socket"		,(def_type)function_it ,c_socket);
   new_built_in(sys_module,"bind"		,(def_type)predicate_it,c_bind);
   new_built_in(sys_module,"connect"		,(def_type)predicate_it,c_connect);
+#endif
   new_built_in(sys_module,"fwrite"		,(def_type)predicate_it,c_fwrite);
   new_built_in(sys_module,"fflush"		,(def_type)predicate_it,c_fflush);
+#ifdef __unix__
   new_built_in(sys_module,"listen"		,(def_type)predicate_it,c_listen);
   new_built_in(sys_module,"accept"		,(def_type)function_it ,c_accept);
+#endif
   new_built_in(sys_module,"errno"		,(def_type)function_it ,c_errno);
   new_built_in(sys_module,"errmsg"		,(def_type)function_it ,c_errmsg);
   new_built_in(sys_module,"import_symbol"	,(def_type)predicate_it,c_import_symbol);
+#ifdef __unix__
   new_built_in(sys_module,"fork"		,(def_type)function_it ,c_fork);
   new_built_in(sys_module,"wait"		,(def_type)function_it ,c_wait);
   new_built_in(sys_module,"waitpid"		,(def_type)function_it ,c_waitpid);
@@ -1915,8 +1940,11 @@ void insert_sys_builtins()
   new_built_in(sys_module,"lazy_project"	,(def_type)function_it ,c_lazy_project);
   new_built_in(sys_module,"wait_on_feature"	,(def_type)predicate_it,c_wait_on_feature);
   new_built_in(sys_module,"my_wait_on_feature"	,(def_type)function_it ,c_my_wait_on_feature);
+#endif
   new_built_in(sys_module,"apply1"		,(def_type)function_it ,c_apply1);
+#ifdef __unix__
   new_built_in(sys_module,"getpid"		,(def_type)function_it ,c_getpid);
+#endif
   new_built_in(sys_module,"stream2sys_stream"	,(def_type)function_it ,c_stream2sys_stream);
   new_built_in(sys_module,"sys_stream2stream"	,(def_type)function_it ,c_sys_stream2stream);
 #ifdef LIFE_DBM

@@ -7,7 +7,7 @@
 static char vcid[] = "$Id: login.c,v 1.4 1995/01/14 00:25:33 duchier Exp $";
 #endif /* lint */
 #define REV401PLUS
-
+#define EXTERN extern
 #ifdef REV401PLUS
 #include "defs.h"
 #endif
@@ -334,7 +334,12 @@ void assert_clause(ptr_psi_term t)
 
 void start_chrono()
 {
+#ifdef __unix__
   times(&start_time);
+#endif
+#ifdef _WIN64
+  start_time = clock();
+#endif
 }
 
 
@@ -1094,9 +1099,17 @@ void show_count()
   if (verbose) {
     printf("  [");
     
+#ifdef __unix__
     times(&end_time);
     t = (end_time.tms_utime - start_time.tms_utime)/60.0;
-    
+#endif
+
+#ifdef _WIN64
+    end_time = clock();
+    t = (float)(end_time - start_time) / (float)CLOCKS_PER_SEC;
+#endif
+
+
     printf("%1.3fs cpu, %ld goal%s",t,goal_count,(goal_count!=1?"s":""));
     
     if (t!=0.0) printf(" (%0.0f/s)",goal_count/t);
@@ -1422,7 +1435,7 @@ long unify_body(long eval_flag)
 	      unsigned long ulen = *((unsigned long *)u->value_3);
 	      unsigned long vlen = *((unsigned long *)v->value_3);
               success=(ulen==vlen &&
-		       (bcmp((char *)u->value_3,(char *)v->value_3,ulen)==0));
+		       (memcmp((char *)u->value_3,(char *)v->value_3,ulen)==0));
 	    }
             else if (u->type==cut && v->type==cut) { /* 22.9 */
               GENERIC mincut;
@@ -2209,7 +2222,9 @@ void main_prove()
     
   xcount=0;
   xeventdelay=XEVENTDELAY;
+#ifdef __unix__
   interrupted=FALSE;
+#endif
   main_loop_ok=TRUE;
   
   while (main_loop_ok && goal_stack) {
@@ -2431,64 +2446,80 @@ void main_prove()
     }
 
     if (main_loop_ok) {
-    
-      if (success) {
+
+        if (success) {
 
 #ifdef X11
-	/* Polling on external events */
-	if (xcount<=0 && aim->type==prove) {
-	  if (x_exist_event()) {
-	    /* printf("At event, xeventdelay = %ld.\n",xeventdelay); */
-	    xeventdelay=0;
-	    release_resid(xevent_existing);
-	  } else {
-	    if (xeventdelay<XEVENTDELAY)
-	      /* If XEVENTDELAY=1000 it takes 90000 goals to get back */
-	      /* from 100 at the pace of 1%. */
-	      xeventdelay=(xeventdelay*101)/100+2;
-	    else
-	      xeventdelay=XEVENTDELAY;
-	  }
-	  xcount=xeventdelay;
-	}
-	else
-	  xcount--;
+            /* Polling on external events */
+            if (xcount <= 0 && aim->type == prove) {
+                if (x_exist_event()) {
+                    /* printf("At event, xeventdelay = %ld.\n",xeventdelay); */
+                    xeventdelay = 0;
+                    release_resid(xevent_existing);
+                }
+                else {
+                    if (xeventdelay < XEVENTDELAY)
+                        /* If XEVENTDELAY=1000 it takes 90000 goals to get back */
+                        /* from 100 at the pace of 1%. */
+                        xeventdelay = (xeventdelay * 101) / 100 + 2;
+                    else
+                        xeventdelay = XEVENTDELAY;
+                }
+                xcount = xeventdelay;
+            }
+            else
+                xcount--;
 #endif
-	
-      }
-      else {
-        if (choice_stack) {
-	  backtrack();
-          Traceline("backtracking\n");
-	  success=TRUE;
+
         }
-        else /* if (goal_stack) */ {
-          undo(NULL); /* 8.10 */
-	  Infoline("\n*** No");
-	  /* printf("\n*** No (in main_prove)."); */
-          show_count();
+        else {
+            if (choice_stack) {
+                backtrack();
+                Traceline("backtracking\n");
+                success = TRUE;
+            }
+            else /* if (goal_stack) */ {
+                undo(NULL); /* 8.10 */
+                Infoline("\n*** No");
+                /* printf("\n*** No (in main_prove)."); */
+                show_count();
 #ifdef TS
-	  /* global_time_stamp=INIT_TIME_STAMP; */ /* 9.6 */
+                /* global_time_stamp=INIT_TIME_STAMP; */ /* 9.6 */
 #endif
-	  main_loop_ok=FALSE;
+                main_loop_ok = FALSE;
+            }
         }
-      }
-      
-      if (heap_pointer-stack_pointer < GC_THRESHOLD)
-        memory_check();
-      
-      if (interrupted || (stepflag && steptrace))
-        handle_interrupt();
-      else if (stepcount>0) {
-        stepcount--;
-        if (stepcount==0 && !stepflag) {
-          stepflag=TRUE;
-          handle_interrupt();
+
+        if (heap_pointer - stack_pointer < GC_THRESHOLD)
+            memory_check();
+#ifdef __unix__
+        if (interrupted || (stepflag && steptrace))
+            handle_interrupt();
+        else if (stepcount > 0) {
+            stepcount--;
+            if (stepcount == 0 && !stepflag) {
+                stepflag = TRUE;
+                handle_interrupt();
+            }
+    }
+#endif
+#ifdef _WIN64
+
+        if (stepcount > 0) {
+            stepcount--;
+            if (stepcount == 0 && !stepflag) {
+                stepflag = TRUE;
+            }
         }
+#endif
+
+
+
+
+
       }
     }
   }
-}
 
 
 int dummy_printf(char *f,char *s,char *t)

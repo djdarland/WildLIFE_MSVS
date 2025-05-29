@@ -6,7 +6,10 @@
 #ifndef lint
 static char vcid[] = "$Id: built_ins.c,v 1.14 1995/07/27 21:26:28 duchier Exp $";
 #endif /* lint */
+
+#define EXTERN extern
 #define REV401PLUS
+
 
 #ifdef REV401PLUS
 #include "defs.h"
@@ -357,7 +360,7 @@ void unify_bool_result(ptr_psi_term t,long v)
       release_resid(t);
   }
   else {
-    Warningline("the persistent term '%P' appears in a boolean constraint and cannot be refined\n",t);
+    Warningline((char*)"the persistent term '%P' appears in a boolean constraint and cannot be refined\n",t);
     }
     */
 }
@@ -409,7 +412,7 @@ long unify_real_result(ptr_psi_term t,REAL v)
     }
   }
   else {
-    Warningline("the persistent term '%P' appears in an arithmetic constraint and cannot be refined\n",t);
+    Warningline((char*)"the persistent term '%P' appears in an arithmetic constraint and cannot be refined\n",t);
   }
   
   return success;
@@ -595,7 +598,7 @@ static long c_eval_disjunction()
     i_check_out(arg1);
   }
   else {
-    Errorline("malformed disjunction '%P'\n",funct);
+    Errorline((char*)"malformed disjunction '%P'\n",funct);
     return (c_abort());
   }
   
@@ -852,7 +855,7 @@ static long c_boolpred()
             push_goal(prove,arg1,(ptr_psi_term)DEFRULES,NULL);
           }
           else {
-            Errorline("function result '%P' should be a boolean or a predicate.\n",
+            Errorline((char*)"function result '%P' should be a boolean or a predicate.\n",
 		      arg1);
             return (c_abort());
           }
@@ -861,7 +864,7 @@ static long c_boolpred()
     }
   }
   else {
-    Errorline("missing argument to '*boolpred*'.\n");
+    Errorline((char*)"missing argument to '*boolpred*'.\n");
     return (c_abort());
   }
 
@@ -945,7 +948,7 @@ static long c_logical_main(long sel)
     }
     else {
       success=FALSE;
-      Errorline("Non-boolean argument or result in '%P'.\n",funct);
+      Errorline((char*)"Non-boolean argument or result in '%P'.\n",funct);
     }
   }
   else
@@ -1015,7 +1018,7 @@ static long c_not()
     }
     else {
       success=FALSE;
-      Errorline("Non-boolean argument or result in '%P'.\n",funct);
+      Errorline((char*)"Non-boolean argument or result in '%P'.\n",funct);
     }
   }
   else
@@ -1094,7 +1097,7 @@ static long c_xor()
     }
     else {
       success=FALSE;
-      Errorline("Non-boolean argument or result in '%P'.\n",funct);
+      Errorline((char*)"Non-boolean argument or result in '%P'.\n",funct);
     }
   }
   else
@@ -1127,7 +1130,7 @@ static long c_apply()
     else
       if(other->type && other->type->type_def!=(def_type)function_it) {// REV401PLUS _type & (def_type) & _it
 	success=FALSE;
-        Errorline("argument is not a function in %P.\n",funct);
+        Errorline((char*)"argument is not a function in %P.\n",funct);
       }
       else {
         /* What we really want here is to merge all attributes in       */
@@ -1190,7 +1193,7 @@ static long c_project()
 	    label=heap_copy_string(thebuffer); /* A little voracious */
 	  }
 	  else { /*  RM: Jul 28 1993  */
-	    Errorline("non-integer numeric feature in %P\n",funct);
+	    Errorline((char*)"non-integer numeric feature in %P\n",funct);
 	    return FALSE;
 	  }
 	}
@@ -1208,7 +1211,7 @@ static long c_project()
       if (n)
 	push_goal(unify,result,(ptr_psi_term)n->data,NULL); //REV401PLUS cast
       else if (arg1->type->type_def==(def_type)function_it && !(arg1->flags&QUOTED_TRUE)) { // _def & (def_type) & _it
-	Errorline("attempt to add a feature to curried function %P\n",
+	Errorline((char*)"attempt to add a feature to curried function %P\n",
 		  arg1);
 	return FALSE;
       }
@@ -1660,12 +1663,12 @@ static long c_exists()
       deref_args(g,set_1);
       if (!psi_to_string(arg1,&c_arg1)) {
         success=FALSE;
-        Errorline("bad argument in %P.\n",g);
+        Errorline((char*)"bad argument in %P.\n",g);
       }
     }
     else {
       success=FALSE;
-      Errorline("bad argument in %P.\n",g);
+      Errorline((char*)"bad argument in %P.\n",g);
     }
   }
 
@@ -1702,12 +1705,12 @@ static long c_load()
       }
     }
     else {
-      Errorline("bad file name in %P.\n",t);
+      Errorline((char*)"bad file name in %P.\n",t);
       success=FALSE;
     }
   }
   else {
-    Errorline("no file name in %P.\n",t);
+    Errorline((char*)"no file name in %P.\n",t);
     success=FALSE;
   }
 
@@ -1787,12 +1790,12 @@ static long c_set_choice()
         }
       }
       else {
-        Errorline("bad argument to %P.\n",t);
+        Errorline((char*)"bad argument to %P.\n",t);
 	success=FALSE;
       }
     }
     else {
-      Errorline("bad argument %P.\n",t);
+      Errorline((char*)"bad argument %P.\n",t);
       success=FALSE;
     }
   }
@@ -1846,12 +1849,12 @@ static long c_exists_choice()
         push_goal(unify,result,ans_term,NULL);
       }
       else {
-        Errorline("bad second argument to %P.\n",funct);
+        Errorline((char*)"bad second argument to %P.\n",funct);
         success=FALSE;
       }
     }
     else {
-      Errorline("bad first argument %P.\n",funct);
+      Errorline((char*)"bad first argument %P.\n",funct);
       success=FALSE;
     }
   }
@@ -2017,11 +2020,11 @@ static long c_read(long psi_flag)
   if (arg1) {
     deref_args(g,set_1);
     if (eof_flag) {
-      Errorline("attempt to read past end of file (%E).\n");
+      Errorline((char*)"attempt to read past end of file (%E).\n");
       return (abort_life(TRUE));
     }
     else {
-      prompt="";
+      prompt=(char*)"";
       old_var_tree=var_tree;
       var_tree=NULL;
       if (psi_flag) {
@@ -2073,7 +2076,7 @@ static long c_read(long psi_flag)
     }
   }
   else {
-    Errorline("argument missing in %P.\n",g);
+    Errorline((char*)"argument missing in %P.\n",g);
     success=FALSE;
   }
   
@@ -2096,16 +2099,18 @@ void exit_life(long nl_flag)
 // long nl_flag;  // DJD
 {
   exit(0);
-  open_input_file("stdin");   // CHAR * MSVC
+  open_input_file((char*)"stdin");   // CHAR * MSVC
   life_end = clock();
   if (NOTQUIET) { /* 21.1 */
-    if (nl_flag) printf("\n");
-    printf("*** Exiting Wild_Life  ");
-    printf("[%1.3lfs cpu, %1.3lfs gc (%2.1lf%%)]\n",
-           ((REAL)(life_end-life_start)/(REAL)CLOCKS_PER_SEC,
-           garbage_time,
-           (REAL)garbage_time * 100.0) / (REAL) (life_end-life_start));
+      if (nl_flag) printf("\n");
+      printf("*** Exiting Wild_Life  ");
+      printf("[%1.3lfs cpu, %1.3lfs gc (%2.1lf%%)]\n",
+          ((REAL)(life_end - life_start) / (REAL)CLOCKS_PER_SEC,
+              garbage_time,
+              (REAL)garbage_time * 100.0) / (REAL)(life_end - life_start));
+
   }
+}
 #endif
   
   
@@ -2126,39 +2131,10 @@ void exit_life(long nl_flag)
            (REAL)garbage_time * 100.0) / (REAL) (life_end.tms_utime-life_start.tms_utime)/(REAL)sysconf(_SC_CLK_TCK);
   }
 
-#ifdef ARITY  /*  RM: Mar 29 1993  */
-  arity_end();
-#endif
-  
-  exit(1);
 }
 
 #endif
 
-#ifdef OBSOLETE
-
-void exit_life(long nl_flag)
-// long nl_flag;
-{
-  open_input_file("stdin");
-  times(&life_end);
-  if (NOTQUIET) { /* 21.1 */
-    if (nl_flag) printf("\n");
-    printf("*** Exiting Wild_Life  ");
-    printf("[%1.3lfs cpu, %1.3lfs gc (%2.1lf%%)]\n",
-           ((REAL)(life_end.tms_utime-life_start.tms_utime)/(REAL)sysconf(_SC_CLK_TCK)),
-           garbage_time,
-           (REAL)garbage_time * 100.0) / (REAL) (life_end.tms_utime-life_start.tms_utime)/(REAL)sysconf(_SC_CLK_TCK);
-  }
-
-#ifdef ARITY  /*  RM: Mar 29 1993  */
-  arity_end();
-#endif
-  
-  exit(1);
-}
-
-#endif
 
 
 /******** C_ABORT
@@ -2217,7 +2193,7 @@ static long c_not_implemented()
   
   t=aim->aaaa_1;
   deref_ptr(t);
-  Errorline("built-in %P is not implemented yet.\n",t);
+  Errorline((char*)"built-in %P is not implemented yet.\n",t);
   return FALSE;
 }
 
@@ -2232,7 +2208,7 @@ static long c_declaration()
   
   t=aim->aaaa_1;
   deref_ptr(t);
-  Errorline("%P is a declaration, not a query.\n",t);
+  Errorline((char*)"%P is a declaration, not a query.\n",t);
   return FALSE;
 }
 
@@ -2276,19 +2252,20 @@ static long c_setq()
           success=TRUE;
         }
         else
-         Errorline("%P may not have arguments in %P.\n",arg1,g);
+            Errorline((char*)"%P may not have arguments in %P.\n", arg1, g);
       }
       else
-        Errorline("%P should be dynamic in %P.\n",arg1,g);
+          Errorline((char*)"%P should be dynamic in %P.\n", arg1, g);
     }
     else
-      Errorline("%P should be a function or uninterpreted in %P.\n",arg1,g);
+        Errorline((char*)"%P should be a function or uninterpreted in %P.\n", arg1, g);
   }
   else
-    Errorline("%P is missing one or both arguments.\n",g);
+      Errorline((char*)"%P is missing one or both arguments.\n", g);
 
   return success;
 }
+
 
 
 
@@ -2313,7 +2290,7 @@ static long c_assert_first()
   }
   else {
     success=FALSE;
-    Errorline("bad clause in %P.\n",g);
+    Errorline((char*)"bad clause in %P.\n",g);
   }
   
   return success;
@@ -2341,7 +2318,7 @@ static long c_assert_last()
   }
   else {
     success=FALSE;
-    Errorline("bad clause in %P.\n",g);
+    Errorline((char*)"bad clause in %P.\n",g);
   }
   
   return success;
@@ -2408,7 +2385,7 @@ long pred_clause(ptr_psi_term t,long r,ptr_psi_term g)
       push_goal(clause,head,body,(GENERIC)&(head->type->rule));
   }
   else
-    Errorline("bad argument in %s.\n", (r?"retract":"clause"));
+    Errorline((char*)"bad argument in %s.\n", (r?"retract":"clause"));
   
   return success;
 }
@@ -2476,7 +2453,7 @@ static long c_global()    /*  RM: Feb 10 1993  */
     if (!error_2)
       global_tree(g->attr_list);
   } else {
-    Errorline("argument(s) missing in %P\n",g);
+    Errorline((char*)"argument(s) missing in %P\n",g);
   }
   
   return !error_2;
@@ -2498,7 +2475,7 @@ void global_error_check(ptr_node n, long *error_2, long *eval_2)
     if (t->type==leftarrowsym) {
       get_two_args(t->attr_list,&a1,&a2);
       if (a1==NULL || a2==NULL) {
-        Errorline("%P is an incorrect global variable declaration (%E).\n",t);
+        Errorline((char*)"%P is an incorrect global variable declaration (%E).\n",t);
 	*error_2=TRUE;
 	bad_init=TRUE;
       } else {
@@ -2509,7 +2486,7 @@ void global_error_check(ptr_node n, long *error_2, long *eval_2)
       }
     }
     if (!bad_init && t->type->type_def!=(def_type)undef_it && t->type->type_def!=(def_type)global_it) {
-      Errorline("%T %P cannot be redeclared as a global variable (%E).\n",
+      Errorline((char*)"%T %P cannot be redeclared as a global variable (%E).\n",
 		t->type->type_def,
 		t);
       t->type=error_psi_term->type;
@@ -2587,7 +2564,7 @@ static long c_persistent()     /*  RM: Feb 10 1993  */
     if (!error)
       persistent_tree(g->attr_list);
   } else {
-    Errorline("argument(s) missing in %P\n",g);
+    Errorline((char*)"argument(s) missing in %P\n",g);
   }
 
   return !error;
@@ -2605,7 +2582,7 @@ void persistent_error_check(ptr_node n, long *error) //REV401PLUS add void
     t=(ptr_psi_term)n->data;
     deref_ptr(t);
     if (t->type->type_def!=(def_type)undef_it && t->type->type_def!=(def_type)global_it) {
-      Errorline("%T %P cannot be redeclared persistent (%E).\n",
+      Errorline((char*)"%T %P cannot be redeclared persistent (%E).\n",
 	         t->type->type_def,
 	         t);
       t->type=error_psi_term->type;
@@ -2674,15 +2651,15 @@ static long c_open_in()
 	    success=FALSE;
         }
 	else
-	  Errorline("bad input stream in %P.\n",g);
+	  Errorline((char*)"bad input stream in %P.\n",g);
       }
       else
-	Errorline("no stream in %P.\n",g);
+	Errorline((char*)"no stream in %P.\n",g);
     else
-      Errorline("bad file name in %P.\n",g);
+      Errorline((char*)"bad file name in %P.\n",g);
   }
   else
-    Errorline("no file name in %P.\n",g);
+    Errorline((char*)"no file name in %P.\n",g);
 
   return success;
 }
@@ -2720,15 +2697,15 @@ static long c_open_out()
 	  else
 	    success=FALSE;
 	else
-	  Errorline("bad stream in %P.\n",g);
+	  Errorline((char*)"bad stream in %P.\n",g);
       }
       else
-	Errorline("no stream in %P.\n",g);
+	Errorline((char*)"no stream in %P.\n",g);
     else
-      Errorline("bad file name in %P.\n",g);
+      Errorline((char*)"bad file name in %P.\n",g);
   }
   else
-    Errorline("no file name in %P.\n",g);
+    Errorline((char*)"no file name in %P.\n",g);
   
   return success;
 }
@@ -2761,10 +2738,10 @@ static long c_set_input()
       }
     }
     else
-      Errorline("bad stream in %P.\n",g);
+      Errorline((char*)"bad stream in %P.\n",g);
   }
   else
-    Errorline("no stream in %P.\n",g);
+    Errorline((char*)"no stream in %P.\n",g);
   
   return success;
 }
@@ -2790,10 +2767,10 @@ static long c_set_output()
       output_stream=(FILE *)arg1->value_3;
     }
     else
-      Errorline("bad stream in %P.\n",g);
+      Errorline((char*)"bad stream in %P.\n",g);
   }
   else
-    Errorline("no stream in %P.\n",g);
+    Errorline((char*)"no stream in %P.\n",g);
   
   return success;
 }
@@ -2820,7 +2797,7 @@ static long c_close()
     outclose=equal_types(arg1->type,stream) && arg1->value_3;
     inclose=FALSE;
     if (equal_types(arg1->type,inputfilesym)) {
-      ptr_node n=find(FEATCMP,STREAM,arg1->attr_list);
+      ptr_node n=find(FEATCMP,(char*)STREAM,arg1->attr_list);
       if (n) {
         arg1=(ptr_psi_term)n->data;
         inclose=(arg1->value_3!=NULL);
@@ -2832,17 +2809,17 @@ static long c_close()
       fclose((FILE *)arg1->value_3);
       
       if (inclose && arg1->value_3==(GENERIC)input_stream)
-	open_input_file("stdin");
+	open_input_file((char*)"stdin");
       else if (outclose && arg1->value_3==(GENERIC)output_stream)
-	open_output_file("stdout");
+	open_output_file((char*)"stdout");
       
       arg1->value_3=NULL;
     }
     else
-      Errorline("bad stream in %P.\n",g);
+      Errorline((char*)"bad stream in %P.\n",g);
   }
   else
-    Errorline("no stream in %P.\n",g);
+    Errorline((char*)"no stream in %P.\n",g);
   
   return success;
 }
@@ -2893,7 +2870,7 @@ static long c_get()
     }
   }
   else {
-    Errorline("argument missing in %P.\n",g);
+    Errorline((char*)"argument missing in %P.\n",g);
     success=FALSE;
   }
  
@@ -2942,7 +2919,7 @@ static long c_put_main(long to_stderr)
         success=TRUE;
       }
       else {
-        Errorline("out-of-range character value in %P.\n",g);
+        Errorline((char*)"out-of-range character value in %P.\n",g);
       }
     }
     else if (psi_to_string(arg1,&str)) {
@@ -2952,7 +2929,7 @@ static long c_put_main(long to_stderr)
       fprintf((to_stderr?stderr:output_stream),"%s",str);
   }
   else
-    Errorline("argument missing in %P.\n",g);
+    Errorline((char*)"argument missing in %P.\n",g);
   
   return success;
 }
@@ -3103,7 +3080,7 @@ static long c_page_width()
       if (pw>0)
         page_width=pw;
       else
-        Errorline("argument in %P must be positive.\n",g);
+        Errorline((char*)"argument in %P must be positive.\n",g);
       success=TRUE;
     }
     else if (sub_type(integer,arg1->type)) {
@@ -3111,10 +3088,10 @@ static long c_page_width()
       success=TRUE;
     }
     else
-      Errorline("bad argument in %P.\n",g);
+      Errorline((char*)"bad argument in %P.\n",g);
   }
   else
-    Errorline("argument missing in %P.\n",g);
+    Errorline((char*)"argument missing in %P.\n",g);
   
   return success;
 }
@@ -3141,7 +3118,7 @@ static long c_print_depth()
       if (dl>=0)
         print_depth=dl;
       else
-        Errorline("argument in %P must be positive or zero.\n",g);
+        Errorline((char*)"argument in %P must be positive or zero.\n",g);
       success=TRUE;
     }
     else if (sub_type(integer,arg1->type)) {
@@ -3149,7 +3126,7 @@ static long c_print_depth()
       success=TRUE;
     }
     else
-      Errorline("bad argument in %P.\n",g);
+      Errorline((char*)"bad argument in %P.\n",g);
   }
   else {
     /* No arguments: reset print depth to default value */
@@ -3216,7 +3193,7 @@ static long c_disj()
   if (arg1) push_goal(prove,arg1,(ptr_psi_term)DEFRULES,NULL);
   if (!arg1 && !arg2) {
     success=FALSE;
-    Errorline("neither first nor second arguments exist in %P.\n",g);
+    Errorline((char*)"neither first nor second arguments exist in %P.\n",g);
   }
 
   return success;
@@ -3288,7 +3265,7 @@ static long c_cond()
         residuate(arg1);
     }
     else /*  RM: Apr 15 1993  */
-      Errorline("argument to cond is not boolean in %P\n",g);
+      Errorline((char*)"argument to cond is not boolean in %P\n",g);
   }
   else
     curry();
@@ -3876,7 +3853,7 @@ static long c_split_double()
 	}
     }
     else
-      Errorline("non-numeric arguments in %P\n",funct);
+      Errorline((char*)"non-numeric arguments in %P\n",funct);
   }
   else
     curry();
@@ -3925,11 +3902,11 @@ static long c_string_address()
 	  
 	  }
 	  else
-	    Errorline("result is not a real in %P\n",funct);
+	    Errorline((char*)"result is not a real in %P\n",funct);
 	}
       }
       else
-	Errorline("argument is not a string in %P\n",funct);
+	Errorline((char*)"argument is not a string in %P\n",funct);
   }
   else
     curry();
@@ -3967,10 +3944,10 @@ static long c_chdir()
     #endif
       //      success=!chdir(expand_file_name((char *)arg1->value_3));
     else
-      Errorline("bad argument in %P\n",funct);
+      Errorline((char*)"bad argument in %P\n",funct);
   }
   else
-    Errorline("argument missing in %P\n",funct);
+    Errorline((char*)"argument missing in %P\n",funct);
   
   return success;
 }
@@ -4000,7 +3977,7 @@ static long c_call_once()
     else
       if(FALSE /*arg1->type->type!=predicate*/) {
         success=FALSE;
-        Errorline("argument of %P should be a predicate.\n",funct);
+        Errorline((char*)"argument of %P should be a predicate.\n",funct);
       }
       else {
 	resid_aim=NULL;
@@ -4052,7 +4029,7 @@ static long c_call()
     else
       if(FALSE /*arg1->type->type!=predicate*/) {
         success=FALSE;
-        Errorline("argument of %P should be a predicate.\n",funct);
+        Errorline((char*)"argument of %P should be a predicate.\n",funct);
       }
       else {
 	resid_aim=NULL;
@@ -4101,7 +4078,7 @@ static long c_bk_assign()
 
       /*  RM: Mar 10 1993  */
       if((GENERIC)arg1>=heap_pointer) {
-	Errorline("cannot use '<-' on persistent value in %P\n",g);
+	Errorline((char*)"cannot use '<-' on persistent value in %P\n",g);
 	return c_abort();
       }
 
@@ -4127,7 +4104,7 @@ static long c_bk_assign()
     }
   }
   else
-    Errorline("argument missing in %P.\n",g);
+    Errorline((char*)"argument missing in %P.\n",g);
   
   return success;
 }
@@ -4161,7 +4138,7 @@ static long c_assign()
     }
   }
   else
-    Errorline("argument missing in %P.\n",g);
+    Errorline((char*)"argument missing in %P.\n",g);
   
   return success;
 }
@@ -4205,7 +4182,7 @@ static long c_global_assign()
     }
   }
   else
-    Errorline("argument missing in %P.\n",g);
+    Errorline((char*)"argument missing in %P.\n",g);
   
   return success;
 }
@@ -4257,7 +4234,7 @@ static long c_unify_pred()
     push_goal(unify,arg1,arg2,NULL);
   }
   else
-    Errorline("argument missing in %P.\n",g);
+    Errorline((char*)"argument missing in %P.\n",g);
   
   return success;
 }
@@ -4351,7 +4328,7 @@ static long c_undo()
   }
   else {
     success=FALSE;
-    Errorline("argument missing in %P.\n",g);
+    Errorline((char*)"argument missing in %P.\n",g);
   }
   
   return success;
@@ -4403,7 +4380,7 @@ static long c_freeze_inner(long freeze_flag)
     
     if (arg1->type->type_def!=(def_type)predicate_it) {
       success=FALSE;
-      Errorline("the argument %P of freeze must be a predicate.\n",arg1);
+      Errorline((char*)"the argument %P of freeze must be a predicate.\n",arg1);
       /* main_loop_ok=FALSE; 8.9 */
       return success;
     }
@@ -4426,7 +4403,7 @@ static long c_freeze_inner(long freeze_flag)
       
       if ((unsigned long)rule<=MAX_BUILT_INS) {
         success=FALSE; /* 8.9 */
-        Errorline("the argument %P of freeze must be user-defined.\n",arg1); /* 8.9 */
+        Errorline((char*)"the argument %P of freeze must be user-defined.\n",arg1); /* 8.9 */
         return success; /* 8.9 */
 	/* Removed obsolete stuff here 11.9 */
       }
@@ -4475,7 +4452,7 @@ static long c_freeze_inner(long freeze_flag)
   }
   else {
     success=FALSE;
-    Errorline("goal missing in %P.\n",g);
+    Errorline((char*)"goal missing in %P.\n",g);
   }
   
   /* match_date=NULL; */ /* 13.6 */
@@ -4543,7 +4520,7 @@ static long c_char()
         residuate(arg1);
     }
     else {
-      Errorline("argument of %P must be an integer.\n",funct);
+      Errorline((char*)"argument of %P must be an integer.\n",funct);
       success=FALSE;
     }
   }
@@ -4589,7 +4566,7 @@ static long c_ascii()
       }
       else {/*  RM: Feb 18 1994  */
 	success=FALSE;
-	Errorline("String argument expected in '%P'\n",funct);
+	Errorline((char*)"String argument expected in '%P'\n",funct);
       }
       /*
       else {
@@ -4658,7 +4635,7 @@ static long c_string2psi()
     }
     else {
       success=FALSE;
-      Warningline("argument of '%P' is not a string.\n",funct);
+      Warningline((char*)"argument of '%P' is not a string.\n",funct);
       /* report_warning(funct,"argument is not a string"); 9.9 */
     }
   }
@@ -4666,7 +4643,7 @@ static long c_string2psi()
     curry();
 
   if(!success)
-    Errorline("error occurred in '%P'\n",funct);
+    Errorline((char*)"error occurred in '%P'\n",funct);
   
   return success;
 }
@@ -4749,7 +4726,7 @@ static long c_int2string()
         do {
           i--;
           if (i<=0) {
-            Errorline("internal buffer too small for int2str(%P).\n",arg1);
+            Errorline((char*)"internal buffer too small for int2str(%P).\n",arg1);
             return FALSE;
           }
           next = floor(the_int/10);
@@ -5017,13 +4994,13 @@ static long c_listing()
       }
       else {
         success=FALSE;
-        Errorline("argument of %P must be a predicate, function, or sort.\n",g);
+        Errorline((char*)"argument of %P must be a predicate, function, or sort.\n",g);
       }
     }
   }
   else {
     success=FALSE;
-    Errorline("argument missing in %P.\n",g);
+    Errorline((char*)"argument missing in %P.\n",g);
   }
   
   return success;
@@ -5067,7 +5044,7 @@ static long c_pred()
   }
   else {
     success=FALSE;
-    Errorline("argument(s) missing in %P.\n",g);
+    Errorline((char*)"argument(s) missing in %P.\n",g);
   }
   
   return success;
@@ -5156,7 +5133,7 @@ static void op_declare(long p,wl_operator t,char *s)
   ptr_operator_data od;
   
   if (p>MAX_PRECEDENCE || p<0) {
-    Errorline("operator precedence must be in the range 0..%d.\n",
+    Errorline((char*)"operator precedence must be in the range 0..%d.\n",
 	      MAX_PRECEDENCE);
     return;
   }
@@ -5212,7 +5189,7 @@ long declare_operator(ptr_psi_term t)
           else if (type->type == xfy_sym) kind=xfy;
           else if (type->type == yfx_sym) kind=yfx;
           else
-            Errorline("bad operator kind '%s'.\n",type->type->keyword->symbol);
+            Errorline((char*)"bad operator kind '%s'.\n",type->type->keyword->symbol);
     
           if (kind!=nop) {
 	    op_declare(p,kind,s);
@@ -5220,16 +5197,16 @@ long declare_operator(ptr_psi_term t)
 	  }
         }
 	else
-	  Errorline("precedence must range from 1 to 1200 in %P.\n",t);
+	  Errorline((char*)"precedence must range from 1 to 1200 in %P.\n",t);
       }
       else
-        Errorline("precedence must be a positive integer in %P.\n",t);
+        Errorline((char*)"precedence must be a positive integer in %P.\n",t);
     }
     else
-      Errorline("numbers or strings may not be operators in %P.\n",t);
+      Errorline((char*)"numbers or strings may not be operators in %P.\n",t);
   }
   else
-    Errorline("argument missing in %P.\n",t);
+    Errorline((char*)"argument missing in %P.\n",t);
 
   return success;
 }
@@ -5294,11 +5271,11 @@ long append_files(char *s1,char *s2)
       result=TRUE;
     }
     else
-      Errorline("couldn't open \"%s\"\n",f2);
+      Errorline((char*)"couldn't open \"%s\"\n",f2);
       /* printf("*** Error: couldn't open \"%s\"\n",f2); PVR 14.9.93 */
    }
   else
-    Errorline("couldn't open \"%s\"\n",f1);
+    Errorline((char*)"couldn't open \"%s\"\n",f1);
     /* printf("*** Error: couldn't open \"%s\"\n",f1); PVR 14.9.93 */
 
   return result;
@@ -5650,14 +5627,14 @@ long c_append_file()
               c_arg1= (char *)arg1->value_3;
           else {
             success=FALSE;
-            Errorline("bad argument in %P.\n",g);
+            Errorline((char*)"bad argument in %P.\n",g);
           }
        else
          success=FALSE;
     }
     else {
       success=FALSE;
-      Errorline("bad argument in %P.\n",g);
+      Errorline((char*)"bad argument in %P.\n",g);
     };
   };
 
@@ -5668,14 +5645,14 @@ long c_append_file()
               c_arg2= (char *)arg2->value_3;
           else {
             success=FALSE;
-            Errorline("bad argument in %P.\n",g);
+            Errorline((char*)"bad argument in %P.\n",g);
           }
        else
          success=FALSE;
     }
     else {
       success=FALSE;
-      Errorline("bad argument in %P.\n",g);
+      Errorline((char*)"bad argument in %P.\n",g);
     };
   };
 

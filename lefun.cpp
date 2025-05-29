@@ -6,7 +6,7 @@
 #ifndef lint
 static char vcid[] = "$Id: lefun.c,v 1.4 1995/01/14 00:24:55 duchier Exp $";
 #endif /* lint */
-
+#define EXTERN extern
 #define REV401PLUS
 #ifdef REV401PLUS
 #include "defs.h"
@@ -742,7 +742,7 @@ long match_aim()
               else if (overlap_type(v->type,sys_bytedata)) {
 		unsigned long ulen = *((unsigned long *) u->value_3);
 		unsigned long vlen = *((unsigned long *) v->value_3);
-                success=(ulen==vlen && bcmp((char *)u->value_3,(char *)v->value_3,ulen)==0);
+                success=(ulen==vlen && memcmp((char *)u->value_3,(char *)v->value_3,ulen)==0);
 	      }
             }
             else
