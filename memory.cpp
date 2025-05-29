@@ -656,7 +656,8 @@ void check_definition(ptr_definition *d)
     check_pair_list(&((*d)->rule));
     check_triple_list(&((*d)->properties));
     
-    if ((*d)->type_def==(def_type)type_it) {
+    if ((*d)->wl_type==type_it) {
+    // if ((*d)->type_def==(def_type)type_it) {
       check_kids(&((*d)->parents));
       check_kids(&((*d)->children));
     }
@@ -719,7 +720,8 @@ static void check_def_rest(ptr_definition *d)
     check_pair_list(&((*d)->rule));
     check_triple_list(&((*d)->properties));
     
-    if ((*d)->type_def==(def_type)type_it) {
+    if ((*d)->wl_type==type_it) {
+    // if ((*d)->type_def==(def_type)type_it) {
       check_kids(&((*d)->parents));
       check_kids(&((*d)->children));
     }

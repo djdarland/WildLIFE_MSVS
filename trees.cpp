@@ -117,7 +117,7 @@ char *heap_ncopy_string(char *s,unsigned long n)
   if (s==one || s==two) return s;
 
   p=(char *)heap_alloc(n+1);
-  printf("trees p = %p\n", p);
+  // printf("trees p = %p\n", p);
   // exit(0);
   strncpy(p,s,n);
   p[n]='\0';

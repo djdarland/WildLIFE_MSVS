@@ -877,7 +877,7 @@ static long c_mresiduate()
 }
 
 
-
+#ifdef OLD_WAY
 void insert_system_builtins()
 {
   new_built_in(bi_module,(char*)"trace",(def_type)predicate_it,c_trace);
@@ -898,4 +898,27 @@ void insert_system_builtins()
   new_built_in(bi_module, (char*)"residuate",(def_type)predicate_it,c_residuate);
   new_built_in(bi_module, (char*)"mresiduate",(def_type)predicate_it,c_mresiduate);
   new_built_in(bi_module, (char*)"tprove",(def_type)predicate_it,c_tprove);
+}
+#endif
+
+void insert_system_builtins()
+{
+  new_built_in(bi_module,(char*)"trace",predicate_it,c_trace);
+  new_built_in(bi_module,(char*)"step",predicate_it,c_step);
+  new_built_in(bi_module, (char*)"verbose",predicate_it,c_verbose);
+  new_built_in(bi_module, (char*)"warning",predicate_it,c_warning);
+  new_built_in(bi_module, (char*)"maxint",function_it,c_maxint);
+  new_built_in(bi_module, (char*)"cpu_time",function_it,c_cputime);
+  new_built_in(bi_module, (char*)"quiet",function_it,c_quiet); /* 21.1 */
+  new_built_in(bi_module, (char*)"real_time",function_it,c_realtime);
+  new_built_in(bi_module, (char*)"local_time",function_it,c_localtime);
+  new_built_in(bi_module, (char*)"statistics",predicate_it,c_statistics);
+  new_built_in(bi_module, (char*)"gc",predicate_it,c_garbage);
+  new_built_in(bi_module, (char*)"system",function_it,c_system);
+  new_built_in(bi_module, (char*)"getenv",function_it,c_getenv);
+  new_built_in(bi_module, (char*)"encode",predicate_it,c_encode);
+  new_built_in(bi_module, (char*)"rlist",function_it,c_residList);
+  new_built_in(bi_module, (char*)"residuate",predicate_it,c_residuate);
+  new_built_in(bi_module, (char*)"mresiduate",predicate_it,c_mresiduate);
+  new_built_in(bi_module, (char*)"tprove",predicate_it,c_tprove);
 }

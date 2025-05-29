@@ -1338,6 +1338,7 @@ static long c_exp()
   return success;
 }
 
+#ifdef OLD_WAY
 void insert_math_builtins()
 {
   new_built_in(syntax_module,(char*)"*",(def_type)function_it,c_mult);
@@ -1359,5 +1360,30 @@ void insert_math_builtins()
   new_built_in(bi_module,(char*)"sin",(def_type)function_it,c_sin);
   new_built_in(bi_module,(char*)"tan",(def_type)function_it,c_tan);
   new_built_in(bi_module,(char*)"sqrt",(def_type)function_it,c_sqrt);
+}
+
+#endif
+
+void insert_math_builtins()
+{
+  new_built_in(syntax_module,(char*)"*",function_it,c_mult);
+  new_built_in(syntax_module,(char*)"+",function_it,c_add);
+  new_built_in(syntax_module,(char*)"-",function_it,c_sub);
+  new_built_in(syntax_module,(char*)"/",function_it,c_div);  
+  new_built_in(syntax_module,(char*)"//",function_it,c_intdiv);  
+  new_built_in(syntax_module,(char*)"mod",function_it,c_mod); /* PVR 24.2.94 */
+  new_built_in(syntax_module,(char*)"/\\",function_it,c_bit_and);
+  new_built_in(syntax_module,(char*)"\\/",function_it,c_bit_or);
+  new_built_in(syntax_module,(char*)"\\",function_it,c_bit_not);
+  new_built_in(syntax_module,(char*)">>",function_it,c_shift_right);
+  new_built_in(syntax_module,(char*)"<<",function_it,c_shift_left);
+  new_built_in(bi_module,(char*)"floor",function_it,c_floor);
+  new_built_in(bi_module,(char*)"ceiling",function_it,c_ceiling);
+  new_built_in(bi_module,(char*)"exp",function_it,c_exp);
+  new_built_in(bi_module,(char*)"log",function_it,c_log);
+  new_built_in(bi_module,(char*)"cos",function_it,c_cos);
+  new_built_in(bi_module,(char*)"sin",function_it,c_sin);
+  new_built_in(bi_module,(char*)"tan",function_it,c_tan);
+  new_built_in(bi_module,(char*)"sqrt",function_it,c_sqrt);
 }
 
