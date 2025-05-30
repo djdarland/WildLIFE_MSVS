@@ -1634,32 +1634,32 @@ GENERIC stack_alloc(unsigned long s)
 
 void init_memory()
 {
-    printf("ALLOC_WORDS = %ld\n", ALLOC_WORDS);
+  // printf("ALLOC_WORDS = %ld\n", ALLOC_WORDS);
     //   alloc_words=GetIntOption("memory",ALLOC_WORDS);
     alloc_words = ALLOC_WORDS;
     mem_size = alloc_words * sizeof(long);
 
     mem_base = (GENERIC)malloc(mem_size);
     other_base = (GENERIC)malloc(mem_size);
-    printf("mem_base = %p other_base = %p \n", (void*)mem_base, (void*)other_base);
+    // printf("mem_base = %p other_base = %p \n", (void*)mem_base, (void*)other_base);
     if (mem_base && other_base) {
         /* Rewrote some rather poor code... RM: Mar  1 1994  */
         // ALIGNUP(mem_base);
         stack_pointer = mem_base;
-        printf("stack_pointer = %p\n", (void*)stack_pointer);
+        // printf("stack_pointer = %p\n", (void*)stack_pointer);
         mem_limit = mem_base + alloc_words - 2;
         // ALIGNUP(mem_limit);
         heap_pointer = mem_limit;
-        printf("heap_pointer = %p\n", (void*)heap_pointer);
+        // printf("heap_pointer = %p\n", (void*)heap_pointer);
         // ALIGNUP(other_base);
         other_pointer = other_base;
-        printf("other_pointer=%p\n", (void*)other_pointer);
+        // printf("other_pointer=%p\n", (void*)other_pointer);
         other_limit = other_base + alloc_words - 2;
-        printf("other_limit = %p\n", (void*)other_limit);
+        // printf("other_limit = %p\n", (void*)other_limit);
         // ALIGNUP(other_limit);
 
         delta = other_base - mem_base;
-        printf("delta =%ld\n", delta);
+        // printf("delta =%ld\n", delta);
         buffer = (char*)malloc(PRINT_BUFFER); /* The printing buffer */
 
         /*  RM: Oct 22 1993  */
@@ -1797,7 +1797,7 @@ GENERIC stack_alloc(unsigned long s)
 
 void init_memory()
 {
-    printf("ALLOC_WORDS =                            %ld\n", ALLOC_WORDS);
+  // printf("ALLOC_WORDS =                            %ld\n", ALLOC_WORDS);
     //   alloc_words=GetIntOption("memory",ALLOC_WORDS);
     alloc_words = ALLOC_WORDS;
     mem_size = alloc_words * sizeof(long);
@@ -1805,27 +1805,27 @@ void init_memory()
     mem_base = (GENERIC)malloc(mem_size);
     other_base = (GENERIC)malloc(mem_size);
 
-    printf("mem_baswe =                                 %p\n", (void*)mem_base);
-    printf("other_base =                                %p\n", (void*)other_base);
+    //printf("mem_baswe =                                 %p\n", (void*)mem_base);
+    // printf("other_base =                                %p\n", (void*)other_base);
 
     if (mem_base && other_base) {
         /* Rewrote some rather poor code... RM: Mar  1 1994  */
        //  ALIGNUP(mem_base);
         stack_pointer = mem_base;
-        printf("stack_pointer =                           %p\n", (void*)stack_pointer);
+        // printf("stack_pointer =                           %p\n", (void*)stack_pointer);
         mem_limit = mem_base + alloc_words - 2;
         // ALIGNUP(mem_limit);
         heap_pointer = mem_limit;
-        printf("heap_pointer =                            %p\n", (void*)heap_pointer);
+        // printf("heap_pointer =                            %p\n", (void*)heap_pointer);
         // ALIGNUP(other_base);
         other_pointer = other_base;
-        printf("other_pointer=                            %p\n", (void*)other_pointer);
+        // printf("other_pointer=                            %p\n", (void*)other_pointer);
         other_limit = other_base + alloc_words - 2;
-        printf("other_limit =                             %p\n", (void*)other_limit);
+        // printf("other_limit =                             %p\n", (void*)other_limit);
         // ALIGNUP(other_limit);
 
         delta = other_base - mem_base;
-        printf("delta =%                                  ld\n", delta);
+        // printf("delta =%                                  ld\n", delta);
         buffer = (char*)malloc(PRINT_BUFFER); /* The printing buffer */
 
         /*  RM: Oct 22 1993  */

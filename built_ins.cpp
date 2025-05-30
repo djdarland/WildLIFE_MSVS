@@ -2104,7 +2104,7 @@ long c_halt()   /*  RM: Jan  8 1993  Used to be 'void' */ // REV401PLUS chg to l
 void exit_life(long nl_flag)
 // long nl_flag;  // DJD
 {
-  exit(0);
+  //  exit(0);
   open_input_file((char*)"stdin");   // CHAR * MSVC
   life_end = clock();
   if (NOTQUIET) { /* 21.1 */
@@ -2116,6 +2116,7 @@ void exit_life(long nl_flag)
               (REAL)garbage_time * 100.0) / (REAL)(life_end - life_start));
 
   }
+  exit(0);
 }
 #endif
   
@@ -2136,7 +2137,7 @@ void exit_life(long nl_flag)
            garbage_time,
            (REAL)garbage_time * 100.0) / (REAL) (life_end.tms_utime-life_start.tms_utime)/(REAL)sysconf(_SC_CLK_TCK);
   }
-
+  exit(0);
 }
 
 #endif
@@ -6194,9 +6195,9 @@ void init_built_in_types()
   /* new_built_in(bi_module,"#",(def_type)function_it,c_module_access); */
   
   /* Hack so '.set_up' doesn't issue a Warning message */
-  /*  RM: Feb  3 1993  */
-//  hash_lookup(bi_module->symbol_table,"set_module")->wl_public=TRUE;
-//  hash_lookup(bi_module->symbol_table,"built_in")->wl_public=TRUE;
+  /*  RM: Feb  3 1993  */  // Commented DJD - causes crash - modified moules.cpp
+  // hash_lookup(bi_module->symbol_table,"set_module")->wl_public=TRUE;
+  // hash_lookup(bi_module->symbol_table,"built_in")->wl_public=TRUE;
 
   /*  RM: Jan 29 1993  */
   abortsym=update_symbol(bi_module,"abort"); /* 26.1 */

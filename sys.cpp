@@ -156,7 +156,7 @@ static ptr_psi_term make_bytedata(ptr_definition sort, unsigned long bytes)
   char *b = (char *) heap_alloc(bytes+sizeof(bytes));
   *((long *) b) = bytes;
 //  bzero(b+sizeof(bytes),bytes);
-  memcpy(b+sizeof(bytes),0,bytes);
+  memset(b+sizeof(bytes),0,bytes);
   temp_result=stack_psi_term(0);
   temp_result->type=sort;
   temp_result->value_3=(GENERIC)b;
@@ -334,7 +334,7 @@ static long bitvector_unop_internal(ptr_psi_term args[],
 // long* op;   // REV401PLUS
 {
   return bitvector_unop_code((unsigned long *)args[0]->value_3,
-			     result,(int)op); // REV401PLUS
+			     result,*op); // REV401PLUS
 }
 
 static long bitvector_unop(long op)
@@ -758,7 +758,7 @@ static long get_buffer_internal(ptr_psi_term args[],
   t->type = quoted_string;
   t->value_3=(GENERIC)heap_alloc(size+1);
  // bzero((char*)t->value_3,size+1);
-  memcpy((char*)t->value_3,0,size+1);
+  memset((char*)t->value_3,0,size+1);
   FP_PREPARE(srm,FP_INPUT);
   if (fread((void*)t->value_3,sizeof(char),size,srm->fp) <= 0)
     return FALSE;
