@@ -35,13 +35,18 @@ int main(int argc, char *argv[])  // REV401PLUS correct main proto
   long c; /* 21.12 (prev. char) */ 
 
   int i;
-#ifdef SOLARIS
-  for(i=0;i<256;i++)
-    rand_array[i]=rand_r(&lifeseed);
-#else
+#ifdef __unix__
   for(i=0;i<256;i++)
     rand_array[i]=random();
 #endif
+
+#ifdef _WIN64
+  for(i=0;i<256;i++)
+    rand_array[i]=rand();
+#endif
+
+
+  
   init_globals();
   arg_c=argc;
   if (argc < 10)
@@ -55,6 +60,7 @@ int main(int argc, char *argv[])  // REV401PLUS correct main proto
     Errorline("Too many command line arguments\n");
   
   quietflag = GetBoolOption("q");
+  cygwin_flag = GetBoolOption("cyg");
 
   init_io();
   init_memory();
@@ -66,8 +72,14 @@ int main(int argc, char *argv[])  // REV401PLUS correct main proto
   assert(stack_pointer==mem_base); /* 8.10 */
 
   /* Timekeeping initialization */
+#ifdef __unix__
   tzset();
   times(&life_start);
+#endif
+#ifdef _WIN64
+  _tzset();
+  life_start = clock();
+#endif
   assert(stack_pointer==mem_base); /* 8.10 */
 
   init_modules(); /*  RM: Jan  8 1993  */
@@ -78,7 +90,9 @@ int main(int argc, char *argv[])  // REV401PLUS correct main proto
   x_setup_builtins();
   assert(stack_pointer==mem_base); /* 8.10 */
 #endif
+#ifdef __unix__
   init_interrupt();
+#endif
   assert(stack_pointer==mem_base); /* 8.10 */
   title();
   assert(stack_pointer==mem_base); /* 8.10 */
@@ -98,9 +112,8 @@ int main(int argc, char *argv[])  // REV401PLUS correct main proto
 #endif
 
   
-  open_input_file("~/life_local/Source/.set_up");
-
-  push_goal(load,input_state,(ptr_psi_term)file_date,(GENERIC)heap_copy_string("~/life_local/Source/.set_up")); // REV401PLUS casts
+  open_input_file(SETUP);
+  push_goal(load,input_state,(ptr_psi_term)file_date,(GENERIC)heap_copy_string(SETUP)); // REV401PLUS casts
 
   file_date+=2;
   main_prove();
