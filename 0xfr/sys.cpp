@@ -1840,7 +1840,9 @@ void make_sys_type_links()
   make_type_link(sys_regexp       ,sys_bytedata);
   make_type_link(sys_stream       ,sys_bytedata);
   make_type_link(sys_file_stream  ,sys_stream);
+#ifdef __unix__
   make_type_link(sys_socket_stream,sys_stream);
+#endif
   make_type_link(sys_bytedata     ,built_in); /* DENYS: BYTEDATA */
 }
 

@@ -722,3 +722,4 @@ long x_postscript_window(Display *display,Window window,ListHeader *displaylist,
 #endif
 ptr_goal GoalFromPsiTerm(ptr_psi_term psiTerm);
 void init_globals();
+void report_null(GENERIC ptr, char *where);

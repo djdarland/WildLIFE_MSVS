@@ -229,11 +229,14 @@ long assert_less(ptr_psi_term t1,ptr_psi_term t2)
               // d2->type_def, d2->keyword->symbol);
   }
   else {
+    
     d1->wl_type=type_it;
     // d1->type_def=(def_type)type_it;
     d2->wl_type=type_it;
     // d2->type_def=(def_type)type_it;
     types_modified=TRUE;
+    report_null((GENERIC)d1,"Assert Less d1");
+    report_null((GENERIC)d2,"Assert Less d2");
     make_type_link(d1, d2); /* 1.7 */
     /* d1->parents=cons(d2,d1->parents); */
     /* d2->children=cons(d1,d2->children); */
@@ -1080,6 +1083,14 @@ void encode_types()
     top->children=NULL;
 
     /* The following definitions are vital to avoid crashes */
+    report_null((GENERIC)integer,"Encode types integer");
+    report_null((GENERIC)real,"Encode types  real");
+    report_null((GENERIC)boolean,"Encode types  boolean");
+    report_null((GENERIC)lf_true,"Encode types  lf_true");
+    report_null((GENERIC)lf_false,"Encode types lf_false");
+    report_null((GENERIC)quoted_string,"Encode types  quoted string");
+    report_null((GENERIC)built_in,"Encode types built_in ");
+
     make_type_link(integer,real);
     make_type_link(lf_true,boolean);
     make_type_link(lf_false,boolean);
@@ -1770,4 +1781,12 @@ ptr_int_list decode(ptr_int_list c)
   }
   
   return result;
+}
+
+void report_null(GENERIC ptr, char *where)
+{
+  if (!ptr) {
+    printf("NULL Pointer %s\n", where);
+    exit(0);
+  }
 }
