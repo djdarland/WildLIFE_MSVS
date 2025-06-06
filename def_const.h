@@ -1,3 +1,4 @@
+#pragma once
 /*! \file def_const.h
   \brief constants
 
@@ -7,24 +8,20 @@
 #define EXTERN
 #endif
 
+#ifndef TRUE
+#define TRUE 1L
+#endif
+#ifndef FALSE
+#define FALSE 0L
+#endif
+
 
 
 /*! \def least_sel
   \brief used by collect_symbols in built_ins.c 
 
 */
-
-// #ifndef TRUE
-// #define TRUE 1
-// #endif
-// #ifndef FALSE
-// #define FALSE 0
-// #endif
-//#ifndef NULL
-// #define NULL 0
-// #endif
-
-
+ 
 #define least_sel 0
 
 /*! \def greatest_sel
@@ -70,6 +67,20 @@
 
 */
 
+#define WORDALIGN 1 
+
+/*! \def WORD 
+  \brief Memory Word Size
+
+*/
+
+#define WORD sizeof(long long)
+
+#ifdef WORDALIGN
+#define ALIGN WORD
+#else
+#define ALIGN 8
+#endif
 
 /*! \def TS
   \brief Time stamp technique 

@@ -1,7 +1,20 @@
+#pragma once
 /*! \file def_glob.h
   \brief globals
   
 */
+#ifdef __unix__
+EXTERN struct tms life_start;
+EXTERN struct tms life_end;
+EXTERN struct tms start_time;
+EXTERN struct tms end_time;
+#endif
+#ifdef _WIN64
+EXTERN clock_t life_end;
+EXTERN clock_t life_start;
+EXTERN clock_t start_time;
+EXTERN clock_t end_time;
+#endif
 
 // from extern.h
 
@@ -31,17 +44,14 @@ EXTERN char *arg_v[ARGNN]; // Modified DJD
 
 */
 
-
-// EXTERN int alloc_words;
-EXTERN unsigned long long alloc_words;
+EXTERN int alloc_words;
 
 /*! \var mem_size
   \brief number of words from memory = alloc_words * sizeof word 
 
 */
 
-// EXTERN int mem_size;
-EXTERN unsigned long long mem_size;
+EXTERN int mem_size;
 
 /*! \var mem_base
   \brief mem_size memory allocated in init_memory by malloc 
@@ -82,25 +92,15 @@ EXTERN float garbage_time;
   \brief time life started - seconds
 
 */
-#ifdef __unix__
-EXTERN struct tms life_start;
-EXTERN struct tms life_end;
-EXTERN struct tms start_time;
-EXTERN struct tms end_time;
-#endif
-#ifdef _WIN64
-EXTERN clock_t life_end;
-EXTERN clock_t life_start;
-EXTERN clock_t start_time;
-EXTERN clock_t end_time;
-#endif
 
+// EXTERN struct tms life_start;
 
 /*! \var life_start
   \brief time life ended - seconds
 
 */
 
+// EXTERN struct tms life_end;
 
 /*! \var other_base
   \brief mem_size memory allocated in init_memory by malloc 
@@ -950,6 +950,7 @@ EXTERN long long clean_succ;
 
 /* ptr_choice_point prompt_choice_stack; 12.7 */
 
+// EXTERN struct tms start_time,end_time;
 
 EXTERN long long xeventdelay;
 EXTERN long long xcount;

@@ -1,3 +1,4 @@
+#pragma once
 /*! \file def_proto.h
   \brief prototypes
 
@@ -82,8 +83,7 @@ ptr_psi_term new_psi_term(long long numargs,ptr_definition typ,ptr_psi_term **a1
 long long has_rules(ptr_pair_list r);
 long long is_built_in(ptr_pair_list r);
 void list_special(ptr_psi_term t);
-void new_built_in(ptr_module m, char *s,char t,long long (*r)());
-// void new_built_in(ptr_module m, char *s,def_type t,long long (*r)());
+void new_built_in(ptr_module m, char *s,def_type t,long long (*r)());
 long long declare_operator(ptr_psi_term t);
 char *str_conc(char *s1,char *s2);
 char *sub_str(char *s,long long p,long long n);
@@ -268,10 +268,8 @@ void List_Cut (RefListHeader  header,Ref atom, RefListHeader newHeader);
 void get_two_args(ptr_node t, ptr_psi_term *a, ptr_psi_term *b);
 void get_one_arg(ptr_node t, ptr_psi_term *a);
 void get_one_arg_addr(ptr_node t, ptr_psi_term **a);
-void add_rule(ptr_psi_term head, ptr_psi_term body, char typ);
-// void add_rule(ptr_psi_term head, ptr_psi_term body, def_type typ);
-void assert_rule(psi_term t, char typ);
-// void assert_rule(psi_term t, def_type typ);
+void add_rule(ptr_psi_term head, ptr_psi_term body, def_type typ);
+void assert_rule(psi_term t, def_type typ);
 void assert_clause(ptr_psi_term t);
 void start_chrono();
 void push_ptr_value(type_ptr t, GENERIC *p);
@@ -339,8 +337,8 @@ void check_attr(ptr_node *n);
 void check_gamma_code();
 void print_gc_info(long long timeflag);
 void garbage();
-GENERIC heap_alloc(unsigned long long s);
-	GENERIC stack_alloc(unsigned long long s);
+GENERIC heap_alloc(long long s);
+GENERIC stack_alloc(long long s);
 void init_memory ();
 long long memory_check ();
 
@@ -536,7 +534,7 @@ void read_token_main(ptr_psi_term tok,long long for_parser);
 long long intcmp(long long a,long long b);
 long long is_int(char **s,long long *len,long long *sgn);
 long long featcmp(char *str1,char *str2);
-char *heap_ncopy_string(char *s,unsigned long long n);
+char *heap_ncopy_string(char *s,int n);
 char *heap_copy_string(char *s);
 char *stack_copy_string(char *s);
 ptr_node general_insert(long long comp,char *keystr,ptr_node *tree,GENERIC info,long long heapflag, long long copystr,long long bkflag);

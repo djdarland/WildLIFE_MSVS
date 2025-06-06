@@ -1,6 +1,11 @@
 #include <stdio.h>
+#ifdef __unix__
 #include <stdlib.h>
-#ifdef NEEDED
+#endif
+#ifdef _WIN64
+#include <cstdlib>
+#endif
+#ifdef REG_NEEDED
 void regerror(char *s)
 // char *s;
 {

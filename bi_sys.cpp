@@ -6,8 +6,9 @@
 #ifndef lint
 static char vcid[] = "$Id: bi_sys.c,v 1.2 1994/12/08 23:08:17 duchier Exp $";
 #endif /* lint */
-#define REV401PLUS
 #define EXTERN extern
+#define REV401PLUS
+
 #ifdef REV401PLUS
 #include "defs.h"
 #endif
@@ -43,7 +44,7 @@ long long c_trace()
     else if (arg1->type==lf_false)
       trace=FALSE;
     else {
-      Errorline((char*)"bad first argument in %P.\n",t);
+      Errorline("bad first argument in %P.\n",t);
       /* report_error(t,"bad first argument"); */
       success=FALSE;
     }
@@ -59,7 +60,7 @@ long long c_trace()
     else if (arg2->type==lf_false)
       stepflag=FALSE;
     else {
-      Errorline((char*)"bad second argument in %P.\n",t);
+      Errorline("bad second argument in %P.\n",t);
       /* report_error(t,"bad second argument"); */
       success=FALSE;
     }
@@ -124,7 +125,7 @@ static long long c_warning()
   warningflag = !warningflag;
 
   /*  RM: Sep 24 1993  */
-  Infoline((char*)"*** Warning messages are%s printed\n",warningflag?"":" not");
+  Infoline("*** Warning messages are%s printed\n",warningflag?"":" not");
   
   return TRUE;
 }
@@ -179,7 +180,6 @@ long long c_quiet()
 /******** C_CPUTIME
   Return the cpu-time in seconds used by the Wild_Life interpreter.
 */
-
 
 #ifdef _WIN64
 
@@ -274,36 +274,6 @@ static long long c_realtime()
   }
   return success;
 }
-#if FALSE
-
-// origin below
-
-static long long c_realtime()
-{
-  ptr_psi_term result, t;
-  REAL thetime,val;
-  long long num,success;
-  struct timeval tp;
-  struct timezone tzp;
-  
-  t=aim->aaaa_1;
-  deref_args(t,set_empty);
-  result=aim->bbbb_1;
-  deref_ptr(result);
-  success=get_real_value(result,&val,&num);
-  if (success) {
-    gettimeofday(&tp, &tzp);
-    thetime=(REAL)tp.tv_sec + ((REAL)tp.tv_usec/1000000.0);
-    /* thetime=times(&life_end)/60.0; */
-    if (num)
-      success=(val==thetime);
-    else
-      success=unify_real_result(result,thetime);
-  }
-  return success;
-}
-
-#endif
 
 
 /******** C_LOCALTIME
@@ -382,134 +352,6 @@ static long long c_localtime()
 
 #endif
 
-#ifdef OBSOLETE
-
-
-static long long c_cputime()
-{
-  ptr_psi_term result, t;
-  REAL thetime,val;
-  long long num,success;
-  
-  t=aim->aaaa_1;
-  deref_args(t,set_empty);
-  result=aim->bbbb_1;
-  deref_ptr(result);
-  success=get_real_value(result,&val,&num);
-  if (success) {
-    times(&life_end);
-    thetime= ((REAL)life_end.tms_utime-life_start.tms_utime)/(REAL)sysconf(_SC_CLK_TCK);
-    if (num)
-      success=(val==thetime);
-    else
-      success=unify_real_result(result,thetime);
-  }
-  return success;
-}
-
-
-
-/******** C_REALTIME
-  Return the time in seconds since 00:00:00 GMT, January 1, 1970.
-  This is useful for building real-time applications such as clocks.
-*/
-
-// REV401PLUS I had revised c_realtime as below in prior work on X
-
-static long long c_realtime()
-{
-  ptr_psi_term result, t;
-  REAL thetime,val;
-  long long num,success;
-  struct timeval tp;
-  struct timezone tzp;
- 
-  t=aim->aaaa_1;
-  deref_args(t,set_empty);
-  result=aim->bbbb_1;
-  deref_ptr(result);
-  success=get_real_value(result,&val,&num);
-  if (success) {
-    gettimeofday(&tp, &tzp);
-    thetime=(REAL)tp.tv_sec + ((REAL)tp.tv_usec/1000000.0);
-    /* thetime=times(&life_end)/60.0; */
-    //    if (num)
-    //  success=(val==thetime);
-    // else
-      success=unify_real_result(result,thetime);
-  }
-  return success;
-}
-#if FALSE
-
-// origin below
-
-static long long c_realtime()
-{
-  ptr_psi_term result, t;
-  REAL thetime,val;
-  long long num,success;
-  struct timeval tp;
-  struct timezone tzp;
-  
-  t=aim->aaaa_1;
-  deref_args(t,set_empty);
-  result=aim->bbbb_1;
-  deref_ptr(result);
-  success=get_real_value(result,&val,&num);
-  if (success) {
-    gettimeofday(&tp, &tzp);
-    thetime=(REAL)tp.tv_sec + ((REAL)tp.tv_usec/1000000.0);
-    /* thetime=times(&life_end)/60.0; */
-    if (num)
-      success=(val==thetime);
-    else
-      success=unify_real_result(result,thetime);
-  }
-  return success;
-}
-
-#endif
-
-/******** C_LOCALTIME
-  Return a psi-term containing the local time split up into year, month, day,
-  hour, minute, second, and weekday.
-  This is useful for building real-time applications such as clocks.
-*/
-static long long c_localtime()
-{
-  ptr_psi_term result, t, psitime;
-  long long success=TRUE;
-  struct timeval tp;
-  struct timezone tzp;
-  struct tm *thetime;
-  
-  t=aim->aaaa_1;
-  deref_args(t,set_empty);
-  result=aim->bbbb_1;
-  deref_ptr(result);
-
-  gettimeofday(&tp, &tzp);
-  thetime=localtime((time_t *) &(tp.tv_sec));
-
-  psitime=stack_psi_term(4);
-  psitime->type=timesym;
-  stack_add_int_attr(psitime, year_attr,    thetime->tm_year+1900);
-  stack_add_int_attr(psitime, month_attr,   thetime->tm_mon+1);
-  stack_add_int_attr(psitime, day_attr,     thetime->tm_mday);
-  stack_add_int_attr(psitime, hour_attr,    thetime->tm_hour);
-  stack_add_int_attr(psitime, minute_attr,  thetime->tm_min);
-  stack_add_int_attr(psitime, second_attr,  thetime->tm_sec);
-  stack_add_int_attr(psitime, weekday_attr, thetime->tm_wday);
-
-  push_goal(unify,result,psitime,NULL);
-
-  return success;
-}
-
-#endif
-
-
 /******** C_STATISTICS
   Print some information about Wild_Life: stack size, heap size, total memory.
 */
@@ -587,10 +429,10 @@ static long long c_getenv()
       }
     }
     else
-      Errorline((char*)"bad argument in %P\n",funct);
+      Errorline("bad argument in %P\n",funct);
   }
   else
-    Errorline((char*)"argument missing in %P\n",funct);
+    Errorline("argument missing in %P\n",funct);
   
   return success;
 }
@@ -618,7 +460,7 @@ static long long c_system()
 	value=(REAL)system((char *)arg1->value_3);
 	if(value==127) {
 	  success=FALSE;
-          Errorline((char*)"could not execute shell in %P.\n",funct);
+          Errorline("could not execute shell in %P.\n",funct);
 	  /* report_error(funct,"couldn't execute shell"); */
 	}
 	else
@@ -627,11 +469,11 @@ static long long c_system()
       else {
 	/* residuate(arg1); */ /*  RM: Feb 10 1993  */
         success=FALSE;
-        Errorline((char*)"bad argument in %P.\n",funct);
+        Errorline("bad argument in %P.\n",funct);
       }
     else {
       success=FALSE;
-      Errorline((char*)"bad argument in %P.\n",funct);
+      Errorline("bad argument in %P.\n",funct);
       /* report_error(funct,"bad argument"); */
     }
   }
@@ -813,7 +655,7 @@ static long long c_residuate()
 
 	get_two_args(pred->attr_list, &arg1, &arg2);
 	if ((!arg1)||(!arg2)) {
-	  Errorline((char*)"%P requires two arguments.\n",pred);
+	  Errorline("%P requires two arguments.\n",pred);
 	  return FALSE;
         }
 	
@@ -846,7 +688,7 @@ static long long c_mresiduate()
   
   get_two_args(pred->attr_list, &arg1, &arg2);
   if ((!arg1)||(!arg2)) {
-    Errorline((char*)"%P requires two arguments.\n",pred);
+    Errorline("%P requires two arguments.\n",pred);
     return FALSE;
   }
   
@@ -869,7 +711,7 @@ static long long c_mresiduate()
   }
   
   if(!tmp || tmp->type!=nil) {
-    Errorline((char*)"%P should be a nil-terminated list in mresiduate.\n",arg1);
+    Errorline("%P should be a nil-terminated list in mresiduate.\n",arg1);
     success=FALSE;
   }
 
@@ -877,48 +719,25 @@ static long long c_mresiduate()
 }
 
 
-#ifdef OLD_WAY
-void insert_system_builtins()
-{
-  new_built_in(bi_module,(char*)"trace",(def_type)predicate_it,c_trace);
-  new_built_in(bi_module,(char*)"step",(def_type)predicate_it,c_step);
-  new_built_in(bi_module, (char*)"verbose",(def_type)predicate_it,c_verbose);
-  new_built_in(bi_module, (char*)"warning",(def_type)predicate_it,c_warning);
-  new_built_in(bi_module, (char*)"maxint",(def_type)function_it,c_maxint);
-  new_built_in(bi_module, (char*)"cpu_time",(def_type)function_it,c_cputime);
-  new_built_in(bi_module, (char*)"quiet",(def_type)function_it,c_quiet); /* 21.1 */
-  new_built_in(bi_module, (char*)"real_time",(def_type)function_it,c_realtime);
-  new_built_in(bi_module, (char*)"local_time",(def_type)function_it,c_localtime);
-  new_built_in(bi_module, (char*)"statistics",(def_type)predicate_it,c_statistics);
-  new_built_in(bi_module, (char*)"gc",(def_type)predicate_it,c_garbage);
-  new_built_in(bi_module, (char*)"system",(def_type)function_it,c_system);
-  new_built_in(bi_module, (char*)"getenv",(def_type)function_it,c_getenv);
-  new_built_in(bi_module, (char*)"encode",(def_type)predicate_it,c_encode);
-  new_built_in(bi_module, (char*)"rlist",(def_type)function_it,c_residList);
-  new_built_in(bi_module, (char*)"residuate",(def_type)predicate_it,c_residuate);
-  new_built_in(bi_module, (char*)"mresiduate",(def_type)predicate_it,c_mresiduate);
-  new_built_in(bi_module, (char*)"tprove",(def_type)predicate_it,c_tprove);
-}
-#endif
 
 void insert_system_builtins()
 {
-  new_built_in(bi_module,(char*)"trace",predicate_it,c_trace);
-  new_built_in(bi_module,(char*)"step",predicate_it,c_step);
-  new_built_in(bi_module, (char*)"verbose",predicate_it,c_verbose);
-  new_built_in(bi_module, (char*)"warning",predicate_it,c_warning);
-  new_built_in(bi_module, (char*)"maxint",function_it,c_maxint);
-  new_built_in(bi_module, (char*)"cpu_time",function_it,c_cputime);
-  new_built_in(bi_module, (char*)"quiet",function_it,c_quiet); /* 21.1 */
-  new_built_in(bi_module, (char*)"real_time",function_it,c_realtime);
-  new_built_in(bi_module, (char*)"local_time",function_it,c_localtime);
-  new_built_in(bi_module, (char*)"statistics",predicate_it,c_statistics);
-  new_built_in(bi_module, (char*)"gc",predicate_it,c_garbage);
-  new_built_in(bi_module, (char*)"system",function_it,c_system);
-  new_built_in(bi_module, (char*)"getenv",function_it,c_getenv);
-  new_built_in(bi_module, (char*)"encode",predicate_it,c_encode);
-  new_built_in(bi_module, (char*)"rlist",function_it,c_residList);
-  new_built_in(bi_module, (char*)"residuate",predicate_it,c_residuate);
-  new_built_in(bi_module, (char*)"mresiduate",predicate_it,c_mresiduate);
-  new_built_in(bi_module, (char*)"tprove",predicate_it,c_tprove);
+  new_built_in(bi_module,"trace",(def_type)predicate_it,c_trace);
+  new_built_in(bi_module,"step",(def_type)predicate_it,c_step);
+  new_built_in(bi_module,"verbose",(def_type)predicate_it,c_verbose);
+  new_built_in(bi_module,"warning",(def_type)predicate_it,c_warning);
+  new_built_in(bi_module,"maxint",(def_type)function_it,c_maxint);
+  new_built_in(bi_module,"cpu_time",(def_type)function_it,c_cputime);
+  new_built_in(bi_module,"quiet",(def_type)function_it,c_quiet); /* 21.1 */
+  new_built_in(bi_module,"real_time",(def_type)function_it,c_realtime);
+  new_built_in(bi_module,"local_time",(def_type)function_it,c_localtime);
+  new_built_in(bi_module,"statistics",(def_type)predicate_it,c_statistics);
+  new_built_in(bi_module,"gc",(def_type)predicate_it,c_garbage);
+  new_built_in(bi_module,"system",(def_type)function_it,c_system);
+  new_built_in(bi_module,"getenv",(def_type)function_it,c_getenv);
+  new_built_in(bi_module,"encode",(def_type)predicate_it,c_encode);
+  new_built_in(bi_module,"rlist",(def_type)function_it,c_residList);
+  new_built_in(bi_module,"residuate",(def_type)predicate_it,c_residuate);
+  new_built_in(bi_module,"mresiduate",(def_type)predicate_it,c_mresiduate);
+  new_built_in(bi_module,"tprove",(def_type)predicate_it,c_tprove);
 }

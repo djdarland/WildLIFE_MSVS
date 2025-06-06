@@ -1,4 +1,4 @@
-/* Copyright 1991 Digital Equipment Corporation.
+ /* Copyright 1991 Digital Equipment Corporation.
 ** All Rights Reserved.
 *****************************************************************/
 /* 	$Id: memory.c,v 1.10 1995/07/27 19:03:24 duchier Exp $	 */
@@ -6,29 +6,15 @@
 #ifndef lint
 static char vcid[] = "$Id: memory.c,v 1.10 1995/07/27 19:03:24 duchier Exp $";
 #endif /* lint */
-#define REV401PLUS
+
 #define EXTERN extern
+#define REV401PLUS
 #ifdef REV401PLUS
 #include "defs.h"
 #endif
 
 #ifdef prlDEBUG
 static long long amount_used;
-#endif
-
-#define WORDALIGN 1 
-
-/*! \def WORD 
-  \brief Memory Word Size
-
-*/
-
-#define WORD sizeof(double)
-
-#ifdef WORDALIGN
-#define ALIGN WORD
-#else
-#define ALIGN 8
 #endif
 
 #ifdef CLIFE
@@ -38,9 +24,6 @@ static long long pass;
 #endif /* CLIFE */
 
 #define LONELY 1
-
-static float gc_time, life_time;
-
 #ifdef _WIN64
 static clock_t last_garbage_time;
 #endif
@@ -48,10 +31,9 @@ static clock_t last_garbage_time;
 static struct tms last_garbage_time;
 #endif
 
-
+static float gc_time, life_time;
 
 #define ALIGNUP(X) { (X) = (GENERIC)( ((long long) (X) + (ALIGN-1)) & ~(ALIGN-1) ); }
-// #define ALIGNUP(X) {(X)}
 
 static long long delta;
 #define LONELY 1
@@ -672,8 +654,7 @@ void check_definition(ptr_definition *d)
     check_pair_list(&((*d)->rule));
     check_triple_list(&((*d)->properties));
     
-    if ((*d)->wl_type==type_it) {
-    // if ((*d)->type_def==(def_type)type_it) {
+    if ((*d)->type_def==(def_type)type_it) {
       check_kids(&((*d)->parents));
       check_kids(&((*d)->children));
     }
@@ -736,8 +717,7 @@ static void check_def_rest(ptr_definition *d)
     check_pair_list(&((*d)->rule));
     check_triple_list(&((*d)->properties));
     
-    if ((*d)->wl_type==type_it) {
-    // if ((*d)->type_def==(def_type)type_it) {
+    if ((*d)->type_def==(def_type)type_it) {
       check_kids(&((*d)->parents));
       check_kids(&((*d)->children));
     }
@@ -1480,14 +1460,13 @@ void print_gc_info(long long timeflag)
 void garbage()
 {
   GENERIC addr;
-  #ifdef __unix__
+    #ifdef __unix__
   struct tms garbage_start_time,garbage_end_time;
 #endif
 #ifdef _WIN64
   time_t garbage_start_time, garbage_end_time; 
 #endif
 
-  //  struct tms garbage_start_time,garbage_end_time;
   long long start_number_cells, end_number_cells;
 
   start_number_cells = (stack_pointer-mem_base) + (mem_limit-heap_pointer);
@@ -1500,12 +1479,6 @@ void garbage()
   times(&garbage_start_time);
   life_time=(garbage_start_time.tms_utime - last_garbage_time.tms_utime)/60.0;
 #endif
-
-  //  times(&garbage_start_time);
-
-  /* Time elapsed since last garbage collection */
-  // life_time=(garbage_start_time.tms_utime - last_garbage_time.tms_utime)/60.0;
-
 
   if (verbose) {
     fprintf(stderr,"*** Garbage Collect "); /*  RM: Jan 26 1993  */
@@ -1544,7 +1517,6 @@ void garbage()
 
   printed_pointers=NULL;
   pointer_names=NULL;
-    /* Time elapsed since last garbage collection */
 #ifdef __unix__
   times(&garbage_end_time);
   gc_time=(garbage_end_time.tms_utime - garbage_start_time.tms_utime)/60.0;
@@ -1555,10 +1527,8 @@ void garbage()
   gc_time=(garbage_end_time - garbage_start_time)/CLOCKS_PER_SEC;
   // printf("gc end %f\n", gc_time);
 #endif
-
-  //  times(&garbage_end_time);
-  //  gc_time=(garbage_end_time.tms_utime - garbage_start_time.tms_utime)/60.0;
-  garbage_time = garbage_time + (long long)gc_time;
+  
+  garbage_time+=gc_time;
 
   if (verbose) {
     fprintf(stderr,"*** End  ");
@@ -1584,11 +1554,6 @@ void garbage()
 
 */
 
-/****************************************************************************
-
-  MEMORY ALLOCATION ROUTINES.
-
-*/
 
 
 /******** HEAP_ALLOC(s)
@@ -1597,18 +1562,18 @@ void garbage()
   the macro ALIGN is supposed to be a power of 2 and the pointer returned
   is a multiple of ALIGN.
 */
-GENERIC heap_alloc(unsigned long long s)
+GENERIC heap_alloc (long long s)
 // long long s;
 {
-    if (s & (ALIGN - 1))
-        s = s - (s & (ALIGN - 1)) + ALIGN;
+    if (s & (ALIGN-1))
+      s = s - (s & (ALIGN-1))+ALIGN;
     /* assert(s % sizeof(*heap_pointer) == 0); */
-    s /= sizeof(*heap_pointer);
-
+    s /= sizeof (*heap_pointer);
+  
     heap_pointer -= s;
 
-    if (stack_pointer > heap_pointer)
-        Errorline("the heap overflowed into the stack.\n");
+    if (stack_pointer>heap_pointer)
+      Errorline("the heap overflowed into the stack.\n");
 
     return heap_pointer;
 }
@@ -1621,23 +1586,23 @@ GENERIC heap_alloc(unsigned long long s)
   the macro ALIGN is supposed to be a power of 2 and the pointer returned
   is a multiple of ALIGN.
 */
-GENERIC stack_alloc(unsigned long long s)
+GENERIC stack_alloc(long long s)
 // long long s;
 {
     GENERIC r;
 
     r = stack_pointer;
 
-    if (s & (ALIGN - 1))
-        s = s - (s & (ALIGN - 1)) + ALIGN;
+    if (s & (ALIGN-1))
+      s = s - (s & (ALIGN-1)) + ALIGN;
     /* assert(s % sizeof(*stack_pointer) == 0); */
-    s /= sizeof(*stack_pointer);
+    s /= sizeof (*stack_pointer);
 
     stack_pointer += s;
 
-    if (stack_pointer > heap_pointer)
-        Errorline("the stack overflowed into the heap.\n");
-
+    if (stack_pointer>heap_pointer)
+      Errorline("the stack overflowed into the heap.\n");
+  
     return r;
 }
 
@@ -1647,57 +1612,52 @@ GENERIC stack_alloc(unsigned long long s)
   Get two big blocks of memory to work in.
   The second is only used for the half-space garbage collector.
   The start and end addresses of the blocks are re-aligned correctly.
-  to allocate.
+  to allocate.  
 */
 
 
-void init_memory()
+void init_memory ()
 {
-  // printf("ALLOC_WORDS = %ld\n", ALLOC_WORDS);
-    //   alloc_words=GetIntOption("memory",ALLOC_WORDS);
-    alloc_words = ALLOC_WORDS;
-    mem_size = alloc_words * sizeof(long long);
+  alloc_words=GetIntOption("memory",ALLOC_WORDS);
+  mem_size=alloc_words*sizeof(long long);
+  
+  mem_base   = (GENERIC) malloc(mem_size);
+  other_base = (GENERIC) malloc(mem_size);
 
-    mem_base = (GENERIC)malloc(mem_size);
-    other_base = (GENERIC)malloc(mem_size);
-    // printf("mem_base = %p other_base = %p \n", (void*)mem_base, (void*)other_base);
-    if (mem_base && other_base) {
-        /* Rewrote some rather poor code... RM: Mar  1 1994  */
-        // ALIGNUP(mem_base);
-        stack_pointer = mem_base;
-        // printf("stack_pointer = %p\n", (void*)stack_pointer);
-        mem_limit = mem_base + alloc_words - 2;
-        // ALIGNUP(mem_limit);
-        heap_pointer = mem_limit;
-        // printf("heap_pointer = %p\n", (void*)heap_pointer);
-        // ALIGNUP(other_base);
-        other_pointer = other_base;
-        // printf("other_pointer=%p\n", (void*)other_pointer);
-        other_limit = other_base + alloc_words - 2;
-        // printf("other_limit = %p\n", (void*)other_limit);
-        // ALIGNUP(other_limit);
+  if (mem_base && other_base) {
+    /* Rewrote some rather poor code... RM: Mar  1 1994  */
+    ALIGNUP(mem_base);
+    stack_pointer = mem_base;
+    
+    mem_limit=mem_base+alloc_words-2;
+    ALIGNUP(mem_limit);
+    heap_pointer = mem_limit;
 
-        delta = other_base - mem_base;
-        // printf("delta =%ld\n", delta);
-        buffer = (char*)malloc(PRINT_BUFFER); /* The printing buffer */
+    ALIGNUP(other_base);
+    other_pointer = other_base;
 
-        /*  RM: Oct 22 1993  */
-        /* Fill the memory with rubbish data */
-        /*
-        {
-          int i;
+    other_limit=other_base+alloc_words-2;
+    ALIGNUP(other_limit);
+    
+    delta = other_base - mem_base;
+    buffer = (char *) malloc (PRINT_BUFFER); /* The printing buffer */
 
-          for(i=0;i<alloc_words;i++) {
-        mem_base[i]= -1234;
-        other_base[i]= -1234;
-          }
-        }
-        */
+    /*  RM: Oct 22 1993  */
+    /* Fill the memory with rubbish data */
+    /*
+    {
+      int i;
+      
+      for(i=0;i<alloc_words;i++) {
+	mem_base[i]= -1234;
+	other_base[i]= -1234;
+      }
     }
-    else
-        Errorline("Wild_life could not allocate sufficient memory to run.\n\n");
+    */
+  }
+  else
+    Errorline("Wild_life could not allocate sufficient memory to run.\n\n");
 }
-
 
 
 

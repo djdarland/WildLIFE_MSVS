@@ -6,8 +6,9 @@
 #ifndef lint
 static char vcid[] = "$Id: trees.c,v 1.3 1995/07/27 21:22:21 duchier Exp $";
 #endif /* lint */
-#define REV401PLUS
+
 #define EXTERN extern
+#define REV401PLUS
 #ifdef REV401PLUS
 #include "defs.h"
 #endif
@@ -108,7 +109,7 @@ long long featcmp(char *str1, char *str2)
   Make a copy of the string in the heap, and return a pointer to that.
   Exceptions: "1" and "2" are unique (and in the heap).
 */
-char *heap_ncopy_string(char *s,unsigned long long n)
+char *heap_ncopy_string(char *s,int n)
 // char *s;
 // int n;
 {
@@ -117,8 +118,6 @@ char *heap_ncopy_string(char *s,unsigned long long n)
   if (s==one || s==two) return s;
 
   p=(char *)heap_alloc(n+1);
-  // printf("trees p = %p\n", p);
-  // exit(0);
   strncpy(p,s,n);
   p[n]='\0';
   

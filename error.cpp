@@ -10,11 +10,12 @@
 *****************************************************************/
 /* 	$Id: error.c,v 1.3 1995/07/11 01:53:03 duchier Exp $	 */
 
+#define EXTERN extern
+#define REV401PLUS
 #ifndef lint
 static char vcid[] = "$Id: error.c,v 1.3 1995/07/11 01:53:03 duchier Exp $";
 #endif /* lint */
-#define REV401PLUS
-#define EXTERN extern
+
 #ifdef REV401PLUS
 #include "defs.h"
 #endif
@@ -164,7 +165,7 @@ void outputline(char *format,...)
 	      break; 
 	    case 'E': 
 	      assert(output_stream==stderr); 
-	      perr_i("near line %ld",psi_term_line_number);	
+	      perr_i("near line %lld",psi_term_line_number);	
 	      if (strcmp(input_file_name,"stdin")) {	   
 		perr_s(" in file \042%s\042",input_file_name); 
 	      }						   
@@ -258,7 +259,7 @@ void traceline(char *format,...)
 		  break; 
 		case 'E': 
 		  assert(stdout==stderr); 
-		  perr_i("near line %ld",psi_term_line_number);	
+		  perr_i("near line %lld",psi_term_line_number);	
 		  if (strcmp(input_file_name,"stdin")) {	   
 		    perr_s(" in file \042%s\042",input_file_name); 
 		  }						   
@@ -348,7 +349,7 @@ void infoline(char *format,...)
 		  break; 
 		case 'E': 
 		  assert(stdout==stderr); 
-		  perr_i("near line %ld",psi_term_line_number);	
+		  perr_i("near line %lld",psi_term_line_number);	
 		  if (strcmp(input_file_name,"stdin")) {	   
 		    perr_s(" in file 042%s042",input_file_name); 
 		  }						   
@@ -441,7 +442,7 @@ void warningline(char *format,...)
 		break; 
 	      case 'E': 
 		assert(stderr==stderr); 
-		perr_i("near line %ld",psi_term_line_number);	
+		perr_i("near line %lld",psi_term_line_number);	
 		if (strcmp(input_file_name,"stdin")) {	   
 		  perr_s(" in file 042%s042",input_file_name); 
 		}						   
@@ -532,7 +533,7 @@ void Errorline(char *format,...)
 	      break; 
 	    case 'E': 
 	      assert(stderr==stderr); 
-	      perr_i("near line %ld",psi_term_line_number);	
+	      perr_i("near line %lld",psi_term_line_number);	
 	      if (strcmp(input_file_name,"stdin")) {	   
 		perr_s(" in file \042%s\042",input_file_name); 
 	      }						   
@@ -625,7 +626,7 @@ void Syntaxerrorline(char *format,...)
 		break; 
 	      case 'E': 
 		assert(stderr==stderr); 
-		perr_i("near line %ld",psi_term_line_number);	
+		perr_i("near line %lld",psi_term_line_number);	
 		if (strcmp(input_file_name,"stdin")) {	   
 		  perr_s(" in file \042%s\042",input_file_name); 
 		}						   
@@ -1048,7 +1049,7 @@ long long int_div_warning(ptr_psi_term arg, REAL val)
 
 long long mod_warning(ptr_psi_term arg, REAL val,int zero)
 {
-  int err;
+  long long  err;
 
   err=nonint_warning(arg,val,"of modulo operation is not an integer");
   if(!err && zero && val==0) {

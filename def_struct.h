@@ -1,3 +1,4 @@
+#pragma once
 /*! \file def_struct.h
   \brief typedefs and structures
 
@@ -152,8 +153,7 @@ typedef struct wl_definition {
   ptr_int_list code;
   ptr_int_list parents;
   ptr_int_list children;
-  char wl_type;
-//  def_type type_def;
+  def_type type_def;
   char always_check;  /* TRUE by default */
   char wl_protected;     /* TRUE by default */
   char evaluate_args; /* TRUE by default */

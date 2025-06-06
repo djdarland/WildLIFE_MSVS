@@ -44,8 +44,6 @@ int main(int argc, char *argv[])  // REV401PLUS correct main proto
   for(i=0;i<256;i++)
     rand_array[i]=rand();
 #endif
-
-
   
   init_globals();
   arg_c=argc;
@@ -112,10 +110,10 @@ int main(int argc, char *argv[])  // REV401PLUS correct main proto
 #endif
 
   
-  open_input_file(SETUP);
-  push_goal(load,input_state,(ptr_psi_term)file_date,(GENERIC)heap_copy_string(SETUP)); // REV401PLUS casts
-  garbage_time = 0.0;
-  
+  open_input_file("~/life_local/Source/.set_up");
+
+  push_goal(load,input_state,(ptr_psi_term)file_date,(GENERIC)heap_copy_string("~/life_local/Source/.set_up")); // REV401PLUS casts
+
   file_date+=2;
   main_prove();
 

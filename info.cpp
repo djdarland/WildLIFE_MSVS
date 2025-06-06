@@ -6,8 +6,9 @@
 #ifndef lint
 static char vcid[] = "$Id: info.c,v 1.4 1995/01/30 21:03:55 duchier Exp $";
 #endif /* lint */
-#define REV401PLUS
+
 #define EXTERN extern
+#define REV401PLUS
 #ifdef REV401PLUS
 #include "defs.h"
 #endif
@@ -39,22 +40,15 @@ static void pnf(char *s,long long n)
 void title()
 {
   if(quietflag)
-    printf("Wild_Life Interpreter +VERSION+  +DATE+\n");
-  //printf("Wild_Life Interpreter @VERSION@  @DATE@\n"); // replace @ w + if lost and save this
-
+    return; /*  RM: Feb 17 1993  */
+  
+  printf("Wild_Life Interpreter Version +VERSION+ +DATE+\n");
   printf("Copyright (C) 1991-93 DEC Paris Research Laboratory\n");
   printf("Extensions, Copyright (C) 1994-1995 Intelligent Software Group, SFU\n"); 
   printf("Ported to Linux and Cygwin December 2022 after many efforts since 1995\n");
   printf("By Dennis J. Darland dennis.darland@hotmail.com\n");
-  #ifdef NOT
-  printf("sizeof(long long) = %d\n",sizeof(long long));
-  printf("sizeof(long long) = %d\n",sizeof(long long));
-  printf("sizeof(double) = %d\n",sizeof(double));
-  printf("sizeof(REAL) = %d\n",sizeof(REAL));
-  printf("sizeof(GENERIC) = %d\n",sizeof(GENERIC));
-  printf("sizeof(char) = %d\n",sizeof(char));
-  printf("sizeof(int) = %d\n",sizeof(int));
-  #endif
+  
+  
 #ifndef X11
   printf("X interface not installed.\n");
 #endif

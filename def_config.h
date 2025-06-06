@@ -1,3 +1,4 @@
+#pragma once
 /*! \file def_config.h
   \brief defines formerly set in Makefile
 
@@ -31,5 +32,3 @@
 */
 
 #define NORAW 1
-
-#define SETUP "~/life_local/Source/.set_up"

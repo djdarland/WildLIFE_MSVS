@@ -1,9 +1,17 @@
+#pragma once
 /*! \file def_macro.h
   \brief macros
 
 */
 
 // from c_life.h
+
+#ifdef _WIN64
+#define bzero(a,l) memset(a,0,l)
+#define bcmp(a,b,l) memcmp(a,b,l)
+#define bcopy(a,b,l) memcpy(a,b,l)
+#endif
+
 
 /* A useful macro for goals which should succeed */
 
@@ -296,6 +304,7 @@
 #define HEAPDONE(R) (to_heap && ONHEAP(R))
 
 // from memory.c
+#define ALIGNUP(X) { (X) = (GENERIC)( ((long long) (X) + (ALIGN-1)) & ~(ALIGN-1) ); }
 
 #define Infoline   if (NOTQUIET) infoline
 #define Warningline if (warningflag) warningline
