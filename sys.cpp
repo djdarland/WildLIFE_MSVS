@@ -4,51 +4,19 @@
    All new system utilities and extensions to Wild LIFE 1.01
    are implemented in this file and made available in LIFE
    module "sys"
-   */
+*/
 /* 	$Id: sys.c,v 1.9 1996/01/17 00:33:09 duchier Exp $	 */
-
-#ifndef lint
-static char vcid[] = "$Id: sys.c,v 1.9 1996/01/17 00:33:09 duchier Exp $";
-#endif /* lint */
-
-#ifdef REV102
-#include <unistd.h>
-#include "extern.h"
-#include "trees.h"
-#include "login.h"
-#include "types.h"
-#include "parser.h"
-#include "copy.h"
-#include "token.h"
-#include "print.h"
-#include "lefun.h"
-#include "memory.h"
-#include "built_ins.h"
-#include "error.h" 
-#include "modules.h"
-#include "sys.h"
-#endif
-
 #define EXTERN extern
 #define REV401PLUS
 #ifdef REV401PLUS
 #include "defs.h"
 #endif
-
-
-// ptr_definition sys_bytedata; /* DENYS: BYTEDATA */
-// ptr_definition sys_bitvector;
-// ptr_definition sys_regexp;
-// ptr_definition sys_stream;
-// ptr_definition sys_file_stream;
-// ptr_definition sys_socket_stream;
-
 long long call_primitive(long long (*fun)(ptr_psi_term[],
-				ptr_psi_term,
-				ptr_psi_term,
-				//			   ptr_psi_term),
-				GENERIC),
-		    int num,psi_arg argi[],GENERIC info)
+					  ptr_psi_term,
+					  ptr_psi_term,
+					  //			   ptr_psi_term),
+					  GENERIC),
+			 int num,psi_arg argi[],GENERIC info)
 //     int num;
 //     psi_arg argi[];
 //     long long (*fun)();
@@ -146,9 +114,9 @@ long long call_primitive(long long (*fun)(ptr_psi_term[],
 /* DENYS: BYTEDATA */
 
 /******** MAKE_BYTEDATA
-  construct a psi term of the given sort whose value points
-  to a bytedata block that can hold the given number of bytes
-  */
+	  construct a psi term of the given sort whose value points
+	  to a bytedata block that can hold the given number of bytes
+*/
 static ptr_psi_term make_bytedata(ptr_definition sort, unsigned long long bytes)
 //     ptr_definition sort;
 //     unsigned long long bytes;
@@ -162,20 +130,16 @@ static ptr_psi_term make_bytedata(ptr_definition sort, unsigned long long bytes)
   temp_result->value_3=(GENERIC)b;
   return temp_result;
 }
-
 #define BYTEDATA_SIZE(X) (*(unsigned long long *)(X->value_3))
 #define BYTEDATA_DATA(X) ((char*)((char*)X->value_3 + sizeof(unsigned long long)))
-
 /* BIT VECTORS *
- ***************/
-
+***************/
 /******** C_MAKE_BITVECTOR
-  make a bitvector that can hold at least the given number of bits
+	  make a bitvector that can hold at least the given number of bits
 */
-
 static long long make_bitvector_internal(ptr_psi_term args[],
-				    ptr_psi_term result,
-				    ptr_psi_term funct)
+					 ptr_psi_term result,
+					 ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   long long bits = *(REAL *)args[0]->value_3;
@@ -190,23 +154,20 @@ static long long make_bitvector_internal(ptr_psi_term args[],
     push_goal(unify,temp_result,result,NULL);
     return TRUE; }
 }
-
 static long long c_make_bitvector()
 {
   psi_arg args[1];
   SETARG(args,0, "1" , integer , REQUIRED );
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))
+				       ptr_psi_term, ptr_psi_term, GENERIC))
 			make_bitvector_internal,NARGS(args),args,0);
 }
-
 #define BV_AND 0
 #define BV_OR  1
 #define BV_XOR 2
-
 static long long bitvector_binop_code(unsigned long long *bv1,
-				 unsigned long long *bv2,
-				 ptr_psi_term result, int op)
+				      unsigned long long *bv2,
+				      ptr_psi_term result, int op)
 //     unsigned long long *bv1,*bv2;
 //     ptr_psi_term result;
 //     int op;
@@ -240,14 +201,12 @@ static long long bitvector_binop_code(unsigned long long *bv1,
   push_goal(unify,temp_result,result,NULL);
   return TRUE;
 }
-
 /******** BITVECTOR_BINOP
-*/
-
+ */
 static long long bitvector_binop_internal(ptr_psi_term args[],
-				     ptr_psi_term result,
-				     ptr_psi_term funct,
-				     void *op)
+					  ptr_psi_term result,
+					  ptr_psi_term funct,
+					  void *op)
 //     ptr_psi_term args[],result,funct;
 //     void* op;
 {
@@ -255,7 +214,6 @@ static long long bitvector_binop_internal(ptr_psi_term args[],
 			      (unsigned long long *)args[1]->value_3,
 			      result,(long long)op); // last cast int to long long REV401PLUS
 }
-
 static long long bitvector_binop(long long op)
 //      long long op; // REV401PLUS int -> long long
 {
@@ -263,30 +221,25 @@ static long long bitvector_binop(long long op)
   SETARG(args,0, "1" , sys_bitvector , REQUIRED );
   SETARG(args,1, "2" , sys_bitvector , REQUIRED );
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))bitvector_binop_internal,NARGS(args),args,(GENERIC)op); // REV401PLUS (void *) -> (GENERIC)
+				       ptr_psi_term, ptr_psi_term, GENERIC))bitvector_binop_internal,NARGS(args),args,(GENERIC)op); // REV401PLUS (void *) -> (GENERIC)
 }
-
 static long long c_bitvector_and()
 {
   return bitvector_binop(BV_AND);
 }
-
 static long long c_bitvector_or()
 {
   return bitvector_binop(BV_OR);
 }
-
 static long long c_bitvector_xor()
 {
   return bitvector_binop(BV_XOR);
 }
-
 #define BV_NOT   0
 #define BV_COUNT 1
-
 static long long bitvector_unop_code(unsigned long long *bv1,
 				     ptr_psi_term result,
-				     long long  op) // 
+				     long long  op) // UNCERTAIN ABOUT DJD
 //     unsigned long long *bv1;
 //     ptr_psi_term result;
 //     int op;
@@ -324,14 +277,12 @@ static long long bitvector_unop_code(unsigned long long *bv1,
   push_goal(unify,temp_result,result,NULL);
   return TRUE;
 }
-
 /******** BITVECTOR_UNOP
-*/
-
+ */
 static long long bitvector_unop_internal(ptr_psi_term args[],
-				    ptr_psi_term result,
-				    ptr_psi_term funct,
-				    long long op)
+					 ptr_psi_term result,
+					 ptr_psi_term funct,
+					 long long op)  // UNCERTAIN ABOUT DJD
 //     ptr_psi_term args[],result,funct;
 // long long* op;   // REV401PLUS
 {
@@ -339,35 +290,30 @@ static long long bitvector_unop_internal(ptr_psi_term args[],
 			     result,
 			     op); // REV401PLUS
 }
-
 static long long bitvector_unop(long long op)
 //     long long op;   // REV401PLUS 
 {
   psi_arg args[1];
   SETARG(args,0, "1" , sys_bitvector , REQUIRED );
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))bitvector_unop_internal,NARGS(args),args,(GENERIC)op); // REV401PLUS
+				       ptr_psi_term, ptr_psi_term, GENERIC))bitvector_unop_internal,NARGS(args),args,(GENERIC)op); // UNCERTAIN ABOUT DJD
 }
-
 static long long c_bitvector_not()
 {
   return bitvector_unop(BV_NOT);
 }
-
 static long long c_bitvector_count()
 {
   return bitvector_unop(BV_COUNT);
 }
-
 #define BV_GET   0
 #define BV_SET   1
 #define BV_CLEAR 2
-
 static long long bitvector_bit_code(unsigned long long *bv1,
-			       long long idx,
-			       ptr_psi_term result,
-			       long long *op,
-			       ptr_psi_term funct)
+				    long long idx,
+				    ptr_psi_term result,
+				    long long *op,
+				    ptr_psi_term funct)
 //      unsigned long long * bv1;
 //     long long idx;
 //     ptr_psi_term result,funct;
@@ -394,7 +340,7 @@ static long long bitvector_bit_code(unsigned long long *bv1,
     break;
   case BV_CLEAR:
     temp_result = make_bytedata(sys_bitvector,size1);
-	  s2 = ((unsigned char *) temp_result->value_3)+ sizeof(size1);
+    s2 = ((unsigned char *) temp_result->value_3)+ sizeof(size1);
     bcopy(s1,s2,size1);
     s2[i] &= ~ (1<<j);
     break;
@@ -402,11 +348,10 @@ static long long bitvector_bit_code(unsigned long long *bv1,
   push_goal(unify,temp_result,result,NULL);
   return TRUE;
 }
-
 static long long bitvector_bit_internal(ptr_psi_term args[],
-				   ptr_psi_term result,
-				   ptr_psi_term funct,
-				   long long *op)
+					ptr_psi_term result,
+					ptr_psi_term funct,
+					long long *op)
 //     ptr_psi_term args[],result,funct;
 // long long* op; // REV401PLUS
 {
@@ -414,7 +359,6 @@ static long long bitvector_bit_internal(ptr_psi_term args[],
 			    (long long)*((REAL*)args[1]->value_3),
 			    result,op,funct); // REV401PLUS
 }
-
 static long long bitvector_bit(long long op)
 //     long long op; // REV401PLUS
 {
@@ -422,43 +366,35 @@ static long long bitvector_bit(long long op)
   SETARG(args,0, "1" , sys_bitvector , REQUIRED );
   SETARG(args,1, "2" , integer       , REQUIRED );
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))bitvector_bit_internal,NARGS(args),args,(GENERIC)op);
+				       ptr_psi_term, ptr_psi_term, GENERIC))bitvector_bit_internal,NARGS(args),args,(GENERIC)op);
 }
-
 static long long c_bitvector_get()
 {
   return bitvector_bit(BV_GET);
 }
-
 static long long c_bitvector_set()
 {
   return bitvector_bit(BV_SET);
 }
-
 static long long c_bitvector_clear()
 {
   return bitvector_bit(BV_CLEAR);
 }
-
 /* REGULAR EXPRESSIONS *
- ***********************/
-
+***********************/
 #include "regexp/regexp.h"
-
 void regerror(char *s)
 //     char*s;
 {
   fprintf(stderr,"Regexp Error: %s\n",s);
 }
-
 /******** C_REGEXP_COMPILE
-  given a string returns, compiles it into a regexp structure,
-  then copies that structure into a bytedata block on the heap.
- */
-
+	  given a string returns, compiles it into a regexp structure,
+	  then copies that structure into a bytedata block on the heap.
+*/
 static long long regexp_compile_internal(ptr_psi_term args[],
-				    ptr_psi_term result,
-				    ptr_psi_term funct)
+					 ptr_psi_term result,
+					 ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   ptr_psi_term temp_result;
@@ -493,27 +429,24 @@ static long long regexp_compile_internal(ptr_psi_term args[],
   push_goal(unify,temp_result,result,NULL);
   return TRUE;
 }
-
 static long long c_regexp_compile()
 {
   psi_arg args[1];
   SETARG(args,0, "1" , quoted_string , REQUIRED );
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))regexp_compile_internal,NARGS(args),args,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))regexp_compile_internal,NARGS(args),args,0);
 }
-
 /******** C_REGEXP_EXECUTE
-  Attempts to match a regexp with a string
-  regexp_execute(RE:regexp,S:string) -> @(0=>(S0,E0),(S1,E1),...)
-  regexp_execute(RE:regexp,S:string,@(N=>(SN,EN),...)) -> boolean
-  2nd form only instantiates the bounds requested in the mask (3rd arg)
-  and returns a boolean so that it can be used as a predicate.
-  The optional argument "offset" specifies an offset into the string.
- */
-
+	  Attempts to match a regexp with a string
+	  regexp_execute(RE:regexp,S:string) -> @(0=>(S0,E0),(S1,E1),...)
+	  regexp_execute(RE:regexp,S:string,@(N=>(SN,EN),...)) -> boolean
+	  2nd form only instantiates the bounds requested in the mask (3rd arg)
+	  and returns a boolean so that it can be used as a predicate.
+	  The optional argument "offset" specifies an offset into the string.
+*/
 static long long regexp_execute_internal(ptr_psi_term args[],
-				    ptr_psi_term result,
-				    ptr_psi_term funct)
+					 ptr_psi_term result,
+					 ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   regexp * re = (regexp*)(((char *)args[0]->value_3)+sizeof(unsigned long long));
@@ -580,7 +513,6 @@ static long long regexp_execute_internal(ptr_psi_term args[],
     return TRUE;
   }
 }
-
 static long long c_regexp_execute()
 {
   psi_arg args[4];
@@ -589,32 +521,26 @@ static long long c_regexp_execute()
   SETARG(args,2, "3"      , top           , OPTIONAL|NOVALUE );
   SETARG(args,3, "offset" , integer       , OPTIONAL );
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))regexp_execute_internal,NARGS(args),args,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))regexp_execute_internal,NARGS(args),args,0);
 }
-
 /* FILE STREAMS *
- ****************/
-
+****************/
 /* when a fp is opened for updating an input operation
    should not follow an output operation without an intervening
    flush or file positioning operation; and the other way around
    too.  I am going to keep track of what operations have been
    applied so that flush will be automatically invoked when
    necessary */
-
 #define FP_NONE   0
 #define FP_INPUT  1
 #define FP_OUTPUT 2
-
 typedef struct a_stream {
   FILE *fp;
   int op;
 } *ptr_stream;
-
-#define FP_PREPARE(s,OP) \
-  if (s->op != OP && s->op != FP_NONE) fflush(s->fp); \
+#define FP_PREPARE(s,OP)				\
+  if (s->op != OP && s->op != FP_NONE) fflush(s->fp);	\
   s->op = OP;
-
 ptr_psi_term fileptr2stream(FILE *fp,
 			    ptr_definition typ)
 //     FILE*fp;
@@ -625,10 +551,9 @@ ptr_psi_term fileptr2stream(FILE *fp,
   ((ptr_stream)BYTEDATA_DATA(result))->op = FP_NONE;
   return result;
 }
-
 static long long int2stream_internal(ptr_psi_term args[],
-				ptr_psi_term result,
-				ptr_psi_term funct)
+				     ptr_psi_term result,
+				     ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
 #ifdef __unix__
@@ -637,58 +562,52 @@ static long long int2stream_internal(ptr_psi_term args[],
 #endif
 #ifdef _WIN64
   FILE* fp = _fdopen((int)*(REAL*)args[0]->value_3,
-      (char*)args[1]->value_3);
+		     (char*)args[1]->value_3);
 #endif
-
-  
   if (fp==NULL) return FALSE;
   else {
     push_goal(unify,fileptr2stream(fp,sys_stream),result,NULL);
-/*    ptr_psi_term temp_result = make_bytedata(sys_stream,sizeof(fp));
-    *(FILE**)BYTEDATA_DATA(temp_result) = fp;
-    push_goal(unify,temp_result,result,NULL); */
+    /*    ptr_psi_term temp_result = make_bytedata(sys_stream,sizeof(fp));
+     *(FILE**)BYTEDATA_DATA(temp_result) = fp;
+     push_goal(unify,temp_result,result,NULL); */
     return TRUE;
   }
 }
-
 static long long c_int2stream()
 {
   psi_arg args[2];
   SETARG(args,0,"1",integer,REQUIRED);
   SETARG(args,1,"2",quoted_string,REQUIRED);
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))int2stream_internal,NARGS(args),args,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))int2stream_internal,NARGS(args),args,0);
 }
-
 static long long fopen_internal(ptr_psi_term args[],
-			   ptr_psi_term result,
-			   ptr_psi_term funct)
+				ptr_psi_term result,
+				ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   FILE *fp = fopen((char*)args[0]->value_3,
 		   (char*)args[1]->value_3);
   if (fp==NULL) return FALSE;
   else {
-/*    ptr_psi_term temp_result = make_bytedata(sys_file_stream,sizeof(fp));
-    *(FILE**)BYTEDATA_DATA(temp_result) = fp;
-*/
+    /*    ptr_psi_term temp_result = make_bytedata(sys_file_stream,sizeof(fp));
+     *(FILE**)BYTEDATA_DATA(temp_result) = fp;
+     */
     push_goal(unify,fileptr2stream(fp,sys_file_stream),result,NULL);
     return TRUE;
   }
 }
-
 static long long c_fopen()
 {
   psi_arg args[2];
   SETARG(args,0, "1" , quoted_string , REQUIRED );
   SETARG(args,1, "2" , quoted_string , REQUIRED );
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))fopen_internal,NARGS(args),args,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))fopen_internal,NARGS(args),args,0);
 }
-
 static long long fclose_internal(ptr_psi_term args[],
-			    ptr_psi_term result,
-			    ptr_psi_term funct)
+				 ptr_psi_term result,
+				 ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   if (fclose(((ptr_stream)BYTEDATA_DATA(args[0]))->fp) != 0)
@@ -696,18 +615,16 @@ static long long fclose_internal(ptr_psi_term args[],
   else
     return TRUE;
 }
-
 static long long c_fclose()
 {
   psi_arg args[1];
   SETARG(args,0, "1" , sys_stream , REQUIRED );
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))fclose_internal,NARGS(args),args,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))fclose_internal,NARGS(args),args,0);
 }
-
 static long long fwrite_internal(ptr_psi_term args[],
-			    ptr_psi_term result,
-			    ptr_psi_term funct)
+				 ptr_psi_term result,
+				 ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   ptr_stream srm = (ptr_stream)BYTEDATA_DATA(args[0]);
@@ -719,19 +636,17 @@ static long long fwrite_internal(ptr_psi_term args[],
     return FALSE;
   return TRUE;
 }
-
 static long long c_fwrite()
 {
   psi_arg args[2];
   SETARG(args,0,"1",sys_stream,MANDATORY);
   SETARG(args,1,"2",quoted_string,MANDATORY);
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))fwrite_internal,NARGS(args),args,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))fwrite_internal,NARGS(args),args,0);
 }
-
 static long long fflush_internal(ptr_psi_term args[],
-			    ptr_psi_term result,
-			    ptr_psi_term funct)
+				 ptr_psi_term result,
+				 ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   ptr_stream srm = (ptr_stream)BYTEDATA_DATA(args[0]);
@@ -740,18 +655,16 @@ static long long fflush_internal(ptr_psi_term args[],
   if (fflush(srm->fp)!=0) return FALSE;
   return TRUE;
 }
-
 static long long c_fflush()
 {
   psi_arg args[1];
   SETARG(args,0,"1",sys_stream,MANDATORY);
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))fflush_internal,NARGS(args),args,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))fflush_internal,NARGS(args),args,0);
 }
-
 static long long get_buffer_internal(ptr_psi_term args[],
-				ptr_psi_term result,
-				ptr_psi_term funct)
+				     ptr_psi_term result,
+				     ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   ptr_stream srm = (ptr_stream)BYTEDATA_DATA(args[0]);
@@ -767,30 +680,26 @@ static long long get_buffer_internal(ptr_psi_term args[],
   push_goal(unify,t,result,NULL);
   return TRUE;
 }
-
 static long long c_get_buffer()
 {
   psi_arg args[2];
   SETARG(args,0,"1",sys_stream,REQUIRED);
   SETARG(args,1,"2",integer,REQUIRED);
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))get_buffer_internal,NARGS(args),args,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))get_buffer_internal,NARGS(args),args,0);
 }
-
 #ifndef REV401PLUS
 #define TEXTBUFSIZE 5000
-
 struct text_buffer {
   struct text_buffer *next;
   int top;
   char data[TEXTBUFSIZE];
 };
 #endif
-
 /* find the first match for character c starting from index idx in
    buffer buf.  if found place new buffer and index in rbuf and
    ridx and return 1, else return 0
-   */
+*/
 int text_buffer_next(struct text_buffer *buf,
 		     int idx,
 		     char c,
@@ -813,11 +722,10 @@ int text_buffer_next(struct text_buffer *buf,
   }
   return 0;
 }
-
 /* compare string str with text in buffer buf starting at index idx.
    if the text to the end matches a prefix of the string, return
    pointer to remaining suffix of str to be matched, else return 0.
-   */
+*/
 char* text_buffer_cmp(struct text_buffer *buf,
 		      int idx,
 		      char *str)
@@ -838,12 +746,11 @@ char* text_buffer_cmp(struct text_buffer *buf,
   }
   return 0;
 }
-
 /* add a character at the end of a buffer.  if the buffer is
    full, allocate a new buffer and link it to the current one,
    then overwrite the variable holding the pointer to the
    current buffer with the pointer to the new buffer.
-   */
+*/
 void text_buffer_push(struct text_buffer **buf,
 		      char c)
 //     struct text_buffer **buf;
@@ -864,7 +771,6 @@ void text_buffer_push(struct text_buffer **buf,
     (*buf)->data[0]=c;
   }
 }
-
 /* free a linked list of buffers */
 void text_buffer_free(struct text_buffer *buf)
 //     struct text_buffer *buf;
@@ -876,9 +782,7 @@ void text_buffer_free(struct text_buffer *buf)
     buf=next;
   }
 }
-
-static long long
-get_record_internal(ptr_psi_term args[],
+static long long get_record_internal(ptr_psi_term args[],
 		    ptr_psi_term result,
 		    ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
@@ -902,7 +806,6 @@ get_record_internal(ptr_psi_term args[],
       text_buffer_push(&curbuf,(char)c);
     goto PackUpAndLeave;
   }
-
   if (sep[1]=='\0') {
     /* only one char in string */
     while ((c=getc(fp)) != EOF) {
@@ -911,9 +814,7 @@ get_record_internal(ptr_psi_term args[],
     }
     goto PackUpAndLeave;
   }
-
   /* general case: multicharacter separator */
-
  WaitForStart:
   if ((c=getc(fp)) == EOF) goto PackUpAndLeave;
   text_buffer_push(&curbuf,(char)c);
@@ -924,21 +825,18 @@ get_record_internal(ptr_psi_term args[],
     goto MatchNext;
   }
   else goto WaitForStart;
-
  MatchNext:
   if (!*cursep || (c=getc(fp))==EOF) goto PackUpAndLeave;
   text_buffer_push(&curbuf,(char)c);
   if (c!=*cursep) goto TryAgain;
   cursep++;
   goto MatchNext;
-
  TryAgain:
   if (!text_buffer_next(lastbuf,lastidx+1,*sep,&lastbuf,&lastidx))
     goto WaitForStart;
   if (!(cursep=text_buffer_cmp(lastbuf,lastidx,sep)))
     goto TryAgain;
   goto MatchNext;
-
  PackUpAndLeave:
   /* compute how much space we need */
   for(lastbuf=&rootbuf,size=0;lastbuf!=NULL;lastbuf=lastbuf->next)
@@ -954,19 +852,17 @@ get_record_internal(ptr_psi_term args[],
   push_goal(unify,t,result,NULL);
   return TRUE;
 }
-
 static long long c_get_record()
 {
   psi_arg args[2];
   SETARG(args,0,"1",sys_stream,REQUIRED);
   SETARG(args,1,"2",quoted_string,REQUIRED);
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))get_record_internal,NARGS(args),args,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))get_record_internal,NARGS(args),args,0);
 }
-
 static long long get_code_internal(ptr_psi_term args[],
-			      ptr_psi_term result,
-			      ptr_psi_term funct)
+				   ptr_psi_term result,
+				   ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   ptr_stream srm = (ptr_stream)BYTEDATA_DATA(args[0]);
@@ -975,18 +871,16 @@ static long long get_code_internal(ptr_psi_term args[],
   if ((c=getc(srm->fp)) == EOF) return FALSE;
   else return unify_real_result(result,(REAL)c);
 }
-
 static long long c_get_code()
 {
   psi_arg args[1];
   SETARG(args,0,"1",sys_stream,REQUIRED);
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))get_code_internal,NARGS(args),args,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))get_code_internal,NARGS(args),args,0);
 }
-
 static long long ftell_internal(ptr_psi_term args[],
-			   ptr_psi_term result,
-			   ptr_psi_term funct)
+				ptr_psi_term result,
+				ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   ptr_stream srm = (ptr_stream)BYTEDATA_DATA(args[0]);
@@ -995,17 +889,15 @@ static long long ftell_internal(ptr_psi_term args[],
     srm->op = FP_NONE;
   }
   return unify_real_result(result,(REAL)ftell(srm->fp));
-/*  *(FILE**)BYTEDATA_DATA(args[0])));*/
+  /*  *(FILE**)BYTEDATA_DATA(args[0])));*/
 }
-
 static long long c_ftell()
 {
   psi_arg args[1];
   SETARG(args,0,"1",sys_file_stream,REQUIRED);
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))ftell_internal,NARGS(args),args,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))ftell_internal,NARGS(args),args,0);
 }
-
 #ifndef SEEK_SET
 #define SEEK_SET 0
 #endif
@@ -1015,10 +907,9 @@ static long long c_ftell()
 #ifndef SEEK_END
 #define SEEK_END 2
 #endif
-
 static long long fseek_internal(ptr_psi_term args[],
-			   ptr_psi_term result,
-			   ptr_psi_term funct)
+				ptr_psi_term result,
+				ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   ptr_stream srm = (ptr_stream)BYTEDATA_DATA(args[0]);
@@ -1027,9 +918,8 @@ static long long fseek_internal(ptr_psi_term args[],
     (fseek(srm->fp /**(FILE**)BYTEDATA_DATA(args[0])*/,
 	   (long long)*(REAL*)args[1]->value_3,
 	   args[2]?(long long)*(REAL*)args[2]->value_3:SEEK_SET) < 0)
-      ?FALSE:TRUE;
+    ?FALSE:TRUE;
 }
-
 static long long c_fseek()
 {
   psi_arg args[3];
@@ -1037,30 +927,27 @@ static long long c_fseek()
   SETARG(args,1,"2",integer,MANDATORY);
   SETARG(args,2,"3",integer,OPTIONAL);
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))fseek_internal,NARGS(args),args,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))fseek_internal,NARGS(args),args,0);
 }
-
 static long long stream2sys_stream_internal(ptr_psi_term args[],
-				       ptr_psi_term result,
-				       ptr_psi_term funct)
+					    ptr_psi_term result,
+					    ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   push_goal(unify,fileptr2stream((FILE*)args[0]->value_3,sys_stream),
 	    result,NULL);
   return TRUE;
 }
-
 static long long c_stream2sys_stream()
 {
   psi_arg args[1];
   SETARG(args,0,"1",stream,REQUIRED);
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))stream2sys_stream_internal,NARGS(args),args,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))stream2sys_stream_internal,NARGS(args),args,0);
 }
-
 static long long sys_stream2stream_internal(ptr_psi_term args[],
-				       ptr_psi_term result,
-				       ptr_psi_term funct)
+					    ptr_psi_term result,
+					    ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   ptr_psi_term tmp;
@@ -1070,17 +957,15 @@ static long long sys_stream2stream_internal(ptr_psi_term args[],
   push_goal(unify,tmp,result,NULL);
   return TRUE;
 }
-
 static long long c_sys_stream2stream()
 {
   psi_arg args[1];
   SETARG(args,0,"1",sys_stream,REQUIRED);
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))sys_stream2stream_internal,NARGS(args),args,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))sys_stream2stream_internal,NARGS(args),args,0);
 }
-
 /* SOCKETS AND NETWORKING *
- **************************/
+**************************/
 #ifdef __unix__
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -1088,10 +973,9 @@ static long long c_sys_stream2stream()
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <ctype.h>
-
 static long long socket_internal(ptr_psi_term args[],
-			    ptr_psi_term result,
-			    ptr_psi_term funct)
+				 ptr_psi_term result,
+				 ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   int addr_family=AF_INET,type=SOCK_STREAM,protocol=0;
@@ -1106,7 +990,6 @@ static long long socket_internal(ptr_psi_term args[],
       Errorline("Unknown address family in %P.\n",funct);
       return FALSE; }
   }
-
   if (args[1]) {
     s=(char*)args[1]->value_3;
     if      (!strcmp(s,"SOCK_STREAM")) type=SOCK_STREAM;
@@ -1118,34 +1001,26 @@ static long long socket_internal(ptr_psi_term args[],
       Errorline("Unknown socket type in %P.\n",funct);
       return FALSE; }
   }
-
   if ((fd=socket(addr_family,type,protocol))<0)
     return FALSE;
-
   { FILE*fp = fdopen(fd,"r+");
     ptr_psi_term t;
-
     if (fp==NULL) {
       Errorline("fdopen failed on socket in %P.\n",funct);
       return FALSE;
     }
-
-/*    t = make_bytedata(sys_socket_stream,sizeof(fp));
-    *(FILE**)BYTEDATA_DATA(t) = fp;*/
     push_goal(unify,fileptr2stream(fp,sys_socket_stream),result,NULL);
   }
   return TRUE;
 }
-
 static long long c_socket()
 {
   psi_arg args[2];
   SETARG(args,0,"1",quoted_string,OPTIONAL);
   SETARG(args,1,"2",quoted_string,OPTIONAL);
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))socket_internal,NARGS(args),args,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))socket_internal,NARGS(args),args,0);
 }
-
 int is_ipaddr(char *s)
 //     char*s;
 {
@@ -1155,11 +1030,10 @@ int is_ipaddr(char *s)
     else s++;
   return 1;
 }
-
 static long long bind_or_connect_internal(ptr_psi_term args[],
-				     ptr_psi_term result,
-				     ptr_psi_term funct,
-				     void *info)
+					  ptr_psi_term result,
+					  ptr_psi_term funct,
+					  void *info)
 //     ptr_psi_term args[],result,funct;
 //     void*info;
 {
@@ -1175,11 +1049,9 @@ static long long bind_or_connect_internal(ptr_psi_term args[],
       Errorline("Missing port number in %P.\n",funct);
       return FALSE;
     }
-
     bzero((char*)&name,sizeof(name));
     name.sin_family = AF_INET;
     name.sin_port = htons((unsigned short)*(REAL*)args[2]->value_3);
-
     if (!hostname || *hostname=='\0' || !strcasecmp(hostname,"localhost"))
       name.sin_addr.s_addr = INADDR_ANY;
     else {
@@ -1207,10 +1079,8 @@ static long long bind_or_connect_internal(ptr_psi_term args[],
     /* bind in the unix domain */
     struct sockaddr_un name;
     char* path = (char*)args[3]->value_3;
-
     name.sun_family = AF_UNIX;
     strcpy(name.sun_path,path);
-
     if ((do_bind?
 	 bind(fd,(struct sockaddr *)&name,sizeof(name)):
 	 connect(fd,(struct sockaddr *)&name,sizeof(name))) < 0) {
@@ -1224,7 +1094,6 @@ static long long bind_or_connect_internal(ptr_psi_term args[],
   }
   return TRUE;
 }
-
 static long long c_bind()
 {
   psi_arg args[4];
@@ -1233,9 +1102,8 @@ static long long c_bind()
   SETARG(args,2,"port",integer,OPTIONAL);
   SETARG(args,3,"path",quoted_string,OPTIONAL);
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))bind_or_connect_internal,NARGS(args),args,NULL);
+				       ptr_psi_term, ptr_psi_term, GENERIC))bind_or_connect_internal,NARGS(args),args,NULL);
 }
-
 static long long c_connect()
 {
   psi_arg args[4];
@@ -1244,12 +1112,11 @@ static long long c_connect()
   SETARG(args,2,"port",integer,OPTIONAL);
   SETARG(args,3,"path",quoted_string,OPTIONAL);
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))bind_or_connect_internal,NARGS(args),args,(GENERIC)1);
+				       ptr_psi_term, ptr_psi_term, GENERIC))bind_or_connect_internal,NARGS(args),args,(GENERIC)1);
 }
-
 static long long listen_internal(ptr_psi_term args[],
-			    ptr_psi_term result,
-			    ptr_psi_term funct)
+				 ptr_psi_term result,
+				 ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   int fd = fileno(((ptr_stream)BYTEDATA_DATA(args[0]))->fp); /**(FILE**)BYTEDATA_DATA(args[0]));*/
@@ -1258,24 +1125,21 @@ static long long listen_internal(ptr_psi_term args[],
   if (listen(fd,n) < 0) return FALSE;
   return TRUE;
 }
-
 static long long c_listen()
 {
   psi_arg args[2];
   SETARG(args,0,"1",sys_socket_stream,MANDATORY);
   SETARG(args,1,"2",integer,MANDATORY);
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))listen_internal,NARGS(args),args,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))listen_internal,NARGS(args),args,0);
 }
-
 static long long accept_internal(ptr_psi_term args[],
-			    ptr_psi_term result,
-			    ptr_psi_term funct)
+				 ptr_psi_term result,
+				 ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   int fd = fileno(((ptr_stream)BYTEDATA_DATA(args[0]))->fp); /**(FILE**)BYTEDATA_DATA(args[0]));*/
   int s;
-
   if ((s=accept(fd,NULL,NULL)) < 0) return FALSE;
   else {
     FILE * fp = fdopen(s,"r+");
@@ -1285,80 +1149,66 @@ static long long accept_internal(ptr_psi_term args[],
       Errorline("fdopen failed on socket in %P.\n",funct);
       return FALSE;
     }
-
-/*    t = make_bytedata(sys_socket_stream,sizeof(fp));
-    *(FILE**)BYTEDATA_DATA(t) = fp;*/
     push_goal(unify,fileptr2stream(fp,sys_socket_stream),result,NULL);
     return TRUE;
   }
 }
-
 static long long c_accept()
 {
   psi_arg args[1];
   SETARG(args,0,"1",sys_socket_stream,REQUIRED);
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))accept_internal,NARGS(args),args,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))accept_internal,NARGS(args),args,0);
 }
 #endif
 /* SYSTEM ERRORS *
- *****************/
-
+*****************/
 static long long errno_internal(ptr_psi_term args[],
-			   ptr_psi_term result,
-			   ptr_psi_term funct)
+				ptr_psi_term result,
+				ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   push_goal(unify,stack_int(errno),result,NULL);
   return TRUE;
 }
-
 static long long c_errno()
 {
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))errno_internal,0,NULL,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))errno_internal,0,NULL,0);
 }
-
 /* some systems are missing these declarations */
 #ifndef REV401PLUS
 extern char *sys_errlist[];
 extern int sys_nerr;
 #endif
-
 static long long errmsg_internal(ptr_psi_term args[],
-			    ptr_psi_term result,
-			    ptr_psi_term funct)
+				 ptr_psi_term result,
+				 ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   long long n = args[0]?(long long)*(REAL*)args[0]->value_3:errno;
   push_goal(unify,stack_string((char *)strerror(n)),result,NULL); // REV401PLUS added cast
   return TRUE;
-  
 }
-
 static long long c_errmsg()
 {
   psi_arg args[1];
   SETARG(args,0, "1" , integer , OPTIONAL );
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))errmsg_internal,NARGS(args),args,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))errmsg_internal,NARGS(args),args,0);
 }
-
 /* MODULES *
- ***********/
-
+***********/
 /******** C_IMPORT_SYMBOL
-  import a public symbol from another module into the current one,
-  optionally renaming it.
-  */
-
+	  import a public symbol from another module into the current one,
+	  optionally renaming it.
+*/
 static long long import_symbol_internal(ptr_psi_term args[],
-				   ptr_psi_term result,
-				   ptr_psi_term funct)
+					ptr_psi_term result,
+					ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   ptr_keyword key;
-
   if (args[1])
     key=args[1]->type->keyword;
   else
@@ -1388,46 +1238,41 @@ static long long import_symbol_internal(ptr_psi_term args[],
   }
   return TRUE;
 }
-
 static long long c_import_symbol()
 {
   psi_arg args[2];
   SETARG(args,0,"1",top,MANDATORY|UNEVALED);
   SETARG(args,1,"as",top,OPTIONAL|NOVALUE|UNEVALED);
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))import_symbol_internal,NARGS(args),args,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))import_symbol_internal,NARGS(args),args,0);
 }
-
 /* PROCESSES *
- *************/
+*************/
 #ifdef __unix__
 static long long fork_internal(ptr_psi_term args[],
-			  ptr_psi_term result,
-			  ptr_psi_term funct)
+			       ptr_psi_term result,
+			       ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   pid_t id = fork();
   if (id < 0) return FALSE;
   else  return unify_real_result(result,(REAL)id);
 }
-
 static long long c_fork()
 {
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))fork_internal,0,NULL,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))fork_internal,0,NULL,0);
 }
 #endif
 typedef struct {
   char * name;
   ptr_psi_term value;
 } psi_feature;
-
 #define SETFEATURE(lst,n,nam,val) ((lst[n].name=nam),(lst[n].value=val))
-
 static long long unify_pterm_result(ptr_psi_term t,
-			       ptr_definition sym,
-			       psi_feature lst[],
-			       int n)
+				    ptr_definition sym,
+				    psi_feature lst[],
+				    int n)
 //     ptr_psi_term t;
 //     ptr_definition sym;
 //     psi_feature lst[];
@@ -1446,7 +1291,6 @@ static long long unify_pterm_result(ptr_psi_term t,
   push_goal(unify,t,u,NULL);
   return TRUE;
 }
-
 char *get_numeric_feature(long long n)
 //     long long n;
 {
@@ -1463,14 +1307,12 @@ char *get_numeric_feature(long long n)
 #ifndef WIFEXITED
 #include <sys/wait.h>
 #endif
-
 /* ptr_definition sys_process_no_children;
-ptr_definition sys_process_exited;
-ptr_definition sys_process_signaled;
-ptr_definition sys_process_stopped;
-ptr_definition sys_process_continued;
+   ptr_definition sys_process_exited;
+   ptr_definition sys_process_signaled;
+   ptr_definition sys_process_stopped;
+   ptr_definition sys_process_continued;
 */
-
 static long long unify_wait_result(ptr_psi_term result,pid_t id,int status)
 //     ptr_psi_term result;
 //     pid_t id;
@@ -1511,26 +1353,23 @@ static long long unify_wait_result(ptr_psi_term result,pid_t id,int status)
   }
   return unify_pterm_result(result,sym,lst,n);
 }
-
 static long long wait_internal(ptr_psi_term args[],
-			  ptr_psi_term result,
-			  ptr_psi_term funct)
+			       ptr_psi_term result,
+			       ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   int status;
   pid_t id = wait(&status);
   return unify_wait_result(result,id,status);
 }
-
 static long long c_wait()
 {
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))wait_internal,0,NULL,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))wait_internal,0,NULL,0);
 }
-
 static long long waitpid_internal(ptr_psi_term args[],
-			     ptr_psi_term result,
-			     ptr_psi_term funct)
+				  ptr_psi_term result,
+				  ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   int status;
@@ -1545,33 +1384,31 @@ static long long c_waitpid()
   SETARG(args,0,"1",integer,REQUIRED);
   SETARG(args,1,"2",integer,OPTIONAL);
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))waitpid_internal,NARGS(args),args,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))waitpid_internal,NARGS(args),args,0);
 }
-
 static long long kill_internal(ptr_psi_term args[],
-			  ptr_psi_term result,
-			  ptr_psi_term funct)
+			       ptr_psi_term result,
+			       ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   return (kill((pid_t)*(REAL*)args[0]->value_3,
 	       (int)*(REAL*)args[1]->value_3)==0)?TRUE:FALSE;
 }
-
 static long long c_kill()
 {
   psi_arg args[2];
   SETARG(args,0,"1",integer,MANDATORY);
   SETARG(args,1,"2",integer,MANDATORY);
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))kill_internal,NARGS(args),args,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))kill_internal,NARGS(args),args,0);
 }
 #endif
 /* MISCELLANEOUS *
- ****************/
+****************/
 #ifdef __unix__
 static long long cuserid_internal(ptr_psi_term args[],
-			     ptr_psi_term result,
-			     ptr_psi_term funct)
+				  ptr_psi_term result,
+				  ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   char name[L_ctermid+1];   // changed from L_cuserid REV401PLUS
@@ -1581,20 +1418,17 @@ static long long cuserid_internal(ptr_psi_term args[],
     return TRUE;
   }
 }
-
 static long long c_cuserid()
 {
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))cuserid_internal,0,NULL,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))cuserid_internal,0,NULL,0);
 }
-
 #ifndef MAXHOSTNAMELEN
 #include <sys/param.h>
 #endif
-
 static long long gethostname_internal(ptr_psi_term args,
-				 ptr_psi_term result,
-				 ptr_psi_term funct)
+				      ptr_psi_term result,
+				      ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   char name[MAXHOSTNAMELEN+1];
@@ -1604,19 +1438,16 @@ static long long gethostname_internal(ptr_psi_term args,
   }
   else return FALSE;
 }
-
 static long long c_gethostname()
 {
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))gethostname_internal,0,NULL,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))gethostname_internal,0,NULL,0);
 }
-
 /* LAZY PROJECT
- ***************/
-
+***************/
 static long long lazy_project_internal(ptr_psi_term args[],
-				  ptr_psi_term result,
-				  ptr_psi_term funct)
+				       ptr_psi_term result,
+				       ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   ptr_node n;
@@ -1641,22 +1472,20 @@ static long long lazy_project_internal(ptr_psi_term args[],
   else residuate(args[0]);
   return TRUE;
 }
-
 static long long c_lazy_project()
 {
   psi_arg args[2];
   SETARG(args,0,"1",top,REQUIRED|NOVALUE);
   SETARG(args,1,"2",top,REQUIRED|NOVALUE);
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))lazy_project_internal,NARGS(args),args,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))lazy_project_internal,NARGS(args),args,0);
 }
 
 /* WAIT_ON_FEATURE
- ******************/
-
+******************/
 static long long wait_on_feature_internal(ptr_psi_term args[],
-				     ptr_psi_term result,
-				     ptr_psi_term funct)
+					  ptr_psi_term result,
+					  ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   char buffer[100];
@@ -1680,7 +1509,6 @@ static long long wait_on_feature_internal(ptr_psi_term args[],
   else residuate(args[0]);
   return TRUE;
 }
-
 static long long c_wait_on_feature()
 {
   psi_arg args[3];
@@ -1688,12 +1516,11 @@ static long long c_wait_on_feature()
   SETARG(args,1,"2",top,MANDATORY|NOVALUE);
   SETARG(args,2,"3",top,MANDATORY|NOVALUE|UNEVALED);
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))wait_on_feature_internal,NARGS(args),args,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))wait_on_feature_internal,NARGS(args),args,0);
 }
-
 static long long my_wait_on_feature_internal(ptr_psi_term args[],
-					ptr_psi_term result,
-					ptr_psi_term funct)
+					     ptr_psi_term result,
+					     ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   char buffer[100];
@@ -1719,7 +1546,6 @@ static long long my_wait_on_feature_internal(ptr_psi_term args[],
   else residuate(args[0]);
   return TRUE;
 }
-
 static long long c_my_wait_on_feature()
 {
   psi_arg args[3];
@@ -1727,18 +1553,17 @@ static long long c_my_wait_on_feature()
   SETARG(args,1,"2",top,MANDATORY|NOVALUE);
   SETARG(args,2,"3",top,MANDATORY|NOVALUE|UNEVALED);
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))my_wait_on_feature_internal,NARGS(args),args,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))my_wait_on_feature_internal,NARGS(args),args,0);
 }
 #endif
 /* CALL_ONCE
- ************/
+************/
 /*
-   call_once(G) -> T | G,!,T=true;T=false.
-   */
-
+  call_once(G) -> T | G,!,T=true;T=false.
+*/
 static long long call_once_internal(ptr_psi_term args[],
-			       ptr_psi_term result,
-			       ptr_psi_term funct)
+				    ptr_psi_term result,
+				    ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   ptr_psi_term value;
@@ -1754,18 +1579,16 @@ static long long call_once_internal(ptr_psi_term args[],
   push_goal(prove,args[0],(ptr_psi_term)DEFRULES,NULL);
   return TRUE;
 }
-
 static long long c_call_once()
 {
   psi_arg args[1];
   SETARG(args,0,"1",top,MANDATORY|NOVALUE|UNEVALED);
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))call_once_internal,NARGS(args),args,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))call_once_internal,NARGS(args),args,0);
 }
-
 static long long apply1_internal(ptr_psi_term args[],
-			    ptr_psi_term result,
-			    ptr_psi_term funct)
+				 ptr_psi_term result,
+				 ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   long long success=TRUE;
@@ -1791,7 +1614,6 @@ static long long apply1_internal(ptr_psi_term args[],
   }
   return success;
 }
-
 static long long c_apply1()
 {
   psi_arg args[3];
@@ -1799,31 +1621,28 @@ static long long c_apply1()
   SETARG(args,1,"2",top,REQUIRED|NOVALUE);
   SETARG(args,2,"3",top,REQUIRED|NOVALUE);
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))apply1_internal,NARGS(args),args,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))apply1_internal,NARGS(args),args,0);
 }
 #ifdef __unix__
 static long long getpid_internal(ptr_psi_term args[],
-			    ptr_psi_term result,
-			    ptr_psi_term funct)
+				 ptr_psi_term result,
+				 ptr_psi_term funct)
 //     ptr_psi_term args[],result,funct;
 {
   return unify_real_result(result,(REAL)getpid());
 }
-
 static long long c_getpid()
 {
   return call_primitive((long long (*)(wl_psi_term**,
-				  ptr_psi_term, ptr_psi_term, GENERIC))getpid_internal,0,0,0);
+				       ptr_psi_term, ptr_psi_term, GENERIC))getpid_internal,0,0,0);
 }
 #endif
 /********************************************************************
   INITIALIZATION FUNCTIONS
-  *******************************************************************/
-
+*******************************************************************/
 #ifdef LIFE_NDBM
 extern void make_ndbm_type_links();
 #endif
-
 void make_sys_type_links()
 {
 #ifdef LIFE_NDBM
@@ -1838,13 +1657,10 @@ void make_sys_type_links()
 #endif
   make_type_link(sys_bytedata     ,built_in); /* DENYS: BYTEDATA */
 }
-
 #ifdef LIFE_NDBM
 extern void check_ndbm_definitions();
 #endif
-
-void
-check_sys_definitions()
+void check_sys_definitions()
 {
   check_definition(&sys_bytedata);	/* DENYS: BYTEDATA */
   check_definition(&sys_bitvector);
@@ -1863,25 +1679,22 @@ check_sys_definitions()
   check_ndbm_definitions();
 #endif
 }
-
 #ifdef LIFE_DBM
 extern void insert_dbm_builtins();
 #endif
 #ifdef LIFE_NDBM
 extern void insert_ndbm_builtins();
 #endif
-
 void insert_sys_builtins()
 {
   ptr_module curmod = current_module;
   set_current_module(sys_module);
-
   sys_bytedata		=update_symbol(sys_module,"bytedata"); /* DENYS: BYTEDATA */
   sys_bitvector		=update_symbol(sys_module,"bitvector");
   sys_regexp		=update_symbol(sys_module,"regexp");
   sys_stream		=update_symbol(sys_module,"stream");
   sys_file_stream	=update_symbol(sys_module,"file_stream");
-  #ifdef __unix__
+#ifdef __unix__
   sys_socket_stream	=update_symbol(sys_module,"socket_stream");
   sys_process_no_children=update_symbol(sys_module,"process_no_children");
   sys_process_exited	=update_symbol(sys_module,"process_exited");
@@ -1891,8 +1704,8 @@ void insert_sys_builtins()
 #endif
   /* DENYS: BYTEDATA */
   /* purely for illustration
-  new_built_in(sys_module,"string_to_bytedata",function,c_string_to_bytedata);
-  new_built_in(sys_module,"bytedata_to_string",function,c_bytedata_to_string);
+     new_built_in(sys_module,"string_to_bytedata",function,c_string_to_bytedata);
+     new_built_in(sys_module,"bytedata_to_string",function,c_bytedata_to_string);
   */
   new_built_in(sys_module,"make_bitvector"	,(def_type)function_it ,c_make_bitvector);
   new_built_in(sys_module,"bitvector_and"	,(def_type)function_it ,c_bitvector_and);
@@ -1913,21 +1726,21 @@ void insert_sys_builtins()
   new_built_in(sys_module,"get_code"		,(def_type)function_it ,c_get_code);
   new_built_in(sys_module,"ftell"		,(def_type)function_it ,c_ftell);
   new_built_in(sys_module,"fseek"		,(def_type)predicate_it,c_fseek);
-  #ifdef __unix__
+#ifdef __unix__
   new_built_in(sys_module,"socket"		,(def_type)function_it ,c_socket);
   new_built_in(sys_module,"bind"		,(def_type)predicate_it,c_bind);
   new_built_in(sys_module,"connect"		,(def_type)predicate_it,c_connect);
-  #endif
+#endif
   new_built_in(sys_module,"fwrite"		,(def_type)predicate_it,c_fwrite);
   new_built_in(sys_module,"fflush"		,(def_type)predicate_it,c_fflush);
-  #ifdef __unix__
+#ifdef __unix__
   new_built_in(sys_module,"listen"		,(def_type)predicate_it,c_listen);
   new_built_in(sys_module,"accept"		,(def_type)function_it ,c_accept);
-  #endif
+#endif
   new_built_in(sys_module,"errno"		,(def_type)function_it ,c_errno);
   new_built_in(sys_module,"errmsg"		,(def_type)function_it ,c_errmsg);
   new_built_in(sys_module,"import_symbol"	,(def_type)predicate_it,c_import_symbol);
-  #ifdef __unix
+#ifdef __unix
   new_built_in(sys_module,"fork"		,(def_type)function_it ,c_fork);
   new_built_in(sys_module,"wait"		,(def_type)function_it ,c_wait);
   new_built_in(sys_module,"waitpid"		,(def_type)function_it ,c_waitpid);
@@ -1939,7 +1752,7 @@ void insert_sys_builtins()
   new_built_in(sys_module,"my_wait_on_feature"	,(def_type)function_it ,c_my_wait_on_feature);
   new_built_in(sys_module,"apply1"		,(def_type)function_it ,c_apply1);
   new_built_in(sys_module,"getpid"		,(def_type)function_it ,c_getpid);
-  #endif
+#endif
   new_built_in(sys_module,"stream2sys_stream"	,(def_type)function_it ,c_stream2sys_stream);
   new_built_in(sys_module,"sys_stream2stream"	,(def_type)function_it ,c_sys_stream2stream);
 #ifdef LIFE_DBM

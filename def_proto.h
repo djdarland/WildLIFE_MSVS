@@ -29,14 +29,9 @@ ptr_psi_term unitListValue();
 GENERIC unitListNext();
 ptr_psi_term intListValue(ptr_int_list p);
 GENERIC intListNext(ptr_int_list p);
-#if FALSE
-// ptr_psi_term quotedStackCopy(ptr_psi_term p); // Reverted - ptr back in arg REV401PLUS 
-ptr_psi_term quotedStackCopy(ptr_psi_term p); // Reverted - ptr back in arg REV401PLUS // Attempting Unreverting
-#endif
 ptr_psi_term residListGoalQuote(ptr_residuation p);
 GENERIC residListNext(ptr_residuation p);
 ptr_psi_term makePsiTerm(ptr_definition x);
-// ptr_psi_term makePsiList(GENERIC head,ptr_psi_term (*valueFunc)(),GENERIC (*nextFunc)());
 ptr_psi_term makePsiList(GENERIC head, ptr_psi_term (*valueFunc)(GENERIC), GENERIC (*nextFunc)(GENERIC));
 
 ptr_goal makeGoal(ptr_psi_term p);
@@ -471,10 +466,10 @@ void raw_setup_builtins ();
 
 // long long call_primitive(long long (*fun)(),int num,psi_arg argi[],GENERIC info);
 long long call_primitive(long long (*fun)(ptr_psi_term[],
-			   ptr_psi_term,
-			   ptr_psi_term,
-			   GENERIC),
-	       int num,psi_arg argi[],GENERIC info);
+					  ptr_psi_term,
+					  ptr_psi_term,
+					  GENERIC),
+			 int num,psi_arg argi[],GENERIC info);
 ptr_psi_term fileptr2stream(FILE *fp, ptr_definition typ); // removed * 2nd arg
 int text_buffer_next(struct text_buffer *buf, int idx, char c, struct text_buffer **rbuf, int *ridx);
 char* text_buffer_cmp(struct text_buffer *buf, int idx, char *str);
