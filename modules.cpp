@@ -480,7 +480,6 @@ void traverse_tree(ptr_node n,int flag)   // REV401PLUS void
 */
 long long c_public()
 {
-  ptr_psi_term arg1,arg2;
   ptr_psi_term call;
   int success;
   
@@ -501,7 +500,6 @@ long long c_public()
 */
 long long c_private()
 {
-  ptr_psi_term arg1,arg2;
   ptr_psi_term call;
   int success;
   
@@ -726,7 +724,7 @@ long long c_current_module()
 long long c_module_access()
 {
   long long success=FALSE;
-  ptr_psi_term result,module,symbol,call,other;
+  ptr_psi_term call;
   call=aim->aaaa_1;
   deref_ptr(call);
   Warningline("%P not implemented yet...\n",call);
@@ -752,7 +750,7 @@ int global_unify(ptr_psi_term u,ptr_psi_term v)      /*  RM: Feb 11 1993  */
   deref_ptr(u);
   deref_ptr(v);
   Traceline("match persistent %P with %P\n",u,v);
-  if((GENERIC)u>=heap_pointer) {
+  if((GENERIC)u>=wl_mem->heap_pointer_val()) {
     Errorline("cannot unify persistent values\n");
     return c_abort();
   }
@@ -925,7 +923,6 @@ int make_feature_private(ptr_psi_term term)  /*  RM: Mar 11 1993  */
 */
 long long c_private_feature()    /*  RM: Mar 11 1993  */
 {
-  ptr_psi_term arg1,arg2;
   ptr_psi_term call;
   int success;
   

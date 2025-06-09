@@ -27,7 +27,7 @@ void init_print()
 char *heap_nice_name()
 {
   string tmp1,tmp2;
-  long long g,len,leading_a;
+  long long g,len;
 
   g= ++gen_sym_counter;
   len=2;
@@ -195,8 +195,6 @@ referred to elsewhere. T is a dereferenced psi_term.
 void go_through(ptr_psi_term t)
 // ptr_psi_term t;
 {
-  ptr_list l;
-
   go_through_tree(t->attr_list);
 }
 /******** INSERT_VARIABLES(vars,force)
@@ -382,7 +380,7 @@ void prettyf_quote(char *s)
 void end_tab()
 {
   if (indent) {
-    indx->str=(char *)heap_alloc(strlen(buffer)+1);
+    indx->str=(char *)wl_mem->heap_alloc(strlen(buffer)+1);
     strcpy(indx->str,buffer);
     indx++;
     *buffer=0;
@@ -511,12 +509,11 @@ void pretty_list(ptr_psi_term t,long long depth)
 // long long depth;
 {
   ptr_tab_brk wl_new;
-  ptr_list l;
   ptr_definition t_type;
   ptr_psi_term car,cdr;
-  ptr_node n,n2;
+  ptr_node n;
   char *tag=NULL;
-  char colon[2],sep[4],end[3];
+  char sep[4],end[3];
   long long list_depth; /* 20.8 */
   long long done=FALSE; /* RM: Dec 11 1992 */
   
@@ -686,7 +683,6 @@ long long pretty_psi_with_ops(ptr_psi_term t,long long sprec,long long depth)
 // long long sprec;
 // long long depth;
 {
-  ptr_tab_brk wl_new;
   ptr_psi_term arg1, arg2;
   wl_operator ttype, a1type, a2type;
   long long tprec, a1prec, a2prec;
@@ -788,7 +784,7 @@ void pretty_psi_term(ptr_psi_term t,long long sprec,long long depth)
     deref_ptr(t); /* PVR */
     /*  RM: Feb 12 1993  */
     if(display_persistent &&
-       (GENERIC)t>heap_pointer)
+       (GENERIC)t>wl_mem->heap_pointer_val())
       prettyf(" $");
     if((t->type==alist || t->type==disjunction) && check_legal_cons(t,t->type))
       pretty_list(t,depth+1); /*  RM: Dec 11 1992  */
@@ -1050,7 +1046,7 @@ long long print_variables(long long printflag)
   if (!printflag) return FALSE; /* 21.1 */
   outfile=output_stream;
   listing_flag=FALSE;
-  old_heap_pointer=heap_pointer;
+  old_heap_pointer=wl_mem->heap_pointer_val();
   pointer_names=NULL;
   printed_pointers=NULL;
   gen_sym_counter=0;
@@ -1075,7 +1071,7 @@ long long print_variables(long long printflag)
       pretty_output();
     }
   }
-  heap_pointer=old_heap_pointer;
+  wl_mem->set_heap_pointer(old_heap_pointer);
   return (var_tree!=NULL);
 }
 /******** WRITE_ATTRIBUTES(n)
@@ -1139,7 +1135,7 @@ void main_pred_write(ptr_node n)
     ptr_tab_brk wl_new;
  
     if (!write_corefs) main_pred_write(n->left);
-    old_heap_pointer=heap_pointer;
+    old_heap_pointer=wl_mem->heap_pointer_val();
     pointer_names=NULL;
     printed_pointers=NULL;
     gen_sym_counter=0;
@@ -1163,7 +1159,7 @@ void main_pred_write(ptr_node n)
       work_out_length();
       pretty_output();
     }
-    heap_pointer=old_heap_pointer;
+    wl_mem->set_heap_pointer(old_heap_pointer);
     if (!write_corefs) main_pred_write(n->right);
   }
 }
@@ -1215,7 +1211,7 @@ void main_display_psi_term(ptr_psi_term t)
   listing_flag=FALSE;
   if(t) {
     deref_ptr(t);
-    old_heap_pointer=heap_pointer;
+    old_heap_pointer=wl_mem->heap_pointer_val();
     pointer_names=NULL;
     printed_pointers=NULL;
     gen_sym_counter=0;
@@ -1235,7 +1231,7 @@ void main_display_psi_term(ptr_psi_term t)
       work_out_length();
       pretty_output();
     }
-    heap_pointer=old_heap_pointer;
+    wl_mem->set_heap_pointer(old_heap_pointer);
   }
   else
     printf("*null psi_term*");
@@ -1254,7 +1250,7 @@ void display_couple(ptr_psi_term u,char *s,ptr_psi_term v)
 
   output_stream=stdout;
   listing_flag=FALSE;
-  old_heap_pointer=heap_pointer;
+  old_heap_pointer=wl_mem->heap_pointer_val();
   pointer_names=NULL;
   printed_pointers=NULL;
   gen_sym_counter=0;
@@ -1277,7 +1273,7 @@ void display_couple(ptr_psi_term u,char *s,ptr_psi_term v)
     work_out_length();
     pretty_output();
   }
-  heap_pointer=old_heap_pointer;
+  wl_mem->set_heap_pointer(old_heap_pointer);
 }
 /******** PRINT_RESID_MESSAGE
 	  This is called in trace mode to print the residuated goal along long with the
@@ -1293,7 +1289,7 @@ void print_resid_message(ptr_psi_term t,ptr_resid_list r)
   
   outfile=stdout;
   listing_flag=FALSE;
-  old_heap_pointer=heap_pointer;
+  old_heap_pointer=wl_mem->heap_pointer_val();
   pointer_names=NULL;
   printed_pointers=NULL;
   gen_sym_counter=0;
@@ -1324,5 +1320,5 @@ void print_resid_message(ptr_psi_term t,ptr_resid_list r)
   }
   prettyf("}\n");
   end_tab();
-  heap_pointer=old_heap_pointer;
+  wl_mem->set_heap_pointer(old_heap_pointer);
 }

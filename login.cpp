@@ -98,7 +98,6 @@ void get_one_arg_addr(ptr_node t,ptr_psi_term **a)
 //     ptr_psi_term **a;
 {
   ptr_node n;
-  ptr_psi_term *b;
   
   *a=NULL;
   if (t) {
@@ -224,9 +223,6 @@ void assert_rule(psi_term t,def_type typ)
 void assert_clause(ptr_psi_term t)
 //     ptr_psi_term t;
 {
-  ptr_psi_term arg1,arg2;
-  char *str;
-  
   assert_ok=FALSE;  
   deref_ptr(t);
   if (equ_tok((*t),":-"))
@@ -286,10 +282,10 @@ void push_ptr_value(type_ptr t,GENERIC *p)
 {
   ptr_stack n;
   
-  assert((GENERIC)p<heap_pointer); /*  RM: Feb 15 1993  */
+  assert((GENERIC)p<wl_mem->heap_pointer_val()); /*  RM: Feb 15 1993  */
   
   assert(VALID_ADDRESS(p));
-  if (p < (GENERIC *)choice_stack || p > (GENERIC *)stack_pointer) 
+  if (p < (GENERIC *)choice_stack || p > (GENERIC *)wl_mem->stack_pointer_val()) 
     {
       n=STACK_ALLOC(stack);
       n->type=t;
@@ -318,11 +314,11 @@ void push_def_ptr_value(ptr_psi_term q,GENERIC *p)
 #ifdef TS
   if (TRAIL_CONDITION(q) &&
       /* (q->time_stamp != global_time_stamp) && */
-      (p < (GENERIC *)choice_stack || p > (GENERIC *)stack_pointer))
+      (p < (GENERIC *)choice_stack || p > (GENERIC *)wl_mem->stack_pointer_val()))
     {
 #define TRAIL_TS
 #ifdef TRAIL_TS
-      assert((GENERIC)q<heap_pointer); /*  RM: Feb 15 1993  */
+      assert((GENERIC)q<wl_mem->heap_pointer_val()); /*  RM: Feb 15 1993  */
       m=STACK_ALLOC(stack); /* Trail time_stamp */
       m->type=int_ptr;
       m->aaaa_3= (GENERIC *) &(q->time_stamp); // REV401PLUS add * to cast
@@ -367,7 +363,7 @@ void push_psi_ptr_value(ptr_psi_term q,GENERIC *p)
 #ifdef TS
   if (TRAIL_CONDITION(q) &&
       /* (q->time_stamp != global_time_stamp) && */
-      (p < (GENERIC *)choice_stack || p > (GENERIC *)stack_pointer))
+      (p < (GENERIC *)choice_stack || p > (GENERIC *)wl_mem->stack_pointer_val()))
     {
 #define TRAIL_TS
 #ifdef TRAIL_TS
@@ -443,7 +439,7 @@ void push2_ptr_value(type_ptr t,GENERIC *p,GENERIC v)
 {
   ptr_stack n;
   
-  if (p<(GENERIC *)choice_stack || p>(GENERIC *)stack_pointer) {
+  if (p<(GENERIC *)choice_stack || p>(GENERIC *)wl_mem->stack_pointer_val()) {
     n=STACK_ALLOC(stack);
     n->type=t;
     n->aaaa_3= (GENERIC *)p; // REV401PLUS add * to cast
@@ -505,7 +501,7 @@ void push_choice_point(goals t,ptr_psi_term a,ptr_psi_term b,GENERIC c)
   alternative->cccc_1=c;
   alternative->next=goal_stack;
   alternative->pending=FALSE;
-  top=stack_pointer;
+  top=wl_mem->stack_pointer_val();
   choice=STACK_ALLOC(choice_point);
   choice->undo_point=undo_stack;
   choice->goal_stack=alternative;
@@ -584,11 +580,10 @@ with goals to be proved on backtracking.
 */
 void backtrack()
 {
-  long long gts;
   
   goal_stack=choice_stack->goal_stack;
   undo(choice_stack->undo_point);
-  stack_pointer=choice_stack->stack_top;
+  wl_mem->set_stack_pointer(choice_stack->stack_top);
   choice_stack=choice_stack->next;
   resid_aim=NULL;
   /* assert((unsigned long long)stack_pointer>=(unsigned long long)cut_point); 13.6 */
@@ -620,13 +615,13 @@ static void clean_trail(ptr_choice_point cutpt)
     cut_limit = cutpt->undo_point;
   }
   else {
-    cut_sp = mem_base; /* Empty stack */
+    cut_sp = wl_mem->mem_base_val(); /* Empty stack */
     cut_limit = NULL;  /* Empty undo_stack */
   }
   while ((unsigned long long)u > (unsigned long long)cut_limit) {
     clean_iter++;
     if (!(u->type & undo_action) && VALID_RANGE(u->aaaa_3) &&
-        (unsigned long long)u->aaaa_3>(unsigned long long)cut_sp && (unsigned long long)u->aaaa_3<=(unsigned long long)stack_pointer) {
+        (unsigned long long)u->aaaa_3>(unsigned long long)cut_sp && (unsigned long long)u->aaaa_3<=(unsigned long long)wl_mem->stack_pointer_val()) {
       *prev = u->next;
       clean_succ++;
     }
@@ -641,9 +636,6 @@ static void clean_trail(ptr_choice_point cutpt)
 void clean_undo_window(long long disp,long long wind)
 //     long long disp,wind;
 {
-  ptr_stack *prev,u;
-  ptr_choice_point c;
-  
 #ifdef X11
   /* Remove entries on the trail */
   u = undo_stack;
@@ -781,7 +773,7 @@ void merge3(ptr_node *u,ptr_node v)
       more_v_attr=TRUE;
     }
     else {
-      ptr_psi_term t1,t2;
+      ptr_psi_term t1;
       
       cmp=featcmp((*u)->key,v->key);
       if (cmp==0) {
@@ -858,8 +850,8 @@ void show_count()
 #endif
     printf("%1.3fs cpu, %lld goal%s",t,goal_count,(goal_count!=1?"s":""));
     if (t!=0.0) printf(" (%0.0f/s)",goal_count/t);
-    printf(", %ld stack",sizeof(mem_base)*(stack_pointer-mem_base));
-    printf(", %ld heap",sizeof(mem_base)*(mem_limit-heap_pointer));
+    printf(", %ld stack",sizeof(/*wl_mem->mem_base*/ GENERIC)*(wl_mem->stack_pointer_val()-wl_mem->mem_base_val()));
+    printf(", %ld heap",sizeof(/*mem_base*/ GENERIC)*(wl_mem->mem_limit_val()-wl_mem->heap_pointer_val()));
     printf("]");
   }
   if(NOTQUIET) {
@@ -1010,7 +1002,6 @@ long long unify_body(long long eval_flag)
 {
   long long success=TRUE,compare;
   ptr_psi_term u,v,tmp;
-  ptr_list lu,lv;
   REAL r;
   ptr_definition new_type,old1,old2;
   ptr_node old1attr, old2attr;
@@ -1048,7 +1039,7 @@ long long unify_body(long long eval_flag)
     arity_unify(u,v);
 #endif
     /***** Deal with global vars ****   RM: Feb  8 1993  */
-    if((GENERIC)v>=heap_pointer)
+    if((GENERIC)v>=wl_mem->heap_pointer_val())
       return global_unify(u,v);
     /**** Calculate their Greatest Lower Bound and compare them ****/
     success=(compare=glb(u->type,v->type,&new_type,&new_code));
@@ -1202,8 +1193,6 @@ of the disjunction can be bound to U.
 */
 long long disjunct_aim()
 {
-  ptr_psi_term u,v;
-  ptr_list l;
   long long success=TRUE;
   
   printf("Call to disjunct_aim\nThis routine inhibited by RM: Dec  9 1992\n");
@@ -1291,8 +1280,6 @@ long long prove_aim()
 		curried=FALSE;
 		can_curry=TRUE;
 		resid_vars=NULL;
-		/* resid_limit=(ptr_goal )stack_pointer; 12.6 */
-		
 		if (thegoal->type!=tracesym) /* 26.1 */
 		  Traceline("prove built-in %P\n", thegoal);
 		/* RESPRED */ resid_aim=aim;
@@ -1311,7 +1298,6 @@ long long prove_aim()
 		curried=FALSE;
 		can_curry=TRUE;
 		resid_vars=NULL;
-		/* resid_limit=(ptr_goal )stack_pointer; 12.6 */
 		while (rule && (rule->aaaa_2==NULL || rule->bbbb_2==NULL)) {
 		  rule=rule->next;
 		  Traceline("alternative clause has been retracted\n");
@@ -1471,8 +1457,6 @@ long long num_choices()
 long long num_vars(ptr_node vt)
 //     ptr_node vt;
 {
-  long long num;
-  
   return (vt?(num_vars(vt->left)+1+num_vars(vt->right)):0);
 }
 /* Cut away up to and including the first 'what_next' choice point. */
@@ -1959,8 +1943,8 @@ void main_prove()
 	  main_loop_ok=FALSE;
         }
       }
-      if (heap_pointer-stack_pointer < GC_THRESHOLD)
-        memory_check();
+      if (wl_mem->heap_pointer_val()-wl_mem->stack_pointer_val() < GC_THRESHOLD)
+        wl_mem->memory_check();
 #ifdef __unix__
       if (interrupted || (stepflag && steptrace))
 	handle_interrupt();
@@ -1984,7 +1968,6 @@ void main_prove()
   }
 }
 int dummy_printf(char *f,char *s,char *t)
-//     char *f, *s, *t;
 {
   return strlen(f);
 }

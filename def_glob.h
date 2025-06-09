@@ -15,6 +15,7 @@ EXTERN clock_t life_start;
 EXTERN clock_t start_time;
 EXTERN clock_t end_time;
 #endif
+EXTERN class wl_memory *wl_mem;
 
 // from extern.h
 
@@ -39,89 +40,6 @@ EXTERN int arg_c;
 
 EXTERN char *arg_v[ARGNN]; // Modified DJD
 
-/*! \var alloc_words
-  \brief number of words to allocate - from either command lind or ALLOC_WORDS define
-
-*/
-
-EXTERN int alloc_words;
-
-/*! \var mem_size
-  \brief number of words from memory = alloc_words * sizeof word 
-
-*/
-
-EXTERN int mem_size;
-
-/*! \var mem_base
-  \brief mem_size memory allocated in init_memory by malloc 
-
-*/
-
-EXTERN GENERIC mem_base;
-
-/*! \var heap_pointer
-  \brief used to allocate from heap - size allocated subtracted - adj for alignment
-
-*/
-
-EXTERN GENERIC heap_pointer;
-
-/*! mem_limit
-  \brief starting point of heap - mem_base aligned
-
-*/
-
-EXTERN GENERIC mem_limit;
-
-/*! \var stack_pointer
-  \brief used to allocate from stack - size allocated added - adj for alignment
-
-*/
-
-EXTERN GENERIC stack_pointer;
-
-/*! \var garbage_time
-  \brief total time on garbage collections - seconds
-
-*/
-
-EXTERN float garbage_time;
-
-/*! \var life_start
-  \brief time life started - seconds
-
-*/
-
-// EXTERN struct tms life_start;
-
-/*! \var life_start
-  \brief time life ended - seconds
-
-*/
-
-// EXTERN struct tms life_end;
-
-/*! \var other_base
-  \brief mem_size memory allocated in init_memory by malloc 
-
-  only used for the half-space garbage collector
-*/
-
-EXTERN GENERIC other_base;
-
-/*! \var other_limit
-  \brief only used for the half-space garbage collector
-*/
-
-EXTERN GENERIC other_limit;
-
-/*! \var other_pointer
-  \brief NOT USED - according to comment
-
-*/
-
-EXTERN GENERIC other_pointer;
 
 /*! \var error_psi_term
   \brief symbol in bi module

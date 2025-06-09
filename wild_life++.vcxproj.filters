@@ -96,6 +96,9 @@
     <ClCompile Include="str_const.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="wl_memory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="def_config.h">
@@ -126,6 +129,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="str_const.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="wl_memory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
