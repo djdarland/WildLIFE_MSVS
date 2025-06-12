@@ -156,6 +156,9 @@
     <ClCompile Include="types.cpp" />
     <ClCompile Include="wild_life++.cpp" />
     <ClCompile Include="wl_memory.cpp" />
+    <ClCompile Include="wl_node.cpp" />
+    <ClCompile Include="wl_node_ptr.cpp" />
+    <ClCompile Include="wl_node_ptr_ptr.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="defs.h" />
@@ -169,6 +172,9 @@
     <ClInclude Include="regexp\regmagic.h" />
     <ClInclude Include="str_const.h" />
     <ClInclude Include="wl_memory.h" />
+    <ClInclude Include="wl_node.h" />
+    <ClInclude Include="wl_node_ptr.h" />
+    <ClInclude Include="wl_node_ptr_ptr.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

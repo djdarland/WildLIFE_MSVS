@@ -48,7 +48,7 @@ void heap_add_int_attr(ptr_psi_term t, char *attrname, long long value)
   t1->type=integer;
   t1->value_3=wl_mem->heap_alloc(sizeof(REAL));
   *(REAL *)t1->value_3 = (REAL) value;
-  heap_insert(FEATCMP,heap_copy_string(attrname),&(t->attr_list), (GENERIC)t1); // REV401PLUS cast
+  ((wl_node_ptr_ptr*)&(t->attr_list))->heap_insert(FEATCMP,heap_copy_string(attrname), (GENERIC)t1); // REV401PLUS cast
 }
 void stack_add_int_attr(ptr_psi_term t, char *attrname, long long value)
 // ptr_psi_term t;
@@ -63,7 +63,7 @@ void stack_add_int_attr(ptr_psi_term t, char *attrname, long long value)
   //  *(REAL *)t1->value_3cp =  value;
   *(REAL *)t1->value_3 = (REAL) value;
   //*(REAL *)t1->value_3 = cp2R(value);
-  stack_insert(FEATCMP,heap_copy_string(attrname),&(t->attr_list), (GENERIC)t1); // REV401PLUS cast
+  ((wl_node_ptr_ptr*)&(t->attr_list))->stack_insert(FEATCMP,heap_copy_string(attrname), (GENERIC)t1); // REV401PLUS cast
 }
 /* Modify an attribute whose value is an integer to a psi-term */
 /* that already contains this attribute with another integer value. */
@@ -74,8 +74,10 @@ void heap_mod_int_attr(ptr_psi_term t, char *attrname, long long value)
 {
   ptr_node n;
   ptr_psi_term t1;
-
-  n=find(FEATCMP,attrname,t->attr_list);
+  if (t->attr_list)
+    n=((wl_node_ptr*)t->attr_list)->find(FEATCMP,attrname);
+  else
+    n = NULL;
   t1=(ptr_psi_term)n->data;
   *(REAL *)t1->value_3 = (REAL) value;
 }
@@ -91,7 +93,7 @@ void heap_add_str_attr(ptr_psi_term t, char *attrname, char *str)
   t1=heap_psi_term(4);
   t1->type=quoted_string;
   t1->value_3=(GENERIC)heap_copy_string(str);
-  heap_insert(FEATCMP,heap_copy_string(attrname),&(t->attr_list), (GENERIC)t1); // REV401PLUS cast
+  ((wl_node_ptr_ptr*)&(t->attr_list))->heap_insert(FEATCMP,heap_copy_string(attrname), (GENERIC)t1); // REV401PLUS cast
 }
 
 void stack_add_str_attr(ptr_psi_term t, char *attrname, char *str)
@@ -104,7 +106,7 @@ void stack_add_str_attr(ptr_psi_term t, char *attrname, char *str)
   t1=stack_psi_term(4);
   t1->type=quoted_string;
   t1->value_3=(GENERIC)stack_copy_string(str);
-  stack_insert(FEATCMP,heap_copy_string(attrname),&(t->attr_list), (GENERIC)t1); // REV401PLUS cast
+  ((wl_node_ptr_ptr*)&(t->attr_list))->stack_insert(FEATCMP,heap_copy_string(attrname), (GENERIC)t1); // REV401PLUS cast
 }
 /* Modify an attribute whose value is a string to a psi-term */
 /* that already contains this attribute with another integer value. */
@@ -115,8 +117,10 @@ void heap_mod_str_attr(ptr_psi_term t, char *attrname, char *str)
 {
   ptr_node n;
   ptr_psi_term t1;
-
-  n=find(FEATCMP,attrname,t->attr_list);
+  if (t->attr_list)
+    n=((wl_node_ptr*)t->attr_list)->find(FEATCMP,attrname);
+  else
+    n = NULL;
   t1=(ptr_psi_term)n->data;
   t1->value_3=(GENERIC)heap_copy_string(str);
 }
@@ -126,28 +130,32 @@ void heap_add_psi_attr(ptr_psi_term t, char *attrname, ptr_psi_term g)
 // char *attrname;
 // ptr_psi_term g;
 {
-  heap_insert(FEATCMP,heap_copy_string(attrname),&(t->attr_list), (GENERIC)g); // REV401PLUS cast
+  ((wl_node_ptr_ptr*)&(t->attr_list))->heap_insert(FEATCMP,heap_copy_string(attrname), (GENERIC)g); // REV401PLUS cast
 }
 void stack_add_psi_attr(ptr_psi_term t, char *attrname, ptr_psi_term g)
 // ptr_psi_term t;
 // char *attrname;
 // ptr_psi_term g;
 {
-  stack_insert(FEATCMP,heap_copy_string(attrname),&(t->attr_list), (GENERIC)g); // REV401PLUS cast
+  ((wl_node_ptr_ptr*)&(t->attr_list))->stack_insert(FEATCMP,heap_copy_string(attrname), (GENERIC)g); // REV401PLUS cast
 }
 void bk_stack_add_psi_attr(ptr_psi_term t, char *attrname, ptr_psi_term g)
 // ptr_psi_term t;
 // char *attrname;
 // ptr_psi_term g;
 {
-  bk_stack_insert(FEATCMP,heap_copy_string(attrname),&(t->attr_list), (GENERIC)g); // REV401PLUS
+  ((wl_node_ptr_ptr*)&(t->attr_list))->bk_stack_insert(FEATCMP,heap_copy_string(attrname), (GENERIC)g); // REV401PLUS
 }
 /* Get the GENERIC value of a psi-term's attribute */
 GENERIC get_attr(ptr_psi_term t, char *attrname)
 // ptr_psi_term t;
 // char *attrname;
 {
-  ptr_node n=find(FEATCMP,attrname,t->attr_list);
+  ptr_node n;
+  if (t->attr_list)
+    n=((wl_node_ptr*)t->attr_list)->find(FEATCMP,attrname);
+  else
+    n = NULL;
   return (GENERIC) n->data;
 }
 /* Get the psi-term's STREAM attribute */
@@ -165,7 +173,10 @@ void save_state(ptr_psi_term t)
   ptr_node n;
   ptr_psi_term t1;
 
-  n=find(FEATCMP,STREAM,t->attr_list);
+  if (t->attr_list)
+    n=((wl_node_ptr*)t->attr_list)->find(FEATCMP,STREAM);
+  else
+    n = NULL;
   t1=(ptr_psi_term)n->data;
   t1->value_3=(GENERIC)input_stream;
   heap_mod_str_attr(t,INPUT_FILE_NAME,input_file_name);
@@ -187,6 +198,7 @@ void save_state(ptr_psi_term t)
 void restore_state(ptr_psi_term t)
 // ptr_psi_term t;
 {
+  long long i;
   char *str;
   
   input_stream = (FILE *) ((ptr_psi_term)get_attr(t,STREAM))->value_3;
@@ -363,7 +375,7 @@ char* expand_file_name(char* s)
 char* expand_file_name(char* s)
 // char *s;
 {
-  char* r, * r2, * r3;
+  char* r, * r2, * r3, * s2;
   char* home;
   int slash_count, i;
   if (strcmp(s, "stdin") == 0) return s;
@@ -750,6 +762,7 @@ void read_name(ptr_psi_term tok,long long ch,long long (*f)(long long),ptr_defin
   long long store=TRUE;
   long long flag=TRUE;
   ptr_module module=NULL;
+  ptr_node n; /*  RM: Feb  9 1993  */
 
   tok->coref=NULL;
   tok->resid=NULL;
@@ -819,7 +832,7 @@ void read_number(ptr_psi_term tok,long long c)
 {
   long long c2;
   REAL f,p;
-  long long pwr,posflag;
+  long long sgn,pwr,posflag;
 
   f=0.0;
   do { f=f*10.0+(c-'0'); c=read_char(); } while (DIGIT(c));
@@ -972,11 +985,14 @@ void read_token_main(ptr_psi_term tok, long long for_parser)
         else {
           /* Insert into variable tree, create 'top' value if need be. */
           var_occurred=TRUE;
-          n=find(STRCMP,(char *)tok->value_3,var_tree); // REV401PLUS cast
+	  if (var_tree)
+	    n=((wl_node_ptr*)var_tree)->find(STRCMP,(char *)tok->value_3); // REV401PLUS cast
+	  else
+	    n = NULL;
           if (n==NULL) {
             ptr_psi_term t=stack_psi_term(0);
             /* The change is always trailed. */
-            bk2_stack_insert(STRCMP,(char *)tok->value_3,&var_tree,(GENERIC)t); /* 17.8 */ // REV401PLUS casts
+            ((wl_node_ptr_ptr*)&var_tree)->bk2_stack_insert(STRCMP,(char *)tok->value_3,(GENERIC)t); /* 17.8 */ // REV401PLUS casts
             tok->coref=t;
           }
           else

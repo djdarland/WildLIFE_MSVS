@@ -367,6 +367,7 @@ void mark_quote_c(ptr_psi_term t, long long heap_flag)
 // ptr_psi_term t;
 // long long heap_flag;
 {
+  ptr_list l;
   long long *infoptr;
   ptr_psi_term u;
 
@@ -444,6 +445,7 @@ void mark_quote_new2(ptr_psi_term t)
 void mark_eval_new(ptr_psi_term t)
 // ptr_psi_term t;
 {
+  ptr_list l;
   long long *infoptr,flag;
   ptr_psi_term u;
   long long old_status;
@@ -513,6 +515,7 @@ void mark_eval_tree_new(ptr_node n)
 void mark_quote_new(ptr_psi_term t)
 // ptr_psi_term t;
 {
+  ptr_list l;
   long long *infoptr;
   ptr_psi_term u;
 
@@ -547,6 +550,7 @@ extern void mark_quote_tree(); /* A forward declaration */
 void mark_quote(ptr_psi_term t)
 // ptr_psi_term t;
 {
+  ptr_list l;
 
   if (t && !(t->status&RMASK)) {
     t->status = 4;
@@ -571,6 +575,7 @@ void bk_mark_quote_tree();
 void bk_mark_quote(ptr_psi_term t)
 // ptr_psi_term t;
 {
+  ptr_list l;
 
   if (t && !(t->status&RMASK)) {
     if(t->status!=4 && (GENERIC)t<wl_mem->heap_pointer_val())/*  RM: Jul 16 1993  */

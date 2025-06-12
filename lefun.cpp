@@ -270,6 +270,7 @@ long long do_residuation()
 {
   long long success;
   ptr_psi_term t,u;
+  ptr_goal *gs;
   
   /* This undoes perfectly valid work! */
   /* The old version of Wild_Life did not trail anything
@@ -593,9 +594,9 @@ function definition.
 long long match_aim()
 {
   long long success=TRUE;
-  ptr_psi_term u,v;
+  ptr_psi_term u,v,tmp;
   REAL r;
-  long long lesseq;
+  long long less,lesseq;
   ptr_resid_block rb;
   ptr_psi_term match_date;
   

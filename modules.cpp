@@ -31,8 +31,10 @@ ptr_module find_module(char *module)
 //     char *module;
 {
   ptr_node nodule;
-
-  nodule=find(STRCMP,module,module_table);
+  if(module_table)
+    nodule=((wl_node_ptr*)module_table)->find(STRCMP,module);
+  else
+    nodule = NULL;
   if(nodule)
     return (ptr_module)(nodule->data);
   else
@@ -45,7 +47,6 @@ ptr_module create_module(char *module)
 //     char *module;
 {
   ptr_module wl_new;
-
   wl_new=find_module(module);
   if(!wl_new) {
     wl_new=HEAP_ALLOC(struct wl_module);
@@ -54,7 +55,7 @@ ptr_module create_module(char *module)
     wl_new->open_modules=NULL;
     wl_new->inherited_modules=NULL;
     wl_new->symbol_table=hash_create(16); /*  RM: Feb  3 1993  */
-    heap_insert(STRCMP,wl_new->module_name,&module_table,(GENERIC)wl_new); // REV401PLUS cast
+    ((wl_node_ptr_ptr*)&module_table)->heap_insert(STRCMP,wl_new->module_name,(GENERIC)wl_new); // REV401PLUS cast
   }
   return wl_new;
 }
@@ -480,6 +481,7 @@ void traverse_tree(ptr_node n,int flag)   // REV401PLUS void
 */
 long long c_public()
 {
+  ptr_psi_term arg1,arg2;
   ptr_psi_term call;
   int success;
   
@@ -500,6 +502,7 @@ long long c_public()
 */
 long long c_private()
 {
+  ptr_psi_term arg1,arg2;
   ptr_psi_term call;
   int success;
   
@@ -662,9 +665,9 @@ void replace_attr(ptr_node old_attr,ptr_psi_term term,
   else
     newlabel=wl_new->keyword->symbol;
   if(!strcmp(old_attr->key,oldlabel))
-    stack_insert(FEATCMP,newlabel,&(term->attr_list),(GENERIC)value);
+    ((wl_node_ptr_ptr*)&(term->attr_list))->stack_insert(FEATCMP,newlabel,(GENERIC)value);
   else
-    stack_insert(FEATCMP,old_attr->key,&(term->attr_list),(GENERIC)value);
+    ((wl_node_ptr_ptr*)&(term->attr_list))->stack_insert(FEATCMP,old_attr->key,(GENERIC)value);
   if(old_attr->right)
     replace_attr(old_attr->right,term,old,wl_new);
 }
@@ -683,7 +686,10 @@ long long c_replace()
   call=aim->aaaa_1;
   deref_ptr(call);
   get_two_args(call->attr_list,&arg1,&arg2);
-  n=find(FEATCMP,three,call->attr_list);
+  if (call->attr_list)
+    n=((wl_node_ptr*)call->attr_list)->find(FEATCMP,three);
+  else
+    n = NULL;
   if (n)
     arg3=(ptr_psi_term)n->data;
   if(arg1 && arg2 && arg3) {
@@ -724,7 +730,7 @@ long long c_current_module()
 long long c_module_access()
 {
   long long success=FALSE;
-  ptr_psi_term call;
+  ptr_psi_term result,module,symbol,call,other;
   call=aim->aaaa_1;
   deref_ptr(call);
   Warningline("%P not implemented yet...\n",call);
@@ -923,6 +929,7 @@ int make_feature_private(ptr_psi_term term)  /*  RM: Mar 11 1993  */
 */
 long long c_private_feature()    /*  RM: Mar 11 1993  */
 {
+  ptr_psi_term arg1,arg2;
   ptr_psi_term call;
   int success;
   

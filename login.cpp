@@ -40,7 +40,10 @@ void get_two_args(ptr_node t,ptr_psi_term *a,ptr_psi_term *b)
 	if (n->key==two)
 	  *b=(ptr_psi_term )n->data;
 	else {
-	  n=find(FEATCMP,two,t);
+	  if (t)
+	    n=((wl_node_ptr*)t)->find(FEATCMP,two);
+	  else
+	    n = NULL;
 	  if(n==NULL)
 	    *b=NULL;  
 	  else
@@ -50,12 +53,18 @@ void get_two_args(ptr_node t,ptr_psi_term *a,ptr_psi_term *b)
 	*b=NULL; 
     }
     else {
-      n=find(FEATCMP,one,t);
+      if (t)
+	n=((wl_node_ptr*)t)->find(FEATCMP,one);
+      else
+	n = NULL;
       if (n==NULL)
 	*a=NULL; 
       else
-	*a=(ptr_psi_term )n->data; 
-      n=find(FEATCMP,two,t);
+	*a=(ptr_psi_term )n->data;
+      if (t)
+	n=((wl_node_ptr*)t)->find(FEATCMP,two);
+      else
+	n = NULL;
       if (n==NULL)
 	*b=NULL; 
       else
@@ -80,7 +89,10 @@ void get_one_arg(ptr_node t,ptr_psi_term *a)
       *a=(ptr_psi_term)t->data;
     }
     else {
-      n=find(FEATCMP,one,t);
+      if (t)
+	n=((wl_node_ptr*)t)->find(FEATCMP,one);
+      else
+	n = NULL;
       if (n==NULL)
 	*a=NULL;
       else
@@ -98,13 +110,17 @@ void get_one_arg_addr(ptr_node t,ptr_psi_term **a)
 //     ptr_psi_term **a;
 {
   ptr_node n;
+  ptr_psi_term *b;
   
   *a=NULL;
   if (t) {
     if (t->key==one)
       *a= (ptr_psi_term *)(&t->data);
     else {
-      n=find(FEATCMP,one,t);
+      if (t)
+	n=((wl_node_ptr*)t)->find(FEATCMP,one);
+      else
+	n = NULL;
       if (n==NULL)
 	*a=NULL;
       else
@@ -223,6 +239,9 @@ void assert_rule(psi_term t,def_type typ)
 void assert_clause(ptr_psi_term t)
 //     ptr_psi_term t;
 {
+  ptr_psi_term arg1,arg2;
+  char *str;
+  
   assert_ok=FALSE;  
   deref_ptr(t);
   if (equ_tok((*t),":-"))
@@ -580,6 +599,7 @@ with goals to be proved on backtracking.
 */
 void backtrack()
 {
+  long long gts;
   
   goal_stack=choice_stack->goal_stack;
   undo(choice_stack->undo_point);
@@ -636,6 +656,9 @@ static void clean_trail(ptr_choice_point cutpt)
 void clean_undo_window(long long disp,long long wind)
 //     long long disp,wind;
 {
+  ptr_stack *prev,u;
+  ptr_choice_point c;
+  
 #ifdef X11
   /* Remove entries on the trail */
   u = undo_stack;
@@ -773,7 +796,7 @@ void merge3(ptr_node *u,ptr_node v)
       more_v_attr=TRUE;
     }
     else {
-      ptr_psi_term t1;
+      ptr_psi_term t1,t2;
       
       cmp=featcmp((*u)->key,v->key);
       if (cmp==0) {
@@ -1002,6 +1025,7 @@ long long unify_body(long long eval_flag)
 {
   long long success=TRUE,compare;
   ptr_psi_term u,v,tmp;
+  ptr_list lu,lv;
   REAL r;
   ptr_definition new_type,old1,old2;
   ptr_node old1attr, old2attr;
@@ -1193,6 +1217,8 @@ of the disjunction can be bound to U.
 */
 long long disjunct_aim()
 {
+  ptr_psi_term u,v;
+  ptr_list l;
   long long success=TRUE;
   
   printf("Call to disjunct_aim\nThis routine inhibited by RM: Dec  9 1992\n");
@@ -1457,6 +1483,8 @@ long long num_choices()
 long long num_vars(ptr_node vt)
 //     ptr_node vt;
 {
+  long long num;
+  
   return (vt?(num_vars(vt->left)+1+num_vars(vt->right)):0);
 }
 /* Cut away up to and including the first 'what_next' choice point. */
@@ -1968,6 +1996,7 @@ void main_prove()
   }
 }
 int dummy_printf(char *f,char *s,char *t)
+//     char *f, *s, *t;
 {
   return strlen(f);
 }
